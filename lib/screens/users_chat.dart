@@ -12,6 +12,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return const Column(
+      mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         SizedBox(
           height: 50,
@@ -23,7 +24,7 @@ class _ChatScreenState extends State<ChatScreen> {
         SizedBox(
           height: 10,
         ),
-        // HorizontalTab(),
+        HorizontalTab(),
       ],
     );
   }
@@ -39,14 +40,35 @@ class HorizontalTab extends StatefulWidget {
 }
 
 class _HorizontalTabState extends State<HorizontalTab> {
-  final List<String> lst = ['Hi!', 'alloha'];
+  final List<String> lst = ['Сообщение', 'Звонки', 'Видеозвонки'];
+  int number = 0;
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-        itemCount: lst.length, itemBuilder: (context, index) => ListTile(
-      title: Text(lst[index]),
-    ));
+    return Expanded(
+      child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: lst.length,
+          itemBuilder: (context, index) => SizedBox(
+                width: 80,
+                child: GestureDetector(
+                  onTap: () {
+                    number = index;
+                    print('index:${index}');
+                    print('number:${number}');
+                    setState(() {});
+                  },
+                  child: ListTile(
+                    tileColor: Colors.red,
+                    title: Text(
+                      lst[index],
+                      style: TextStyle(
+                          color: number == index ? Colors.green : Colors.black),
+                    ),
+                  ),
+                ),
+              )),
+    );
   }
 }
 
