@@ -136,44 +136,7 @@ class ScrollableChats extends StatelessWidget {
                     ),
                   ],
                 ),
-              )
-          //     Row(
-          //   children: [
-          //     Text('picture'),
-          //     Column(
-          //       children: [
-          //         Text(
-          //           'Name of doctor',
-          //           style:
-          //               TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-          //         ),
-          //         Text(
-          //           'Text from message',
-          //           style: TextStyle(
-          //             fontSize: 14,
-          //           ),
-          //         ),
-          //       ],
-          //     ),
-          //     Column(
-          //       children: [
-          //         Text(
-          //           'Date of a message' + ',',
-          //           style: TextStyle(
-          //             fontSize: 14,
-          //           ),
-          //         ),
-          //         Text(
-          //           'time of a message',
-          //           style: TextStyle(
-          //             fontSize: 14,
-          //           ),
-          //         ),
-          //       ],
-          //     ),
-          //   ],
-          // ),
-          ),
+              )),
     );
   }
 }
@@ -193,19 +156,20 @@ class _HorizontalTabState extends State<HorizontalTab> {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
+    return SizedBox(
+      height: 40,
       child: ListView.builder(
           scrollDirection: Axis.horizontal,
           itemCount: lst.length,
           itemBuilder: (context, index) => SizedBox(
-                width: 80,
+                width: 140,
                 child: GestureDetector(
                   onTap: () {
                     number = index;
                     setState(() {});
                   },
                   child: ListTile(
-                    tileColor: Colors.red,
+                    // tileColor: Colors.red,
                     title: Column(
                       children: [
                         Text(
