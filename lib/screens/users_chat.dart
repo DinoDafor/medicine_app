@@ -50,8 +50,7 @@ class MyBottomNavigationBar extends StatelessWidget {
           label: 'Главная',
           activeIcon: SvgPicture.asset(
             'assets/icons/home_icon.svg',
-            colorFilter:
-                ColorFilter.mode(Color(0xFF0EBE7E), BlendMode.srcIn),
+            colorFilter: ColorFilter.mode(Color(0xFF0EBE7E), BlendMode.srcIn),
           ),
         ),
         BottomNavigationBarItem(
@@ -59,8 +58,7 @@ class MyBottomNavigationBar extends StatelessWidget {
           label: 'Календарь',
           activeIcon: SvgPicture.asset(
             'assets/icons/calendar_icon.svg',
-            colorFilter:
-                ColorFilter.mode(Color(0xFF0EBE7E), BlendMode.srcIn),
+            colorFilter: ColorFilter.mode(Color(0xFF0EBE7E), BlendMode.srcIn),
           ),
         ),
         BottomNavigationBarItem(
@@ -68,8 +66,7 @@ class MyBottomNavigationBar extends StatelessWidget {
           label: 'Чаты',
           activeIcon: SvgPicture.asset(
             'assets/icons/document_icon.svg',
-            colorFilter:
-                ColorFilter.mode(Color(0xFF0EBE7E), BlendMode.srcIn),
+            colorFilter: ColorFilter.mode(Color(0xFF0EBE7E), BlendMode.srcIn),
           ),
         ),
         BottomNavigationBarItem(
@@ -77,8 +74,7 @@ class MyBottomNavigationBar extends StatelessWidget {
           label: 'Статьи',
           activeIcon: SvgPicture.asset(
             'assets/icons/paper_icon.svg',
-            colorFilter:
-                ColorFilter.mode(Color(0xFF0EBE7E), BlendMode.srcIn),
+            colorFilter: ColorFilter.mode(Color(0xFF0EBE7E), BlendMode.srcIn),
           ),
         ),
         BottomNavigationBarItem(
@@ -86,8 +82,7 @@ class MyBottomNavigationBar extends StatelessWidget {
           label: 'Профиль',
           activeIcon: SvgPicture.asset(
             'assets/icons/profile_icon.svg',
-            colorFilter:
-                ColorFilter.mode(Color(0xFF0EBE7E), BlendMode.srcIn),
+            colorFilter: ColorFilter.mode(Color(0xFF0EBE7E), BlendMode.srcIn),
           ),
         ),
       ],
@@ -107,43 +102,78 @@ class ScrollableChats extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: ListView.builder(
-        itemBuilder: (context, index) => Row(
-          children: [
-            Text('picture'),
-            Column(
-              children: [
-                Text(
-                  'Name of doctor',
-                  style:
-                      TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                ),
-                Text(
-                  'Text from message',
+          itemBuilder: (context, index) => ListTile(
+                title: Text(
+                  "Doctor name",
                   style: TextStyle(
-                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-              ],
-            ),
-            Column(
-              children: [
-                Text(
-                  'Date of a message' + ',',
+                leading: CircleAvatar(
+                  backgroundImage: AssetImage("assets/images/doctor_image.png"),
+                  //todo можно добавить фото-заглушку, если у доктора не будет аватарки
+                  backgroundColor: Colors.deepOrange,
+                ),
+                subtitle: Text(
+                  "Всего наилучшего...",
                   style: TextStyle(
-                    fontSize: 14,
+                    color: Color(0xFF616161),
                   ),
                 ),
-                Text(
-                  'time of a message',
-                  style: TextStyle(
-                    fontSize: 14,
-                  ),
+                trailing: Column(
+                  children: [
+                    Text(
+                      "20/08/2023" + ",",
+                      style: TextStyle(
+                        color: Color(0xFF616161),
+                      ),
+                    ),
+                    Text(
+                      "15:30",
+                      style: TextStyle(
+                        color: Color(0xFF616161),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ],
-        ),
-      ),
+              )
+          //     Row(
+          //   children: [
+          //     Text('picture'),
+          //     Column(
+          //       children: [
+          //         Text(
+          //           'Name of doctor',
+          //           style:
+          //               TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          //         ),
+          //         Text(
+          //           'Text from message',
+          //           style: TextStyle(
+          //             fontSize: 14,
+          //           ),
+          //         ),
+          //       ],
+          //     ),
+          //     Column(
+          //       children: [
+          //         Text(
+          //           'Date of a message' + ',',
+          //           style: TextStyle(
+          //             fontSize: 14,
+          //           ),
+          //         ),
+          //         Text(
+          //           'time of a message',
+          //           style: TextStyle(
+          //             fontSize: 14,
+          //           ),
+          //         ),
+          //       ],
+          //     ),
+          //   ],
+          // ),
+          ),
     );
   }
 }
