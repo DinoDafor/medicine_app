@@ -60,10 +60,27 @@ class _HorizontalTabState extends State<HorizontalTab> {
                   },
                   child: ListTile(
                     tileColor: Colors.red,
-                    title: Text(
-                      lst[index],
-                      style: TextStyle(
-                          color: number == index ? Colors.green : Colors.black),
+                    title: Column(
+                      children: [
+                        Text(
+                          lst[index],
+                          style: TextStyle(
+                              color: number == index ? Colors.green : Colors.black),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Container(
+                          height: 3,
+                          width: 105,
+                          decoration: BoxDecoration(
+                            color: number == index ? Colors.green : Colors.black,
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(20),
+                            )
+                          ),
+                        )
+                      ],
                     ),
                   ),
                 ),
