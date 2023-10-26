@@ -11,7 +11,7 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         SizedBox(
@@ -25,7 +25,125 @@ class _ChatScreenState extends State<ChatScreen> {
           height: 10,
         ),
         HorizontalTab(),
+        ScrollableChats(),
+        MyBottomNavigationBar()
       ],
+    );
+  }
+}
+
+class MyBottomNavigationBar extends StatelessWidget {
+  const MyBottomNavigationBar({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return BottomNavigationBar(
+      type: BottomNavigationBarType.fixed,
+      unselectedItemColor: Colors.grey,
+      selectedItemColor: Color(0xFF0EBE7E),
+      currentIndex: 2,
+      items: [
+        BottomNavigationBarItem(
+          icon: SvgPicture.asset('assets/icons/home_icon.svg'),
+          label: 'Главная',
+          activeIcon: SvgPicture.asset(
+            'assets/icons/home_icon.svg',
+            colorFilter:
+                ColorFilter.mode(Color(0xFF0EBE7E), BlendMode.srcIn),
+          ),
+        ),
+        BottomNavigationBarItem(
+          icon: SvgPicture.asset('assets/icons/calendar_icon.svg'),
+          label: 'Календарь',
+          activeIcon: SvgPicture.asset(
+            'assets/icons/calendar_icon.svg',
+            colorFilter:
+                ColorFilter.mode(Color(0xFF0EBE7E), BlendMode.srcIn),
+          ),
+        ),
+        BottomNavigationBarItem(
+          icon: SvgPicture.asset('assets/icons/document_icon.svg'),
+          label: 'Чаты',
+          activeIcon: SvgPicture.asset(
+            'assets/icons/document_icon.svg',
+            colorFilter:
+                ColorFilter.mode(Color(0xFF0EBE7E), BlendMode.srcIn),
+          ),
+        ),
+        BottomNavigationBarItem(
+          icon: SvgPicture.asset('assets/icons/paper_icon.svg'),
+          label: 'Статьи',
+          activeIcon: SvgPicture.asset(
+            'assets/icons/paper_icon.svg',
+            colorFilter:
+                ColorFilter.mode(Color(0xFF0EBE7E), BlendMode.srcIn),
+          ),
+        ),
+        BottomNavigationBarItem(
+          icon: SvgPicture.asset('assets/icons/profile_icon.svg'),
+          label: 'Профиль',
+          activeIcon: SvgPicture.asset(
+            'assets/icons/profile_icon.svg',
+            colorFilter:
+                ColorFilter.mode(Color(0xFF0EBE7E), BlendMode.srcIn),
+          ),
+        ),
+      ],
+      //todo надо бы вынести это в константу по проекту
+
+      // onTap: (){},
+    );
+  }
+}
+
+class ScrollableChats extends StatelessWidget {
+  const ScrollableChats({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: ListView.builder(
+        itemBuilder: (context, index) => Row(
+          children: [
+            Text('picture'),
+            Column(
+              children: [
+                Text(
+                  'Name of doctor',
+                  style:
+                      TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                ),
+                Text(
+                  'Text from message',
+                  style: TextStyle(
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+            Column(
+              children: [
+                Text(
+                  'Date of a message' + ',',
+                  style: TextStyle(
+                    fontSize: 14,
+                  ),
+                ),
+                Text(
+                  'time of a message',
+                  style: TextStyle(
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -54,8 +172,6 @@ class _HorizontalTabState extends State<HorizontalTab> {
                 child: GestureDetector(
                   onTap: () {
                     number = index;
-                    print('index:${index}');
-                    print('number:${number}');
                     setState(() {});
                   },
                   child: ListTile(
@@ -65,7 +181,9 @@ class _HorizontalTabState extends State<HorizontalTab> {
                         Text(
                           lst[index],
                           style: TextStyle(
-                              color: number == index ? Colors.green : Colors.black),
+                              color: number == index
+                                  ? Colors.green
+                                  : Colors.black),
                         ),
                         SizedBox(
                           height: 5,
@@ -74,11 +192,11 @@ class _HorizontalTabState extends State<HorizontalTab> {
                           height: 3,
                           width: 105,
                           decoration: BoxDecoration(
-                            color: number == index ? Colors.green : Colors.black,
-                            borderRadius: const BorderRadius.all(
-                              Radius.circular(20),
-                            )
-                          ),
+                              color:
+                                  number == index ? Colors.green : Colors.black,
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(20),
+                              )),
                         )
                       ],
                     ),
