@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:medicine_app/screens/chat.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -103,6 +104,10 @@ class ScrollableChats extends StatelessWidget {
     return Expanded(
       child: ListView.builder(
           itemBuilder: (context, index) => ListTile(
+                onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => ChatWithUser()));
+                },
                 title: Text(
                   "Doctor name",
                   style: TextStyle(
