@@ -12,10 +12,20 @@ class ChatWithUser extends StatefulWidget {
 class _ChatWithUserState extends State<ChatWithUser> {
   TextEditingController _controller = TextEditingController();
   List<Message> messages = [
-    Message(message: "hello", fromUser: "danya", dateCreate: "12:00"),
-    Message(message: "hello!", fromUser: "me", dateCreate: "12:00"),
-    Message(message: "Как ты?", fromUser: "danya", dateCreate: "12:01"),
-    Message(message: "я хорошо)", fromUser: "me", dateCreate: "12:02"),
+    Message(
+        message:
+            "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+        fromUser: "danya",
+        dateCreate: "12:00"),
+    Message(
+        message: "This is a short message!",
+        fromUser: "me",
+        dateCreate: "12:00"),
+    Message(
+        message: "This is a relatively longer line of text.",
+        fromUser: "danya",
+        dateCreate: "12:01"),
+    Message(message: "Hi!", fromUser: "me", dateCreate: "12:02"),
     Message(message: "Рад слышать", fromUser: "danya", dateCreate: "12:03"),
   ];
 
@@ -46,41 +56,66 @@ class _ChatWithUserState extends State<ChatWithUser> {
           ],
         ),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-                itemCount: messages.length,
-                itemBuilder: (context, index) {
-                  return Column(
-                    children: [
-                      Container(
-                        alignment: messages[index].fromUser == "me"
-                            ? Alignment.topRight
-                            : Alignment.topLeft,
-                        padding: EdgeInsets.all(10),
-                        child: Text(messages[index].message),
-                        decoration: BoxDecoration(
-                          color: messages[index].fromUser == "me"
-                              ? const Color(0xFF0EBE7E)
-                              : Colors.grey,
-                          borderRadius: BorderRadius.circular(15),
-                        ),
+      body: ScrollableChat(messages: messages, controller: _controller),
+    );
+  }
+}
+
+class ScrollableChat extends StatelessWidget {
+  const ScrollableChat({
+    super.key,
+    required this.messages,
+    required TextEditingController controller,
+  }) : _controller = controller;
+
+  final List<Message> messages;
+  final TextEditingController _controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Expanded(
+          child: ListView.separated(
+            itemCount: messages.length,
+            itemBuilder: (context, index) {
+              return Align(
+                alignment: messages[index].fromUser == "me"
+                    ? Alignment.topRight
+                    : Alignment.topLeft,
+                child: Flex(
+                  direction: Axis.horizontal,
+                  children:  [
+                    Container(
+                      width: 180,
+                      padding: const EdgeInsets.all(10),
+                      child: Text(messages[index].message),
+                      decoration: BoxDecoration(
+                        color: messages[index].fromUser == "me"
+                            ? const Color(0xFF0EBE7E)
+                            : Colors.grey,
+                        borderRadius: BorderRadius.circular(15),
                       ),
-                      SizedBox(height: 10),
-                    ],
-                  );
-                  // return Container(
-                  //  color: Colors.red,
-                  // );
-                }),
+                      constraints: BoxConstraints(
+                        maxWidth: MediaQuery.of(context).size.width * 0.7,
+                      ),
+                    ),
+                  ]
+                ),
+              );
+            },
+            separatorBuilder: (BuildContext context, int index) {
+              return const SizedBox(
+                height: 5,
+              );
+            },
           ),
-          TextField(
-            controller: _controller,
-            decoration: InputDecoration(hintText: "Введите сообщение"),
-          )
-        ],
-      ),
+        ),
+        TextField(
+          controller: _controller,
+          decoration: InputDecoration(hintText: "Введите сообщение"),
+        )
+      ],
     );
   }
 }
