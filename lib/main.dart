@@ -11,6 +11,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData().copyWith(
+        colorScheme: ThemeData().colorScheme.copyWith(
+              primary: Color(0xFF0EBE7E),
+            ),
+      ),
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: ChatScreen(),

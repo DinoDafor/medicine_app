@@ -14,7 +14,7 @@ class _ChatWithUserState extends State<ChatWithUser> {
   List<Message> messages = [
     Message(
         message:
-            "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
         fromUser: "danya",
         dateCreate: "12:00"),
     Message(
@@ -50,8 +50,13 @@ class _ChatWithUserState extends State<ChatWithUser> {
               "assets/icons/Search.svg",
             ),
             const SizedBox(width: 10),
-            SvgPicture.asset(
-              "assets/icons/More Circle.svg",
+            GestureDetector(
+              onTap: () {
+                print("tap tap!");
+              },
+              child: SvgPicture.asset(
+                "assets/icons/More Circle.svg",
+              ),
             ),
           ],
         ),
@@ -61,7 +66,7 @@ class _ChatWithUserState extends State<ChatWithUser> {
   }
 }
 
-class ScrollableChat extends StatelessWidget {
+class ScrollableChat extends StatefulWidget {
   const ScrollableChat({
     super.key,
     required this.messages,
@@ -72,35 +77,34 @@ class ScrollableChat extends StatelessWidget {
   final TextEditingController _controller;
 
   @override
+  State<ScrollableChat> createState() => _ScrollableChatState();
+}
+
+class _ScrollableChatState extends State<ScrollableChat> {
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         Expanded(
           child: ListView.separated(
-            itemCount: messages.length,
+            itemCount: widget.messages.length,
             itemBuilder: (context, index) {
               return Align(
-                alignment: messages[index].fromUser == "me"
+                alignment: widget.messages[index].fromUser == "me"
                     ? Alignment.topRight
                     : Alignment.topLeft,
-                child: Flex(
-                  direction: Axis.horizontal,
-                  children:  [
-                    Container(
-                      width: 180,
-                      padding: const EdgeInsets.all(10),
-                      child: Text(messages[index].message),
-                      decoration: BoxDecoration(
-                        color: messages[index].fromUser == "me"
-                            ? const Color(0xFF0EBE7E)
-                            : Colors.grey,
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      constraints: BoxConstraints(
-                        maxWidth: MediaQuery.of(context).size.width * 0.7,
-                      ),
-                    ),
-                  ]
+                child: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: widget.messages[index].fromUser == "me"
+                        ? const Color(0xFF0EBE7E)
+                        : Color(0xFFF5F5F5),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  constraints: BoxConstraints(
+                    maxWidth: MediaQuery.of(context).size.width * 0.7,
+                  ),
+                  child: Text(widget.messages[index].message),
                 ),
               );
             },
@@ -111,10 +115,64 @@ class ScrollableChat extends StatelessWidget {
             },
           ),
         ),
-        TextField(
-          controller: _controller,
-          decoration: InputDecoration(hintText: "Введите сообщение"),
-        )
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Expanded(
+                child: TextField(
+                  minLines: 1,
+                  maxLines: 10,
+                  controller: widget._controller,
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.emoji_emotions),
+                    suffixIcon: Row(mainAxisSize: MainAxisSize.min, children: [
+                      IconButton(
+                          onPressed: () {
+                            print("pushed attachment");
+                          },
+                          icon: Icon(Icons.attachment)),
+                      IconButton(
+                          onPressed: () {
+                            print("pushed camera");
+                          },
+                          icon: Icon(Icons.camera_alt)),
+                    ]),
+                    hintText: "Введите сообщение...",
+                    border: const OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(100)),
+                    ),
+                    focusedBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color(0xFF0EBE7E),
+                      ),
+                      borderRadius: BorderRadius.all(Radius.circular(100)),
+                    ),
+                  ),
+                ),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFF0EBE7E),
+                  shape: CircleBorder(),
+                ),
+                onPressed: () {
+                  //todo запретить отмену без текста, удалять табы и пробелмы в конце ненужные
+                  widget.messages.add(Message(
+                      message: widget._controller.text,
+                      fromUser: "me",
+                      dateCreate: "12:00"));
+                  widget._controller.clear();
+                  setState(() {});
+                },
+                child: SvgPicture.asset(
+                  "assets/icons/send_arrow.svg",
+                ),
+              )
+            ],
+          ),
+        ),
       ],
     );
   }
