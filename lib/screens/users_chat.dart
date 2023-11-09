@@ -104,44 +104,44 @@ class ScrollableChats extends StatelessWidget {
     return Expanded(
       child: ListView.builder(
           itemBuilder: (context, index) => ListTile(
-            onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => ChatWithUser()));
-            },
-            title: Text(
-              "Doctor name",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            leading: CircleAvatar(
-              backgroundImage: AssetImage("assets/images/doctor_image.png"),
-              //todo можно добавить фото-заглушку, если у доктора не будет аватарки
-              backgroundColor: Colors.deepOrange,
-            ),
-            subtitle: Text(
-              "Всего наилучшего...",
-              style: TextStyle(
-                color: Color(0xFF616161),
-              ),
-            ),
-            trailing: Column(
-              children: [
-                Text(
-                  "20/08/2023" + ",",
+                onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => ChatWithUser()));
+                },
+                title: Text(
+                  "Doctor name",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                leading: CircleAvatar(
+                  backgroundImage: AssetImage("assets/images/doctor_image.png"),
+                  //todo можно добавить фото-заглушку, если у доктора не будет аватарки
+                  backgroundColor: Colors.deepOrange,
+                ),
+                subtitle: Text(
+                  "Всего наилучшего...",
                   style: TextStyle(
                     color: Color(0xFF616161),
                   ),
                 ),
-                Text(
-                  "15:30",
-                  style: TextStyle(
-                    color: Color(0xFF616161),
-                  ),
+                trailing: Column(
+                  children: [
+                    Text(
+                      "20/08/2023" + ",",
+                      style: TextStyle(
+                        color: Color(0xFF616161),
+                      ),
+                    ),
+                    Text(
+                      "15:30",
+                      style: TextStyle(
+                        color: Color(0xFF616161),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          )),
+              )),
     );
   }
 }
@@ -167,41 +167,41 @@ class _HorizontalTabState extends State<HorizontalTab> {
           scrollDirection: Axis.horizontal,
           itemCount: lst.length,
           itemBuilder: (context, index) => SizedBox(
-            width: 140,
-            child: GestureDetector(
-              onTap: () {
-                number = index;
-                setState(() {});
-              },
-              child: ListTile(
-                // tileColor: Colors.red,
-                title: Column(
-                  children: [
-                    Text(
-                      lst[index],
-                      style: TextStyle(
-                          color: number == index
-                              ? Colors.green
-                              : Colors.black),
+                width: 140,
+                child: GestureDetector(
+                  onTap: () {
+                    number = index;
+                    setState(() {});
+                  },
+                  child: ListTile(
+                    // tileColor: Colors.red,
+                    title: Column(
+                      children: [
+                        Text(
+                          lst[index],
+                          style: TextStyle(
+                              color: number == index
+                                  ? Colors.green
+                                  : Colors.black),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Container(
+                          height: 3,
+                          width: 105,
+                          decoration: BoxDecoration(
+                              color:
+                                  number == index ? Colors.green : Colors.black,
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(20),
+                              )),
+                        )
+                      ],
                     ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Container(
-                      height: 3,
-                      width: 105,
-                      decoration: BoxDecoration(
-                          color:
-                          number == index ? Colors.green : Colors.black,
-                          borderRadius: const BorderRadius.all(
-                            Radius.circular(20),
-                          )),
-                    )
-                  ],
+                  ),
                 ),
-              ),
-            ),
-          )),
+              )),
     );
   }
 }

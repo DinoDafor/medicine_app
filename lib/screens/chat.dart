@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:medicine_app/models/Message.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 class ChatWithUser extends StatefulWidget {
   const ChatWithUser({super.key});
@@ -11,6 +12,8 @@ class ChatWithUser extends StatefulWidget {
 
 class _ChatWithUserState extends State<ChatWithUser> {
   TextEditingController _controller = TextEditingController();
+
+  //todo не сохраняется чат, надо сделать
   List<Message> messages = [
     Message(
         message:
@@ -33,45 +36,56 @@ class _ChatWithUserState extends State<ChatWithUser> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        elevation: 0,
         backgroundColor: Colors.white,
-        leading: SvgPicture.asset(
-          "assets/icons/back_arrow_icon.svg",
+        leading: IconButton(
+          icon: SvgPicture.asset(
+            "assets/icons/back_arrow_icon.svg",
+            fit: BoxFit.scaleDown,
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
-        title: Row(
-          children: [
-            Text(
-              "Doctor name",
-              style: TextStyle(
-                color: Color(0xFF212121),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SvgPicture.asset(
-              "assets/icons/Search.svg",
-            ),
-            const SizedBox(width: 10),
-            GestureDetector(
-              onTap: () {
-                print("tap tap!");
-              },
-              child: SvgPicture.asset(
-                "assets/icons/More Circle.svg",
-              ),
-            ),
-          ],
+        title: Text(
+          "Doctor name",
+          style: TextStyle(
+              color: Color(0xFF212121),
+              fontWeight: FontWeight.bold,
+              fontSize: 24),
         ),
+        actions: [
+          SvgPicture.asset(
+            "assets/icons/Search.svg",
+          ),
+          const SizedBox(
+            width: 10,
+            height: 10,
+          ),
+          IconButton(
+            icon: SvgPicture.asset(
+              "assets/icons/More Circle.svg",
+            ),
+            onPressed: () {
+              print("tap tap");
+            },
+          ),
+        ],
       ),
-      body: ScrollableChat(messages: messages, controller: _controller),
+      body: ScrollableChat(
+        messages: messages,
+        controller: _controller,
+      ),
     );
   }
 }
 
 class ScrollableChat extends StatefulWidget {
-  const ScrollableChat({
-    super.key,
-    required this.messages,
-    required TextEditingController controller,
-  }) : _controller = controller;
+  const ScrollableChat(
+      {super.key,
+      required this.messages,
+      required TextEditingController controller})
+      : _controller = controller;
 
   final List<Message> messages;
   final TextEditingController _controller;
@@ -86,6 +100,7 @@ class _ScrollableChatState extends State<ScrollableChat> {
     return Column(
       children: [
         Expanded(
+          //todo добавить скролл вниз, когда приходит новое сообщение
           child: ListView.separated(
             itemCount: widget.messages.length,
             itemBuilder: (context, index) {
@@ -104,7 +119,14 @@ class _ScrollableChatState extends State<ScrollableChat> {
                   constraints: BoxConstraints(
                     maxWidth: MediaQuery.of(context).size.width * 0.7,
                   ),
-                  child: Text(widget.messages[index].message),
+                  child: Text(
+                    widget.messages[index].message,
+                    style: TextStyle(
+                      color: widget.messages[index].fromUser == "me"
+                          ? const Color(0xFFFFFFFF)
+                          : Color(0xFF212121),
+                    ),
+                  ),
                 ),
               );
             },
@@ -157,15 +179,7 @@ class _ScrollableChatState extends State<ScrollableChat> {
                   backgroundColor: Color(0xFF0EBE7E),
                   shape: CircleBorder(),
                 ),
-                onPressed: () {
-                  //todo запретить отмену без текста, удалять табы и пробелмы в конце ненужные
-                  widget.messages.add(Message(
-                      message: widget._controller.text,
-                      fromUser: "me",
-                      dateCreate: "12:00"));
-                  widget._controller.clear();
-                  setState(() {});
-                },
+                onPressed: _sendMessage,
                 child: SvgPicture.asset(
                   "assets/icons/send_arrow.svg",
                 ),
@@ -175,5 +189,16 @@ class _ScrollableChatState extends State<ScrollableChat> {
         ),
       ],
     );
+  }
+
+  void _sendMessage() {
+    if (widget._controller.text.isNotEmpty) {
+      widget.messages.add(Message(
+          message: widget._controller.text.trim(),
+          fromUser: "me",
+          dateCreate: "12:00"));
+      widget._controller.clear();
+    }
+    setState(() {});
   }
 }
