@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:medicine_app/models/Message.dart';
+import 'package:provider/provider.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
+
+import '../models/Chat.dart';
 
 class ChatWithUser extends StatefulWidget {
   const ChatWithUser({super.key});
@@ -14,23 +17,6 @@ class _ChatWithUserState extends State<ChatWithUser> {
   TextEditingController _controller = TextEditingController();
 
   //todo не сохраняется чат, надо сделать
-  List<Message> messages = [
-    Message(
-        message:
-            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-        fromUser: "danya",
-        dateCreate: "12:00"),
-    Message(
-        message: "This is a short message!",
-        fromUser: "me",
-        dateCreate: "12:00"),
-    Message(
-        message: "This is a relatively longer line of text.",
-        fromUser: "danya",
-        dateCreate: "12:01"),
-    Message(message: "Hi!", fromUser: "me", dateCreate: "12:02"),
-    Message(message: "Рад слышать", fromUser: "danya", dateCreate: "12:03"),
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +59,6 @@ class _ChatWithUserState extends State<ChatWithUser> {
         ],
       ),
       body: ScrollableChat(
-        messages: messages,
         controller: _controller,
       ),
     );
@@ -81,13 +66,9 @@ class _ChatWithUserState extends State<ChatWithUser> {
 }
 
 class ScrollableChat extends StatefulWidget {
-  const ScrollableChat(
-      {super.key,
-      required this.messages,
-      required TextEditingController controller})
+  const ScrollableChat({super.key, required TextEditingController controller})
       : _controller = controller;
 
-  final List<Message> messages;
   final TextEditingController _controller;
 
   @override
@@ -101,40 +82,42 @@ class _ScrollableChatState extends State<ScrollableChat> {
       children: [
         Expanded(
           //todo добавить скролл вниз, когда приходит новое сообщение
-          child: ListView.separated(
-            itemCount: widget.messages.length,
-            itemBuilder: (context, index) {
-              return Align(
-                alignment: widget.messages[index].fromUser == "me"
-                    ? Alignment.topRight
-                    : Alignment.topLeft,
-                child: Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: widget.messages[index].fromUser == "me"
-                        ? const Color(0xFF0EBE7E)
-                        : Color(0xFFF5F5F5),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  constraints: BoxConstraints(
-                    maxWidth: MediaQuery.of(context).size.width * 0.7,
-                  ),
-                  child: Text(
-                    widget.messages[index].message,
-                    style: TextStyle(
-                      color: widget.messages[index].fromUser == "me"
-                          ? const Color(0xFFFFFFFF)
-                          : Color(0xFF212121),
+          child: Consumer<ChatModel>(
+            builder: (context, chatModel, child) => ListView.separated(
+              itemCount: chatModel.messages.length,
+              itemBuilder: (context, index) {
+                return Align(
+                  alignment: chatModel.messages[index].fromUser == "me"
+                      ? Alignment.topRight
+                      : Alignment.topLeft,
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: chatModel.messages[index].fromUser == "me"
+                          ? const Color(0xFF0EBE7E)
+                          : Color(0xFFF5F5F5),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    constraints: BoxConstraints(
+                      maxWidth: MediaQuery.of(context).size.width * 0.7,
+                    ),
+                    child: Text(
+                      chatModel.messages[index].message,
+                      style: TextStyle(
+                        color: chatModel.messages[index].fromUser == "me"
+                            ? const Color(0xFFFFFFFF)
+                            : Color(0xFF212121),
+                      ),
                     ),
                   ),
-                ),
-              );
-            },
-            separatorBuilder: (BuildContext context, int index) {
-              return const SizedBox(
-                height: 5,
-              );
-            },
+                );
+              },
+              separatorBuilder: (BuildContext context, int index) {
+                return const SizedBox(
+                  height: 5,
+                );
+              },
+            ),
           ),
         ),
         Padding(
@@ -174,15 +157,28 @@ class _ScrollableChatState extends State<ScrollableChat> {
                   ),
                 ),
               ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF0EBE7E),
-                  shape: CircleBorder(),
-                ),
-                onPressed: _sendMessage,
-                child: SvgPicture.asset(
-                  "assets/icons/send_arrow.svg",
-                ),
+              Consumer<ChatModel>(
+                builder: (context, chatModel, child) {
+                  return ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFF0EBE7E),
+                      shape: CircleBorder(),
+                    ),
+                    onPressed: () {
+                      if (widget._controller.text.isNotEmpty) {
+                        chatModel.add(Message(
+                            message: widget._controller.text.trim(),
+                            fromUser: "me",
+                            dateCreate: "12:00"));
+                        widget._controller.clear();
+                      }
+                      setState(() {});
+                    },
+                    child: SvgPicture.asset(
+                      "assets/icons/send_arrow.svg",
+                    ),
+                  );
+                },
               )
             ],
           ),
@@ -191,14 +187,5 @@ class _ScrollableChatState extends State<ScrollableChat> {
     );
   }
 
-  void _sendMessage() {
-    if (widget._controller.text.isNotEmpty) {
-      widget.messages.add(Message(
-          message: widget._controller.text.trim(),
-          fromUser: "me",
-          dateCreate: "12:00"));
-      widget._controller.clear();
-    }
-    setState(() {});
-  }
+  void _sendMessage() {}
 }

@@ -12,23 +12,25 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        SizedBox(
-          height: 50,
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 10.0),
-          child: NavBar(),
-        ),
-        SizedBox(
-          height: 10,
-        ),
-        HorizontalTab(),
-        ScrollableChats(),
-        MyBottomNavigationBar()
-      ],
+    return Scaffold(
+      body: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          SizedBox(
+            height: 50,
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10.0),
+            child: NavBar(),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          HorizontalTab(),
+          ScrollableChats(),
+          MyBottomNavigationBar()
+        ],
+      ),
     );
   }
 }

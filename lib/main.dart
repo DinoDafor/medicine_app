@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:medicine_app/models/Chat.dart';
+import 'package:medicine_app/screens/authentication_screen.dart';
 import 'package:medicine_app/screens/users_chat.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  //todo скорее всего надо будет переместить в users_chat провайдер
+  runApp(ChangeNotifierProvider(
+      create: (BuildContext context) => ChatModel(), child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -18,7 +23,7 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: ChatScreen(),
+        body: AuthenticationScreen(),
       ),
     );
   }

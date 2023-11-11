@@ -30,6 +30,9 @@ environment:
 dependencies:
   flutter_svg: ^2.0.7
   web_socket_channel: ^2.4.0
+  provider: ^6.1.1
+  email_validator: '^2.1.16'
+  http: ^1.1.0
   flutter:
     sdk: flutter
 
@@ -64,7 +67,7 @@ flutter:
   assets:
     - assets/icons/
     - assets/images/
-#    - directory/subdirectory/
+  #    - directory/subdirectory/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
