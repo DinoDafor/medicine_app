@@ -1,6 +1,7 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:medicine_app/screens/registration_screen.dart';
 import 'package:medicine_app/screens/users_chat.dart';
 
 class AuthenticationScreen extends StatefulWidget {
@@ -11,7 +12,8 @@ class AuthenticationScreen extends StatefulWidget {
 }
 
 class _AuthenticationScreenState extends State<AuthenticationScreen> {
-  // TextEditingController _controller = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -30,22 +32,26 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
               ),
             ),
             TextFormField(
-              // validator: (value) => EmailValidator.validate(value)
-              //     ? null
-              //     : "Please enter a valid email",
+              //todo доделать валидацию по почте
               validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
+                if (value != null) {
+                  if (EmailValidator.validate(value)) {
+                    return null;
+                  } else {
+                    return "Email is not valide";
+                  }
                 }
-                return null;
               },
+              controller: _emailController,
               decoration: InputDecoration(
                 prefixIcon: Icon(Icons.alternate_email),
                 hintText: "Email",
               ),
             ),
             TextFormField(
+              controller: _passwordController,
               validator: (value) {
+                //todo добавить валидацию пароля, проверку регистров, длины и так далее
                 if (value == null || value.isEmpty) {
                   return 'Please enter some text';
                 }
@@ -58,12 +64,22 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
               obscureText: true,
             ),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 if (_formKey.currentState!.validate()) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const ChatScreen()),
-                  );
+                  //запрос на сервер с формой
+                  var response = await http
+                      .post(Uri.parse('https://httpbin.org/post'), body: {
+                    "username": _emailController.text.trim(),
+                    "password": _passwordController.text.trim(),
+                  });
+                  print("response: ${response.body}");
+                  if (response.statusCode == 200) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ChatScreen()),
+                    );
+                  }
                 }
               },
               style: ButtonStyle(
@@ -82,12 +98,29 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                     fontSize: 17,
                   ),
                 ),
-                TextButton(onPressed: () {}, child: Text("Зарегистрируйтесь"))
+                TextButton(
+                    onPressed: () {
+                      //todo добавить переход на страницы регистрации
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const RegistrationScreen()),
+                      );
+                    },
+                    child: Text("Зарегистрируйтесь"))
               ],
             ),
           ],
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 }
