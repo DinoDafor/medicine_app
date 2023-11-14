@@ -29,7 +29,7 @@ public class UserService {
     PasswordEncoder passwordEncoder;
 
     public UserModel addNewUser(final User user) {
-        if (userRepository.findByEmail(user.getEmail()) != null) {
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             throw new DuplicateEntryException("This email is already associated with an account.");
         }
 
