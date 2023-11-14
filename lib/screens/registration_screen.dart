@@ -49,15 +49,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         }
                       },
                       controller: _emailController,
-                      decoration: InputDecoration(
-                        prefixIcon: Container(
-                          margin: const EdgeInsets.only(right: 10),
-                          child: const Icon(Icons.alternate_email),
-                        ),
-                        prefixIconConstraints:
-                            const BoxConstraints(minWidth: 0, minHeight: 0),
-                        hintText: "Email ID",
-                      ),
+                      decoration: buildInputDecoration(
+                          "Email ID", 10, Icons.alternate_email),
                     ),
                     TextFormField(
                       controller: _nameController,
@@ -67,7 +60,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         }
                         return null;
                       },
-                      decoration: buildInputDecoration("Ваше имя"),
+                      decoration:
+                          buildInputDecoration("Ваше имя", 10, Icons.person),
                     ),
                     TextFormField(
                       validator: (value) {
@@ -77,14 +71,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         return null;
                       },
                       controller: _phoneNumberController,
-                      decoration: InputDecoration(
-                        prefixIcon: Container(
-                            margin: const EdgeInsets.only(right: 10),
-                            child: const Icon(Icons.shield)),
-                        prefixIconConstraints:
-                            const BoxConstraints(minWidth: 0, minHeight: 0),
-                        hintText: "Номер телефона",
-                      ),
+                      decoration: buildInputDecoration(
+                          "Номер телефона", 10, Icons.phone),
                     ),
                     TextFormField(
                       validator: (value) {
@@ -93,25 +81,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         }
                         return null;
                       },
-                      decoration: InputDecoration(
-                        prefixIcon: Container(
-                            margin: const EdgeInsets.only(right: 10),
-                            child: const Icon(Icons.shield)),
-                        prefixIconConstraints:
-                            const BoxConstraints(minWidth: 0, minHeight: 0),
-                        hintText: "Пароль",
-                      ),
+                      decoration:
+                          buildInputDecoration("Пароль", 10, Icons.shield),
                       obscureText: true,
                     ),
                     TextFormField(
-                      decoration: InputDecoration(
-                        prefixIcon: Container(
-                            margin: const EdgeInsets.only(right: 10),
-                            child: const Icon(Icons.shield)),
-                        prefixIconConstraints:
-                            const BoxConstraints(minWidth: 0, minHeight: 0),
-                        hintText: "Повторите пароль",
-                      ),
+                      decoration: buildInputDecoration(
+                          "Ещё раз пароль", 10, Icons.shield),
                       obscureText: true,
                     ),
                     ElevatedButton(
@@ -125,7 +101,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 //todo дополнить запрос
                               });
                           if (response.statusCode == 200) {
-                            // context.go(location);
+                             context.go("/chats");
                           }
                         }
                       },
@@ -174,15 +150,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     );
   }
 
-  InputDecoration buildInputDecoration(String hint) {
+  InputDecoration buildInputDecoration(
+      String hint, double margin, IconData iconData) {
     return InputDecoration(
-                      prefixIcon: Container(
-                          margin: const EdgeInsets.only(right: 10),
-                          child: const Icon(Icons.shield)),
-                      prefixIconConstraints:
-                          const BoxConstraints(minWidth: 0, minHeight: 0),
-                      hintText: hint,
-                    );
+      prefixIcon: Container(
+          margin: EdgeInsets.only(right: margin), child: Icon(iconData)),
+      prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+      hintText: hint,
+    );
   }
 
   @override

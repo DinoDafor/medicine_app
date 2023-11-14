@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:medicine_app/models/Chat.dart';
 import 'package:medicine_app/screens/authentication_screen.dart';
+import 'package:medicine_app/screens/chat.dart';
 import 'package:medicine_app/screens/registration_screen.dart';
 import 'package:medicine_app/screens/users_chat.dart';
 import 'package:provider/provider.dart';
@@ -23,7 +24,20 @@ final GoRouter _router = GoRouter(routes: [
             path: 'registration',
             builder: (BuildContext context, GoRouterState state) {
               return const RegistrationScreen();
-            })
+            }),
+        GoRoute(
+            path: 'chats',
+            builder: (BuildContext context, GoRouterState state) {
+              return const ChatScreen();
+            },
+            routes: [
+              //todo тут надо вставить айдишник с кем мы говорим chat/userid=?
+              GoRoute(
+                  path: 'chat',
+                  builder: (BuildContext context, GoRouterState state) {
+                    return const ChatWithUser();
+                  })
+            ]),
       ]),
 ]);
 

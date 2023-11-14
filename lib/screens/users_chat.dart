@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:medicine_app/screens/chat.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -12,7 +13,7 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
@@ -45,7 +46,7 @@ class MyBottomNavigationBar extends StatelessWidget {
     return BottomNavigationBar(
       type: BottomNavigationBarType.fixed,
       unselectedItemColor: Colors.grey,
-      selectedItemColor: Color(0xFF0EBE7E),
+      selectedItemColor: const Color(0xFF0EBE7E),
       currentIndex: 2,
       items: [
         BottomNavigationBarItem(
@@ -53,7 +54,8 @@ class MyBottomNavigationBar extends StatelessWidget {
           label: 'Главная',
           activeIcon: SvgPicture.asset(
             'assets/icons/home_icon.svg',
-            colorFilter: ColorFilter.mode(Color(0xFF0EBE7E), BlendMode.srcIn),
+            colorFilter:
+                const ColorFilter.mode(Color(0xFF0EBE7E), BlendMode.srcIn),
           ),
         ),
         BottomNavigationBarItem(
@@ -61,7 +63,8 @@ class MyBottomNavigationBar extends StatelessWidget {
           label: 'Календарь',
           activeIcon: SvgPicture.asset(
             'assets/icons/calendar_icon.svg',
-            colorFilter: ColorFilter.mode(Color(0xFF0EBE7E), BlendMode.srcIn),
+            colorFilter:
+                const ColorFilter.mode(Color(0xFF0EBE7E), BlendMode.srcIn),
           ),
         ),
         BottomNavigationBarItem(
@@ -69,7 +72,8 @@ class MyBottomNavigationBar extends StatelessWidget {
           label: 'Чаты',
           activeIcon: SvgPicture.asset(
             'assets/icons/document_icon.svg',
-            colorFilter: ColorFilter.mode(Color(0xFF0EBE7E), BlendMode.srcIn),
+            colorFilter:
+                const ColorFilter.mode(Color(0xFF0EBE7E), BlendMode.srcIn),
           ),
         ),
         BottomNavigationBarItem(
@@ -77,7 +81,8 @@ class MyBottomNavigationBar extends StatelessWidget {
           label: 'Статьи',
           activeIcon: SvgPicture.asset(
             'assets/icons/paper_icon.svg',
-            colorFilter: ColorFilter.mode(Color(0xFF0EBE7E), BlendMode.srcIn),
+            colorFilter:
+                const ColorFilter.mode(Color(0xFF0EBE7E), BlendMode.srcIn),
           ),
         ),
         BottomNavigationBarItem(
@@ -85,7 +90,8 @@ class MyBottomNavigationBar extends StatelessWidget {
           label: 'Профиль',
           activeIcon: SvgPicture.asset(
             'assets/icons/profile_icon.svg',
-            colorFilter: ColorFilter.mode(Color(0xFF0EBE7E), BlendMode.srcIn),
+            colorFilter:
+                const ColorFilter.mode(Color(0xFF0EBE7E), BlendMode.srcIn),
           ),
         ),
       ],
@@ -107,27 +113,26 @@ class ScrollableChats extends StatelessWidget {
       child: ListView.builder(
           itemBuilder: (context, index) => ListTile(
                 onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => ChatWithUser()));
+                  context.go("/chats/chat");
                 },
-                title: Text(
+                title: const Text(
                   "Doctor name",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                leading: CircleAvatar(
+                leading: const CircleAvatar(
                   backgroundImage: AssetImage("assets/images/doctor_image.png"),
                   //todo можно добавить фото-заглушку, если у доктора не будет аватарки
                   backgroundColor: Colors.deepOrange,
                 ),
-                subtitle: Text(
+                subtitle: const Text(
                   "Всего наилучшего...",
                   style: TextStyle(
                     color: Color(0xFF616161),
                   ),
                 ),
-                trailing: Column(
+                trailing: const Column(
                   children: [
                     Text(
                       "20/08/2023" + ",",

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:medicine_app/models/Message.dart';
 import 'package:provider/provider.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 
 import '../models/Chat.dart';
 
@@ -14,7 +14,7 @@ class ChatWithUser extends StatefulWidget {
 }
 
 class _ChatWithUserState extends State<ChatWithUser> {
-  TextEditingController _controller = TextEditingController();
+  final TextEditingController _controller = TextEditingController();
 
   //todo не сохраняется чат, надо сделать
 
@@ -30,10 +30,10 @@ class _ChatWithUserState extends State<ChatWithUser> {
             fit: BoxFit.scaleDown,
           ),
           onPressed: () {
-            Navigator.pop(context);
+            context.go("/chats");
           },
         ),
-        title: Text(
+        title: const Text(
           "Doctor name",
           style: TextStyle(
               color: Color(0xFF212121),
@@ -95,7 +95,7 @@ class _ScrollableChatState extends State<ScrollableChat> {
                     decoration: BoxDecoration(
                       color: chatModel.messages[index].fromUser == "me"
                           ? const Color(0xFF0EBE7E)
-                          : Color(0xFFF5F5F5),
+                          : const Color(0xFFF5F5F5),
                       borderRadius: BorderRadius.circular(15),
                     ),
                     constraints: BoxConstraints(
@@ -106,7 +106,7 @@ class _ScrollableChatState extends State<ScrollableChat> {
                       style: TextStyle(
                         color: chatModel.messages[index].fromUser == "me"
                             ? const Color(0xFFFFFFFF)
-                            : Color(0xFF212121),
+                            : const Color(0xFF212121),
                       ),
                     ),
                   ),
@@ -131,18 +131,18 @@ class _ScrollableChatState extends State<ScrollableChat> {
                   maxLines: 10,
                   controller: widget._controller,
                   decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.emoji_emotions),
+                    prefixIcon: const Icon(Icons.emoji_emotions),
                     suffixIcon: Row(mainAxisSize: MainAxisSize.min, children: [
                       IconButton(
                           onPressed: () {
                             print("pushed attachment");
                           },
-                          icon: Icon(Icons.attachment)),
+                          icon: const Icon(Icons.attachment)),
                       IconButton(
                           onPressed: () {
                             print("pushed camera");
                           },
-                          icon: Icon(Icons.camera_alt)),
+                          icon: const Icon(Icons.camera_alt)),
                     ]),
                     hintText: "Введите сообщение...",
                     border: const OutlineInputBorder(
@@ -161,8 +161,8 @@ class _ScrollableChatState extends State<ScrollableChat> {
                 builder: (context, chatModel, child) {
                   return ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF0EBE7E),
-                      shape: CircleBorder(),
+                      backgroundColor: const Color(0xFF0EBE7E),
+                      shape: const CircleBorder(),
                     ),
                     onPressed: () {
                       if (widget._controller.text.isNotEmpty) {

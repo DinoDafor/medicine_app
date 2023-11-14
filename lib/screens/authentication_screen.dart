@@ -102,7 +102,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                                 "password": _passwordController.text.trim(),
                               });
                           if (response.statusCode == 200) {
-                            //context.go()
+                            context.go('/chats');
                           }
                         }
                       },
