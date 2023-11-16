@@ -3,6 +3,9 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:medicine_app/models/Message.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+import 'camera_screen.dart';
 
 import '../models/Chat.dart';
 
@@ -136,11 +139,13 @@ class _ScrollableChatState extends State<ScrollableChat> {
                       IconButton(
                           onPressed: () {
                             print("pushed attachment");
+                            onMediaButtonPressed();
                           },
                           icon: const Icon(Icons.attachment)),
                       IconButton(
                           onPressed: () {
                             print("pushed camera");
+                            onCameraButtonPressed();
                           },
                           icon: const Icon(Icons.camera_alt)),
                     ]),
@@ -185,6 +190,29 @@ class _ScrollableChatState extends State<ScrollableChat> {
         ),
       ],
     );
+  }
+
+  void onMediaButtonPressed() async {
+    // Open the image picker
+    final ImagePicker _picker = ImagePicker();
+    final List<XFile>? pickerResults = await _picker.pickMultiImage();
+
+    // If some files were selected
+    if (pickerResults != null) {
+      if (pickerResults.isNotEmpty) {
+        for (XFile xfile in pickerResults) {
+          String name = xfile.name;
+          int size = await xfile.length();
+          print("MyHomePage.onMediaButtonPressed(): Picked file name=${name}, size=${size}, path=${xfile.path}");
+          File file = File(xfile.path);
+        }
+      }
+    }
+  }
+
+  void onCameraButtonPressed() async {
+    // Open the camera
+    Navigator.push(context, MaterialPageRoute(builder: (_) => CameraScreen()));
   }
 
   void _sendMessage() {}
