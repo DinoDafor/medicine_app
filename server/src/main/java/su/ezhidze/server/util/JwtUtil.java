@@ -7,9 +7,7 @@ import org.springframework.stereotype.Component;
 import su.ezhidze.server.entity.User;
 import su.ezhidze.server.exception.AuthenticationFailException;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Component
