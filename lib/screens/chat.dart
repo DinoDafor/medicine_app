@@ -51,12 +51,48 @@ class _ChatWithUserState extends State<ChatWithUser> {
             width: 10,
             height: 10,
           ),
-          IconButton(
+          PopupMenuButton(
             icon: SvgPicture.asset(
               "assets/icons/More Circle.svg",
+              width: 24,
+              height: 24,
             ),
-            onPressed: () {
-              print("tap tap");
+            itemBuilder: (BuildContext context) {
+              return [
+                PopupMenuItem(
+                  child: ListTile(
+                    leading: SvgPicture.asset(
+                      "assets/icons/delete.svg",
+                      width: 24,
+                      height: 24,
+                    ),
+                    title: const Text(
+                      "Удалить чат",
+                      style: TextStyle(
+                        color: Color(0xFFF75555),
+                      ),
+                    ),
+                    onTap: () {
+                      deleteChat();
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+                PopupMenuItem(
+                  child: ListTile(
+                    leading: SvgPicture.asset(
+                      "assets/icons/download.svg",
+                      width: 24,
+                      height: 24,
+                    ),
+                    title: Text("Отправить чат"),
+                    onTap: () {
+                      sendChat();
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+              ];
             },
           ),
         ],
@@ -66,10 +102,21 @@ class _ChatWithUserState extends State<ChatWithUser> {
       ),
     );
   }
+
+  void deleteChat() {
+    print("Удаление чата...");
+    // todo логика удаления чата
+  }
+
+  void sendChat() {
+    print("Отправка чата...");
+    // todo логика отправки чата
+  }
 }
 
 class ScrollableChat extends StatefulWidget {
-  const ScrollableChat({super.key, required TextEditingController controller})
+  const ScrollableChat(
+      {super.key, required TextEditingController controller})
       : _controller = controller;
 
   final TextEditingController _controller;
@@ -193,11 +240,9 @@ class _ScrollableChatState extends State<ScrollableChat> {
   }
 
   void onMediaButtonPressed() async {
-    // Open the image picker
     final ImagePicker _picker = ImagePicker();
     final List<XFile>? pickerResults = await _picker.pickMultiImage();
 
-    // If some files were selected
     if (pickerResults != null) {
       if (pickerResults.isNotEmpty) {
         for (XFile xfile in pickerResults) {
@@ -211,7 +256,6 @@ class _ScrollableChatState extends State<ScrollableChat> {
   }
 
   void onCameraButtonPressed() async {
-    // Open the camera
     Navigator.push(context, MaterialPageRoute(builder: (_) => CameraScreen()));
   }
 
