@@ -2,7 +2,11 @@ package su.ezhidze.server.model;
 
 import su.ezhidze.server.entity.User;
 
-public class UserModel {
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
+
+public class UserResponseModel {
 
     private Integer id;
 
@@ -12,14 +16,20 @@ public class UserModel {
 
     private String email;
 
-    public UserModel() {
-    }
-
-    public UserModel(final User user) {
+    public UserResponseModel(final User user) {
         id = user.getId();
         firstName = user.getFirstName();
         lastName = user.getLastName();
         email = user.getEmail();
+    }
+
+    public UserResponseModel(final UserRegistrationModel userRegistrationModel) {
+        firstName = userRegistrationModel.getFirstName();
+        lastName = userRegistrationModel.getLastName();
+        email = userRegistrationModel.getEmail();
+    }
+
+    public UserResponseModel() {
     }
 
     public Integer getId() {
@@ -52,5 +62,13 @@ public class UserModel {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Map<String, Object> toMap() {
+        return Map.of(
+                "id", id.toString(),
+                "firstName", firstName,
+                "lastName", lastName,
+                "email", email);
     }
 }

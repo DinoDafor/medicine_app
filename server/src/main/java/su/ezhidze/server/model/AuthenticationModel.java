@@ -10,6 +10,9 @@ public class AuthenticationModel {
     @NotNull(message = "Password cannot be null")
     private String password;
 
+    @NotNull(message = "Role cannot be null")
+    private String role;
+
     public String getEmail() {
         return email;
     }
@@ -24,5 +27,13 @@ public class AuthenticationModel {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }
