@@ -8,7 +8,7 @@ class ChatModel extends ChangeNotifier {
   List<Message> _messages = [
     Message(
         message:
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
         fromUser: "danya",
         dateCreate: "12:00"),
     Message(
@@ -23,11 +23,11 @@ class ChatModel extends ChangeNotifier {
     Message(message: "Рад слышать", fromUser: "danya", dateCreate: "12:03"),
   ];
 
-
   List<Message> get messages => _messages;
 
   void add(Message message) {
     _messages.add(message);
-    notifyListeners();
+    // todo закоммнентировал, ругается на использование внутри builder метода от StreamBuilder, а как использовать от Notifier ???
+    // notifyListeners();
   }
 }

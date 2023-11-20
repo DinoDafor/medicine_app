@@ -39,20 +39,20 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                       padding: const EdgeInsets.all(8.0),
                       child: TextFormField(
                         //todo доделать валидацию по почте
-                        validator: (value) {
-                          if (value != null) {
-                            if (EmailValidator.validate(value)) {
-                              return null;
-                            } else {
-                              return "Email is not valide";
-                            }
-                          }
-                        },
+                        // validator: (value) {
+                        //   if (value != null) {
+                        //     if (EmailValidator.validate(value)) {
+                        //       return null;
+                        //     } else {
+                        //       return "Email is not valide";
+                        //     }
+                        //   }
+                        // },
                         controller: _emailController,
                         decoration: InputDecoration(
                           prefixIcon: Container(
-                            child: Icon(Icons.alternate_email),
-                            margin: EdgeInsets.only(right: 10),
+                            margin: const EdgeInsets.only(right: 10),
+                            child: const Icon(Icons.alternate_email),
                           ),
                           prefixIconConstraints:
                               BoxConstraints(minWidth: 0, minHeight: 0),

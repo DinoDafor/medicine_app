@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:medicine_app/screens/chat.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -14,23 +13,22 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          SizedBox(
-            height: 50,
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10.0),
-            child: NavBar(),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          HorizontalTab(),
-          ScrollableChats(),
-          MyBottomNavigationBar()
-        ],
+      body: SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.0),
+              child: NavBar(),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            HorizontalTab(),
+            ScrollableChats(),
+            MyBottomNavigationBar()
+          ],
+        ),
       ),
     );
   }
