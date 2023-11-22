@@ -10,6 +10,7 @@ import 'dart:io';
 import 'camera_screen.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/status.dart' as status;
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import '../models/Chat.dart';
 
 class ChatWithUser extends StatefulWidget {
@@ -137,6 +138,8 @@ class _ScrollableChatState extends State<ScrollableChat> {
     Uri.parse('wss://echo.websocket.events'),
   );
 
+  final ItemScrollController _scrollController = ItemScrollController();
+
   @override
   void initState() {
     // TODO: implement initState
@@ -148,7 +151,6 @@ class _ScrollableChatState extends State<ScrollableChat> {
     return Column(
       children: [
         Expanded(
-          //todo добавить скролл вниз, когда приходит новое сообщение
           child: Consumer<ChatModel>(
             builder: (context, chatModel, child) {
               return StreamBuilder(
@@ -175,6 +177,7 @@ class _ScrollableChatState extends State<ScrollableChat> {
                                 'echo.websocket.events sponsored by Lob.com') {
                               chatModel.add(
                                   Message.fromJson(jsonDecode(snapshot.data)));
+                              _scrollToBottom(chatModel);
                             }
                           }
                         }
@@ -185,7 +188,8 @@ class _ScrollableChatState extends State<ScrollableChat> {
                         }
                     }
 
-                    return ListView.separated(
+                    return ScrollablePositionedList.separated(
+                      itemScrollController: _scrollController,
                       //todo проблема с тем, что надо смотреть не все сообщения, а только последние N
                       itemCount: chatModel.messages.length,
                       itemBuilder: (context, index) {
@@ -320,6 +324,15 @@ class _ScrollableChatState extends State<ScrollableChat> {
   }
 
   void _sendMessage() {}
+
+
+  void _scrollToBottom(ChatModel chatModel) {
+    _scrollController.scrollTo(
+      index: chatModel.messages.length - 1,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
 
   @override
   void dispose() {

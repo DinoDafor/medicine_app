@@ -36,6 +36,7 @@ dependencies:
   go_router: ^12.1.1
   image_picker: ^1.0.4
   camera: 0.10.5+5
+  scrollable_positioned_list: ^0.3.8
   flutter:
     sdk: flutter
 
