@@ -1,11 +1,14 @@
 package su.ezhidze.server.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import su.ezhidze.server.enums.Role;
 import su.ezhidze.server.model.UserRegistrationModel;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class User {
     @Id
@@ -20,6 +23,8 @@ public class User {
 
     private String password;
 
+    private Role role;
+
     public User() {
     }
 
@@ -29,6 +34,7 @@ public class User {
         lastName = user.getLastName();
         email = user.getEmail();
         password = user.getPassword();
+        role = user.getRole();
     }
 
     public User(final UserRegistrationModel userRegistrationModel) {

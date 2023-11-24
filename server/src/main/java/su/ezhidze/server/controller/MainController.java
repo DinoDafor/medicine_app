@@ -15,6 +15,7 @@ import su.ezhidze.server.exception.BadArgumentException;
 import su.ezhidze.server.exception.DuplicateEntryException;
 import su.ezhidze.server.exception.ExceptionBodyBuilder;
 import su.ezhidze.server.model.*;
+import su.ezhidze.server.service.DoctorService;
 import su.ezhidze.server.service.PatientService;
 import su.ezhidze.server.service.UserService;
 import su.ezhidze.server.util.JwtUtil;
@@ -22,6 +23,8 @@ import su.ezhidze.server.validator.Validator;
 
 import java.util.Map;
 import java.util.Objects;
+
+import static su.ezhidze.server.enums.Role.*;
 
 @Controller
 @RequestMapping(path = "/medApp")
@@ -36,6 +39,9 @@ public class MainController {
 
     @Autowired
     private PatientService patientService;
+
+    @Autowired
+    private DoctorService doctorService;
 
     public MainController(AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
         this.authenticationManager = authenticationManager;
@@ -61,10 +67,12 @@ public class MainController {
                     authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationModel.getEmail(), authenticationModel.getPassword()));
             String token = jwtUtil.createToken(userService.loadUserByEmail(authenticationModel.getEmail()));
             Map<String, Object> response = new java.util.HashMap<>(Map.of("token:", token));
-            if (Objects.equals(authenticationModel.getRole(), "USER")) {
+            if (Objects.equals(authenticationModel.getRole(), USER)) {
                 response.putAll((new UserResponseModel(userService.loadUserByEmail(authenticationModel.getEmail()))).toMap());
-            } else if (Objects.equals(authenticationModel.getRole(), "PATIENT")) {
+            } else if (Objects.equals(authenticationModel.getRole(), PATIENT)) {
                 response.putAll((new PatientResponseModel(patientService.loadPatientByEmail(authenticationModel.getEmail()))).toMap());
+            } else if (Objects.equals(authenticationModel.getRole(), DOCTOR)) {
+                response.putAll((new DoctorResponseModel(doctorService.loadDoctorByEmail(authenticationModel.getEmail()))).toMap());
             }
             return ResponseEntity.ok(response);
         } catch (BadArgumentException e) {
@@ -94,4 +102,3 @@ public class MainController {
         }
     }
 }
-

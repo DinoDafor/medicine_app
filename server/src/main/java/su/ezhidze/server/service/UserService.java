@@ -11,6 +11,8 @@ import su.ezhidze.server.exception.AuthenticationFailException;
 import su.ezhidze.server.exception.DuplicateEntryException;
 import su.ezhidze.server.model.UserRegistrationModel;
 import su.ezhidze.server.model.UserResponseModel;
+import su.ezhidze.server.repository.DoctorRepository;
+import su.ezhidze.server.repository.PatientRepository;
 import su.ezhidze.server.repository.UserRepository;
 import su.ezhidze.server.validator.Validator;
 
@@ -39,12 +41,7 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new AuthenticationFailException("User not found"));
-        UserDetails userDetails =
-                org.springframework.security.core.userdetails.User.builder()
-                        .username(user.getEmail())
-                        .password(user.getPassword())
-                        .roles("USER")
-                        .build();
+        UserDetails userDetails = org.springframework.security.core.userdetails.User.builder().username(user.getEmail()).password(user.getPassword()).roles("USER").build();
         return userDetails;
     }
 

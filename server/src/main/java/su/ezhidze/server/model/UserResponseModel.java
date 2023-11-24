@@ -1,11 +1,14 @@
 package su.ezhidze.server.model;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import su.ezhidze.server.enums.Role;
 import su.ezhidze.server.entity.User;
 
 import java.util.Map;
 
-@Data
+@Getter
+@Setter
 public class UserResponseModel {
 
     private Integer id;
@@ -16,11 +19,14 @@ public class UserResponseModel {
 
     private String email;
 
+    private Role role;
+
     public UserResponseModel(final User user) {
         id = user.getId();
         firstName = user.getFirstName();
         lastName = user.getLastName();
         email = user.getEmail();
+        role = user.getRole();
     }
 
     public Map<String, Object> toMap() {
@@ -28,6 +34,7 @@ public class UserResponseModel {
                 "id", id.toString(),
                 "firstName", firstName,
                 "lastName", lastName,
-                "email", email);
+                "email", email,
+                "role", role);
     }
 }

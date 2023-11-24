@@ -1,11 +1,13 @@
 package su.ezhidze.server.model;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import su.ezhidze.server.entity.Patient;
 
 import java.util.Map;
 
-@Data
+@Getter
+@Setter
 public class PatientResponseModel extends UserResponseModel {
 
     private String dateOfBirth;

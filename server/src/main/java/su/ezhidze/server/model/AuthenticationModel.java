@@ -1,9 +1,12 @@
 package su.ezhidze.server.model;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import su.ezhidze.server.enums.Role;
 
-@Data
+@Getter
+@Setter
 public class AuthenticationModel {
 
     @NotNull(message = "Email cannot be null")
@@ -13,5 +16,5 @@ public class AuthenticationModel {
     private String password;
 
     @NotNull(message = "Role cannot be null")
-    private String role;
+    private Role role;
 }

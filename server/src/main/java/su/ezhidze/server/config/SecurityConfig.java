@@ -15,13 +15,13 @@ import su.ezhidze.server.service.UserService;
 
 @Configuration
 @EnableWebSecurity
-public class HttpConfig {
+public class SecurityConfig {
 
     private final UserService userService;
 
     private final JwtAuthorizationFilter jwtAuthorizationFilter;
 
-    public HttpConfig(UserService userService, JwtAuthorizationFilter jwtAuthorizationFilter) {
+    public SecurityConfig(UserService userService, JwtAuthorizationFilter jwtAuthorizationFilter) {
         this.userService = userService;
         this.jwtAuthorizationFilter = jwtAuthorizationFilter;
     }

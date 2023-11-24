@@ -1,11 +1,13 @@
 package su.ezhidze.server.entity;
 
 import jakarta.persistence.Entity;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import su.ezhidze.server.model.PatientRegistrationModel;
 
 @Entity
-@Data
+@Getter
+@Setter
 public class Patient extends User {
 
     private String dateOfBirth;
