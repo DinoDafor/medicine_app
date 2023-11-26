@@ -8,14 +8,15 @@ import java.util.Date;
 @Getter
 @Setter
 public class OutputMessage {
-    private String from;
-    private String message;
-    private String topic;
-    private Date time = new Date();
 
-    public OutputMessage(String from, String message, String topic) {
+    private String from;
+    private String text;
+    private String time;
+
+    public OutputMessage(final String from, final String text, final String time) {
+
         this.from = from;
-        this.message = message;
-        this.topic = topic;
+        this.text = text;
+        this.time = time;
     }
 }
