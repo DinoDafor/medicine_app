@@ -23,7 +23,7 @@ public class User {
 
     private String password;
 
-    private Role role;
+    private String role;
 
     public User() {
     }
@@ -42,5 +42,6 @@ public class User {
         lastName = userRegistrationModel.getLastName();
         email = userRegistrationModel.getEmail();
         password = userRegistrationModel.getPassword();
+        role = userRegistrationModel.getRole();
     }
 }

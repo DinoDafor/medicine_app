@@ -19,7 +19,7 @@ public class UserResponseModel {
 
     private String email;
 
-    private Role role;
+    private String role;
 
     public UserResponseModel(final User user) {
         id = user.getId();

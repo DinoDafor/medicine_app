@@ -67,11 +67,11 @@ public class MainController {
                     authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationModel.getEmail(), authenticationModel.getPassword()));
             String token = jwtUtil.createToken(userService.loadUserByEmail(authenticationModel.getEmail()));
             Map<String, Object> response = new java.util.HashMap<>(Map.of("token:", token));
-            if (Objects.equals(authenticationModel.getRole(), USER)) {
+            if (Objects.equals(authenticationModel.getRole(), "USER")) {
                 response.putAll((new UserResponseModel(userService.loadUserByEmail(authenticationModel.getEmail()))).toMap());
-            } else if (Objects.equals(authenticationModel.getRole(), PATIENT)) {
+            } else if (Objects.equals(authenticationModel.getRole(), "PATIENT")) {
                 response.putAll((new PatientResponseModel(patientService.loadPatientByEmail(authenticationModel.getEmail()))).toMap());
-            } else if (Objects.equals(authenticationModel.getRole(), DOCTOR)) {
+            } else if (Objects.equals(authenticationModel.getRole(), "DOCTOR")) {
                 response.putAll((new DoctorResponseModel(doctorService.loadDoctorByEmail(authenticationModel.getEmail()))).toMap());
             }
             return ResponseEntity.ok(response);

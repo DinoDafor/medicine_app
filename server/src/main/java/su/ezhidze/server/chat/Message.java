@@ -11,9 +11,5 @@ public class Message {
 
     private String text;
 
-//    Message(String text) {
-//        from = "";
-//        this.text = text;
-//    }
-
+    private String receiverUuid;
 }

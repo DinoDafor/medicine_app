@@ -16,5 +16,5 @@ public class AuthenticationModel {
     private String password;
 
     @NotNull(message = "Role cannot be null")
-    private Role role;
+    private String role;
 }

@@ -5,6 +5,7 @@ import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandler;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
+import org.springframework.web.socket.WebSocketHttpHeaders;
 import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
@@ -32,15 +33,18 @@ public class ChatClient {
         stompClient.setMessageConverter(new MappingJackson2MessageConverter());
 
         StompSessionHandler sessionHandler = new MyStompSessionHandler();
-        StompSession session = stompClient.connect(url, sessionHandler).get();
+        WebSocketHttpHeaders webSocketHttpHeaders = new WebSocketHttpHeaders();
+        webSocketHttpHeaders.add("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzZDM0MzI0c0BnbWFpbC5jb20iLCJmaXJzdE5hbWUiOiJBcnR5b20iLCJsYXN0TmFtZSI6IlRzYXRpbnlhbiIsImV4cCI6MTkxNzExMTg2OX0.bxIaESjCbJq3we5F4FLzuEJI2fco0n509Uk26ZMEyWc");
+        StompSession session = stompClient.connect(url, webSocketHttpHeaders, sessionHandler).get();
 
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         for (; ; ) {
-            String line = in.readLine();
+            String receiverUuid = in.readLine(), line = in.readLine();
             if (line == null) break;
             if (line.isEmpty()) continue;
             Message msg = new Message("user", line);
-            session.send("/app/chat", msg);
+            msg.setReceiverUuid(receiverUuid);
+            session.send("/app/private-chat", msg);
         }
     }
 

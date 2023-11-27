@@ -36,7 +36,5 @@ public class UserRegistrationModel {
     private String password;
 
     @NotNull(message = "role cannot be null")
-    @Size(min = 1, message = "role should not be empty")
-    @Size(max = 100, message = "role length should not be greater than 100 symbols")
-    private Role role;
+    private String role;
 }

@@ -43,7 +43,7 @@ public class SecurityConfig {
                         .requestMatchers("/medApp/registration").permitAll()
                         .requestMatchers("/medApp/authentication").permitAll()
                         .requestMatchers("/medApp/patientRegistration").permitAll()
-                        .anyRequest().permitAll()
+                        .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);

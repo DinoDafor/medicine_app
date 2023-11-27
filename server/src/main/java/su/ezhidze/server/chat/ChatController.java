@@ -1,5 +1,6 @@
 package su.ezhidze.server.chat;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -12,6 +13,9 @@ import java.util.Date;
 
 @Controller
 public class ChatController {
+    @Autowired
+    private WSService service;
+
     @MessageMapping("/chat")
     @SendTo("/topic/messages")
     public OutputMessage getMessage(Message message) throws Exception {
@@ -24,7 +28,8 @@ public class ChatController {
     @SendToUser("/topic/private-messages")
     public OutputMessage getPrivateMessage(Message message, final Principal principal) throws Exception {
         String time = new SimpleDateFormat("HH:mm").format(new Date());
-        System.out.println(message.getText());
+//        System.out.println(message.getText());
+        service.notifyUser(message.getReceiverUuid(), message.getText());
         return new OutputMessage("", "private message to user " + principal.getName() + ": " + message.getText(), time);
     }
 }
