@@ -1,7 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:medicine_app/models/Chat.dart';
+import 'package:medicine_app/models/ChatNotifier.dart';
 import 'package:medicine_app/screens/authentication_screen.dart';
 import 'package:medicine_app/screens/chat.dart';
 import 'package:medicine_app/screens/registration_screen.dart';

@@ -11,7 +11,7 @@ import 'camera_screen.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/status.dart' as status;
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import '../models/Chat.dart';
+import '../models/ChatNotifier.dart';
 
 class ChatWithUser extends StatefulWidget {
   const ChatWithUser({super.key});
@@ -84,19 +84,13 @@ class _ChatWithUserState extends State<ChatWithUser> {
                   ),
                 ),
                 PopupMenuItem(
-                  child: Container(
-                    width: 10,
-                    height: 10,
-                  )
-                ),
-                PopupMenuItem(
                   child: ListTile(
                     leading: SvgPicture.asset(
                       "assets/icons/download.svg",
                       width: 24,
                       height: 24,
                     ),
-                    title: Text("Отправить чат"),
+                    title: const Text("Отправить чат"),
                     onTap: () {
                       sendChat();
                       Navigator.pop(context);
@@ -133,6 +127,7 @@ class ScrollableChat extends StatefulWidget {
 class _ScrollableChatState extends State<ScrollableChat> {
   final TextEditingController _controller = TextEditingController();
   final String userOwner = 'me';
+  //todo сделать запрос на получение всех сообщений с доктором
 
   final _channel = WebSocketChannel.connect(
     Uri.parse('wss://echo.websocket.events'),
@@ -159,12 +154,12 @@ class _ScrollableChatState extends State<ScrollableChat> {
                     switch (snapshot.connectionState) {
                       case ConnectionState.waiting:
                         {
-                          return Center(
-                              child: const CircularProgressIndicator());
+                          return const Center(
+                              child: CircularProgressIndicator());
                         }
                       case ConnectionState.none:
                         {
-                          return Text('ConnectionState.done');
+                          return const Text('ConnectionState.done');
                         }
                       case ConnectionState.active:
                         {
@@ -184,7 +179,7 @@ class _ScrollableChatState extends State<ScrollableChat> {
                       case ConnectionState.done:
                         {
                           //todo делать реконнект?
-                          return Text('ConnectionState.done');
+                          return const Text('ConnectionState.done');
                         }
                     }
 
@@ -199,7 +194,6 @@ class _ScrollableChatState extends State<ScrollableChat> {
                                   ? Alignment.topRight
                                   : Alignment.topLeft,
                           child: Container(
-                            padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
                               color: chatModel.messages[index].fromUser ==
                                       userOwner
@@ -210,13 +204,16 @@ class _ScrollableChatState extends State<ScrollableChat> {
                             constraints: BoxConstraints(
                               maxWidth: MediaQuery.of(context).size.width * 0.7,
                             ),
-                            child: Text(
-                              chatModel.messages[index].message,
-                              style: TextStyle(
-                                color: chatModel.messages[index].fromUser ==
-                                        userOwner
-                                    ? const Color(0xFFFFFFFF)
-                                    : const Color(0xFF212121),
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Text(
+                                chatModel.messages[index].message,
+                                style: TextStyle(
+                                  color: chatModel.messages[index].fromUser ==
+                                          userOwner
+                                      ? const Color(0xFFFFFFFF)
+                                      : const Color(0xFF212121),
+                                ),
                               ),
                             ),
                           ),

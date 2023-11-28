@@ -1,6 +1,9 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+
+import '../models/chat_model.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -105,48 +108,88 @@ class ScrollableChats extends StatelessWidget {
     super.key,
   });
 
+  Future<List<Chat>> df() async {
+    Dio dio = Dio();
+    List<Chat> chats = [];
+    List<dynamic> list = [];
+
+    var response = await dio.get('http://192.168.0.14:3000/chats');
+    if (response.statusCode == 200) {
+      list = response.data;
+      for (int i = 0; i < list.length; i++) {
+        Map<String, dynamic> map = list[i];
+        chats.add(Chat.fromJson(map));
+      }
+    }
+    return chats;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: ListView.builder(
-          itemBuilder: (context, index) => ListTile(
-                onTap: () {
-                  context.go("/chats/chat");
-                },
-                title: const Text(
-                  "Doctor name",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                leading: const CircleAvatar(
-                  backgroundImage: AssetImage("assets/images/doctor_image.png"),
-                  //todo можно добавить фото-заглушку, если у доктора не будет аватарки
-                  backgroundColor: Colors.deepOrange,
-                ),
-                subtitle: const Text(
-                  "Всего наилучшего...",
-                  style: TextStyle(
-                    color: Color(0xFF616161),
-                  ),
-                ),
-                trailing: const Column(
-                  children: [
-                    Text(
-                      "20/08/2023" + ",",
-                      style: TextStyle(
-                        color: Color(0xFF616161),
+      child: FutureBuilder<List<Chat>>(
+          future: df(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return ListView.builder(
+                  itemCount: snapshot.requireData.length,
+                  itemBuilder: (context, index) {
+                    Chat chat = snapshot.requireData[index];
+                    return ListTile(
+                      onTap: () {
+                        context.go("/chats/chat");
+                      },
+                      title: Text(
+                        chat.interlocutor,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    Text(
-                      "15:30",
-                      style: TextStyle(
-                        color: Color(0xFF616161),
+                      leading: const CircleAvatar(
+                        backgroundImage:
+                            AssetImage("assets/images/doctor_image.png"),
+                        //todo можно добавить фото-заглушку, если у доктора не будет аватарки
+                        backgroundColor: Colors.deepOrange,
                       ),
-                    ),
-                  ],
-                ),
-              )),
+                      subtitle: Text(
+                        chat.lastText,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: Color(0xFF616161),
+                        ),
+                      ),
+                      trailing: Column(
+                        children: [
+                          Text(
+                            chat.lastDate,
+                            style: const TextStyle(
+                              color: Color(0xFF616161),
+                            ),
+                          ),
+                          Text(
+                            chat.lastDate,
+                            style: const TextStyle(
+                              color: Color(0xFF616161),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  });
+            } else if (snapshot.hasError) {
+              print("Ошибка!!!");
+              print(snapshot.error);
+              print(snapshot.stackTrace);
+            } else {
+              return const Center(child: CircularProgressIndicator());
+            }
+            //todo подумать что тут возвращать
+            return Text("ds");
+
+          }),
     );
   }
 }
@@ -161,7 +204,7 @@ class HorizontalTab extends StatefulWidget {
 }
 
 class _HorizontalTabState extends State<HorizontalTab> {
-  final List<String> lst = ['Сообщение', 'Звонки', 'Видеозвонки'];
+  final List<String> lst = ['Сообщения', 'Звонки', 'Видеозвонки'];
   int number = 0;
 
   @override
@@ -189,7 +232,7 @@ class _HorizontalTabState extends State<HorizontalTab> {
                                   ? Colors.green
                                   : Colors.black),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 5,
                         ),
                         Container(

@@ -23,6 +23,8 @@ class ChatModel extends ChangeNotifier {
     Message(message: "Рад слышать", fromUser: "danya", dateCreate: "12:03"),
   ];
 
+
+
   List<Message> get messages => _messages;
 
   void add(Message message) {
