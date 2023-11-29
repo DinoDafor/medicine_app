@@ -34,7 +34,6 @@ public class SecurityConfig {
         return authenticationManagerBuilder.build();
     }
 
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -43,7 +42,12 @@ public class SecurityConfig {
                         .requestMatchers("/medApp/registration").permitAll()
                         .requestMatchers("/medApp/authentication").permitAll()
                         .requestMatchers("/medApp/patientRegistration").permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers("/medApp/doctorRegistration").permitAll()
+                        .requestMatchers("/addChat").permitAll()
+                        .requestMatchers("/chats").permitAll()
+                        .requestMatchers("/addUser/**").permitAll()
+                        .requestMatchers("/deleteUser/**").permitAll()
+                        .anyRequest().permitAll()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);

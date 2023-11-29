@@ -1,50 +1,40 @@
 package sample;
 
-import lombok.Getter;
-import lombok.Setter;
-
-/*
- * Message sent to server.
- *
- * @Author Jay Sridhar
- */
 public class Message {
 
-    private String from;
+    private String senderSubject;
 
-    private String text;
+    private Integer chatId;
 
-    private String receiverUuid;
+    private String messageText;
 
-    public Message() {
+    public Message(String senderSubject, Integer chatId, String messageText) {
+        this.senderSubject = senderSubject;
+        this.chatId = chatId;
+        this.messageText = messageText;
     }
 
-    public Message(String from, String text) {
-        this.from = from;
-        this.text = text;
+    public String getSenderSubject() {
+        return senderSubject;
     }
 
-    public String getFrom() {
-        return from;
+    public void setSenderSubject(String senderSubject) {
+        this.senderSubject = senderSubject;
     }
 
-    public void setFrom(String from) {
-        this.from = from;
+    public Integer getChatId() {
+        return chatId;
     }
 
-    public String getText() {
-        return text;
+    public void setChatId(Integer chatId) {
+        this.chatId = chatId;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public String getMessageText() {
+        return messageText;
     }
 
-    public String getReceiverUuid() {
-        return receiverUuid;
-    }
-
-    public void setReceiverUuid(String receiverUuid) {
-        this.receiverUuid = receiverUuid;
+    public void setMessageText(String messageText) {
+        this.messageText = messageText;
     }
 }

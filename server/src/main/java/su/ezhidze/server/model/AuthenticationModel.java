@@ -3,7 +3,6 @@ package su.ezhidze.server.model;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-import su.ezhidze.server.enums.Role;
 
 @Getter
 @Setter

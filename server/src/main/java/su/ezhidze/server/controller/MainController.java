@@ -24,8 +24,6 @@ import su.ezhidze.server.validator.Validator;
 import java.util.Map;
 import java.util.Objects;
 
-import static su.ezhidze.server.enums.Role.*;
-
 @Controller
 @RequestMapping(path = "/medApp")
 public class MainController {
@@ -95,6 +93,17 @@ public class MainController {
     public ResponseEntity addNewPatient(@RequestBody PatientRegistrationModel patientRegistrationModel) {
         try {
             return ResponseEntity.ok(patientService.addNewPatient(patientRegistrationModel));
+        } catch (DuplicateEntryException | BadArgumentException e) {
+            return ResponseEntity.internalServerError().body(ExceptionBodyBuilder.build(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(ExceptionBodyBuilder.build(HttpStatus.BAD_REQUEST.value(), e.getMessage()));
+        }
+    }
+
+    @PostMapping(path = "/doctorRegistration")
+    public ResponseEntity addNewDoctor(@RequestBody DoctorRegistrationModel doctorRegistrationModel) {
+        try {
+            return ResponseEntity.ok(doctorService.addNewDoctor(doctorRegistrationModel));
         } catch (DuplicateEntryException | BadArgumentException e) {
             return ResponseEntity.internalServerError().body(ExceptionBodyBuilder.build(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()));
         } catch (Exception e) {

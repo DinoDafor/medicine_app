@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface DoctorRepository extends CrudRepository<Doctor, Integer> {
     Optional<Doctor> findByEmail(String email);
+
+    Optional<Doctor> findByUUID(String UUID);
 }

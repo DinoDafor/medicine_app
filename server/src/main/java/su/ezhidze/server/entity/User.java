@@ -3,7 +3,6 @@ package su.ezhidze.server.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import su.ezhidze.server.enums.Role;
 import su.ezhidze.server.model.UserRegistrationModel;
 
 @Entity
@@ -25,7 +24,12 @@ public class User {
 
     private String role;
 
+    private String UUID;
+
+    private Boolean isOnline;
+
     public User() {
+        isOnline = false;
     }
 
     public User(final User user) {
@@ -35,6 +39,8 @@ public class User {
         email = user.getEmail();
         password = user.getPassword();
         role = user.getRole();
+        UUID = user.getUUID();
+        isOnline = user.getIsOnline();
     }
 
     public User(final UserRegistrationModel userRegistrationModel) {
@@ -43,5 +49,6 @@ public class User {
         email = userRegistrationModel.getEmail();
         password = userRegistrationModel.getPassword();
         role = userRegistrationModel.getRole();
+        isOnline = false;
     }
 }

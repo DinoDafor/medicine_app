@@ -22,6 +22,7 @@ import java.util.Scanner;
 
 public class ChatClient {
     public static void main(String args[]) throws Exception {
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
         String url = "ws://localhost:8080/chat";
         WebSocketClient client = new StandardWebSocketClient();
@@ -34,16 +35,18 @@ public class ChatClient {
 
         StompSessionHandler sessionHandler = new MyStompSessionHandler();
         WebSocketHttpHeaders webSocketHttpHeaders = new WebSocketHttpHeaders();
-        webSocketHttpHeaders.add("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzZDM0MzI0c0BnbWFpbC5jb20iLCJmaXJzdE5hbWUiOiJBcnR5b20iLCJsYXN0TmFtZSI6IlRzYXRpbnlhbiIsImV4cCI6MTkxNzExMTg2OX0.bxIaESjCbJq3we5F4FLzuEJI2fco0n509Uk26ZMEyWc");
+        System.out.println("jwt token:");
+        webSocketHttpHeaders.add("Authorization", "Bearer " + in.readLine());
         StompSession session = stompClient.connect(url, webSocketHttpHeaders, sessionHandler).get();
 
-        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         for (; ; ) {
-            String receiverUuid = in.readLine(), line = in.readLine();
-            if (line == null) break;
-            if (line.isEmpty()) continue;
-            Message msg = new Message("user", line);
-            msg.setReceiverUuid(receiverUuid);
+            System.out.println("Our email: ");
+            String email = in.readLine();
+            System.out.println("Chat id: ");
+            Integer chatID = Integer.valueOf(in.readLine());
+            System.out.println("Message: ");
+            String message = in.readLine();
+            Message msg = new Message(email, chatID, message);
             session.send("/app/private-chat", msg);
         }
     }
@@ -58,21 +61,13 @@ public class ChatClient {
         @Override
         public void handleFrame(StompHeaders headers, Object payload) {
             Message msg = (Message) payload;
-            System.out.println("Received : " + msg.getText() + " from : " + msg.getFrom());
-        }
-
-        private Message getSampleMessage() {
-            Message msg = new Message();
-            msg.setFrom("Nicky");
-            msg.setText("Howdy!!");
-            return msg;
+            System.out.println("Received : " + msg.getMessageText() + " from : " + msg.getSenderSubject());
         }
 
         @Override
         public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
             session.subscribe("/topic/messages", this);
             session.subscribe("/user/topic/private-messages", this);
-            session.send("/app/chat", getSampleMessage());
         }
     }
 }

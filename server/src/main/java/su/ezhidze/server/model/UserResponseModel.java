@@ -2,7 +2,6 @@ package su.ezhidze.server.model;
 
 import lombok.Getter;
 import lombok.Setter;
-import su.ezhidze.server.enums.Role;
 import su.ezhidze.server.entity.User;
 
 import java.util.Map;
@@ -21,12 +20,18 @@ public class UserResponseModel {
 
     private String role;
 
+    private String UUID;
+
+    private Boolean isOnline;
+
     public UserResponseModel(final User user) {
         id = user.getId();
         firstName = user.getFirstName();
         lastName = user.getLastName();
         email = user.getEmail();
         role = user.getRole();
+        UUID = user.getUUID();
+        isOnline = user.getIsOnline();
     }
 
     public Map<String, Object> toMap() {
@@ -35,6 +40,8 @@ public class UserResponseModel {
                 "firstName", firstName,
                 "lastName", lastName,
                 "email", email,
-                "role", role);
+                "role", role,
+                "UUID", UUID,
+                "isOnline", isOnline);
     }
 }
