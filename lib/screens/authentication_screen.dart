@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -14,6 +15,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  final Dio dio = Dio();
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +57,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                             child: const Icon(Icons.alternate_email),
                           ),
                           prefixIconConstraints:
-                              BoxConstraints(minWidth: 0, minHeight: 0),
+                              const BoxConstraints(minWidth: 0, minHeight: 0),
                           hintText: "Email",
                         ),
                       ),
@@ -95,15 +97,15 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                     ElevatedButton(
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
-                          var response = await http.post(
-                              Uri.parse('https://httpbin.org/post'),
-                              body: {
-                                "username": _emailController.text.trim(),
-                                "password": _passwordController.text.trim(),
-                              });
+                          var response =
+                              await dio.post('https://httpbin.org/post', data: {
+                            "username": _emailController.text.trim(),
+                            "password": _passwordController.text.trim(),
+                          });
                           if (response.statusCode == 200) {
                             context.go('/chats');
                           }
+                          //todo если другой статус код, то показываем, что не пускает в аккаунт else if () {}
                         }
                       },
                       style: ButtonStyle(

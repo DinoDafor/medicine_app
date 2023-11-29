@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
@@ -14,7 +15,9 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import '../models/ChatNotifier.dart';
 
 class ChatWithUser extends StatefulWidget {
-  const ChatWithUser({super.key});
+final String interlocutor;
+
+  const ChatWithUser({super.key, required this.interlocutor});
 
   @override
   State<ChatWithUser> createState() => _ChatWithUserState();
@@ -22,7 +25,11 @@ class ChatWithUser extends StatefulWidget {
 
 class _ChatWithUserState extends State<ChatWithUser> {
   //todo не сохраняется чат, надо сделать
-
+@override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,9 +45,9 @@ class _ChatWithUserState extends State<ChatWithUser> {
             context.go("/chats");
           },
         ),
-        title: const Text(
-          "Doctor name",
-          style: TextStyle(
+        title:  Text(
+         widget.interlocutor,
+          style: const TextStyle(
               color: Color(0xFF212121),
               fontWeight: FontWeight.bold,
               fontSize: 24),
@@ -102,7 +109,7 @@ class _ChatWithUserState extends State<ChatWithUser> {
           ),
         ],
       ),
-      body: ScrollableChat(),
+      body: ScrollableChat(interlocutor: widget.interlocutor),
     );
   }
 
@@ -118,7 +125,9 @@ class _ChatWithUserState extends State<ChatWithUser> {
 }
 
 class ScrollableChat extends StatefulWidget {
-  const ScrollableChat({super.key});
+  final String interlocutor;
+
+  const ScrollableChat({super.key, required this.interlocutor});
 
   @override
   State<ScrollableChat> createState() => _ScrollableChatState();
@@ -127,6 +136,9 @@ class ScrollableChat extends StatefulWidget {
 class _ScrollableChatState extends State<ScrollableChat> {
   final TextEditingController _controller = TextEditingController();
   final String userOwner = 'me';
+  Dio dio = Dio();
+  final List<Message> _messages = [];
+
   //todo сделать запрос на получение всех сообщений с доктором
 
   final _channel = WebSocketChannel.connect(
@@ -139,6 +151,23 @@ class _ScrollableChatState extends State<ScrollableChat> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    getMessages();
+  }
+
+  Future<void> getMessages() async {
+    //dynamic
+    var response = await dio.get('http://192.168.0.14:3000/chats',
+        queryParameters: {'interlocutor': widget.interlocutor});
+    if (response.statusCode == 200) {
+      List<dynamic> list = response.data;
+      Map<String, dynamic> map = list[0];
+      list = map["messages"];
+      for (int i = 0; i < list.length; i++) {
+        map = list[i];
+        print(map);
+        _messages.add(Message.fromJson(map));
+      }
+    }
   }
 
   @override
@@ -170,9 +199,11 @@ class _ScrollableChatState extends State<ScrollableChat> {
                           if (snapshot.hasData) {
                             if (snapshot.data !=
                                 'echo.websocket.events sponsored by Lob.com') {
-                              chatModel.add(
+                              _messages.add(
                                   Message.fromJson(jsonDecode(snapshot.data)));
-                              _scrollToBottom(chatModel);
+                              // chatModel.add(
+                              //     Message.fromJson(jsonDecode(snapshot.data)));
+                              _scrollToBottom(_messages);
                             }
                           }
                         }
@@ -186,17 +217,15 @@ class _ScrollableChatState extends State<ScrollableChat> {
                     return ScrollablePositionedList.separated(
                       itemScrollController: _scrollController,
                       //todo проблема с тем, что надо смотреть не все сообщения, а только последние N
-                      itemCount: chatModel.messages.length,
+                      itemCount: _messages.length,
                       itemBuilder: (context, index) {
                         return Align(
-                          alignment:
-                              chatModel.messages[index].fromUser == userOwner
-                                  ? Alignment.topRight
-                                  : Alignment.topLeft,
+                          alignment: _messages[index].fromUser == userOwner
+                              ? Alignment.topRight
+                              : Alignment.topLeft,
                           child: Container(
                             decoration: BoxDecoration(
-                              color: chatModel.messages[index].fromUser ==
-                                      userOwner
+                              color: _messages[index].fromUser == userOwner
                                   ? const Color(0xFF0EBE7E)
                                   : const Color(0xFFF5F5F5),
                               borderRadius: BorderRadius.circular(15),
@@ -207,10 +236,9 @@ class _ScrollableChatState extends State<ScrollableChat> {
                             child: Padding(
                               padding: const EdgeInsets.all(10.0),
                               child: Text(
-                                chatModel.messages[index].message,
+                                _messages[index].message,
                                 style: TextStyle(
-                                  color: chatModel.messages[index].fromUser ==
-                                          userOwner
+                                  color: _messages[index].fromUser == userOwner
                                       ? const Color(0xFFFFFFFF)
                                       : const Color(0xFF212121),
                                 ),
@@ -268,29 +296,25 @@ class _ScrollableChatState extends State<ScrollableChat> {
                   ),
                 ),
               ),
-              Consumer<ChatModel>(
-                builder: (context, chatModel, child) {
-                  return ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF0EBE7E),
-                      shape: const CircleBorder(),
-                    ),
-                    onPressed: () {
-                      if (_controller.text.isNotEmpty) {
-                        _channel.sink.add(jsonEncode(Message(
-                            message: _controller.text.trim(),
-                            fromUser: userOwner,
-                            dateCreate: "12:00")));
-                        _controller.clear();
-                      }
-                      // setState(() {}
-                      // );
-                    },
-                    child: SvgPicture.asset(
-                      "assets/icons/send_arrow.svg",
-                    ),
-                  );
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF0EBE7E),
+                  shape: const CircleBorder(),
+                ),
+                onPressed: () {
+                  if (_controller.text.isNotEmpty) {
+                    _channel.sink.add(jsonEncode(Message(
+                        message: _controller.text.trim(),
+                        fromUser: userOwner,
+                        dateCreate: "12:00")));
+                    _controller.clear();
+                  }
+                  // setState(() {}
+                  // );
                 },
+                child: SvgPicture.asset(
+                  "assets/icons/send_arrow.svg",
+                ),
               )
             ],
           ),
@@ -322,10 +346,9 @@ class _ScrollableChatState extends State<ScrollableChat> {
 
   void _sendMessage() {}
 
-
-  void _scrollToBottom(ChatModel chatModel) {
+  void _scrollToBottom(List<Message> messages) {
     _scrollController.scrollTo(
-      index: chatModel.messages.length - 1,
+      index: messages.length - 1,
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
     );

@@ -1,4 +1,3 @@
-import 'package:medicine_app/models/Message.dart';
 
 class Chat {
   final int id;

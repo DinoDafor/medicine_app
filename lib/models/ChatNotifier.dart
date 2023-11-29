@@ -4,7 +4,6 @@ import 'Message.dart';
 
 class ChatModel extends ChangeNotifier {
   //todo добавить геттер
-
   List<Message> _messages = [
     Message(
         message:
@@ -26,6 +25,8 @@ class ChatModel extends ChangeNotifier {
 
 
   List<Message> get messages => _messages;
+
+
 
   void add(Message message) {
     _messages.add(message);

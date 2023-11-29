@@ -2,6 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:medicine_app/models/ChatNotifier.dart';
+import 'package:medicine_app/models/Message.dart';
 import 'package:medicine_app/screens/authentication_screen.dart';
 import 'package:medicine_app/screens/chat.dart';
 import 'package:medicine_app/screens/registration_screen.dart';
@@ -36,7 +37,8 @@ final GoRouter _router = GoRouter(routes: [
               GoRoute(
                   path: 'chat',
                   builder: (BuildContext context, GoRouterState state) {
-                    return const ChatWithUser();
+                    String interlocutor = state.extra as String;
+                    return ChatWithUser(interlocutor: interlocutor);
                   })
             ]),
       ]),

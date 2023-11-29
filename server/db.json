@@ -1,5 +1,5 @@
 {
-  "chats": [
+  "chatsCards": [
     {
       "id": 1,
       "interlocutor": "Adam Smith",
@@ -17,6 +17,61 @@
       "interlocutor": "Айболит Геннад ибн Аль Мустафа Геннадий Русков",
       "lastText": "Тут ооооочень длинный текст, который надо как-то сжимать. Тут ооооочень длинный текст, который надо как-то сжимать. Тут ооооочень длинный текст, который надо как-то сжимать. Тут ооооочень длинный текст, который надо как-то сжимать. Тут ооооочень длинный текст, который надо как-то сжимать. Тут ооооочень длинный текст, который надо как-то сжимать. Тут ооооочень длинный текст, который надо как-то сжимать. ",
       "lastDate": "2022"
+    }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "name": "Misha",
+      "phoneNumber": "+79181113331",
+      "email": "dinodafor@mail.ru",
+      "password": 123
+    },
+    {
+      "email": "test@mail.ru",
+      "password": "",
+      "name": "testname",
+      "phoneNumber": "79123",
+      "id": 2
+    },
+    {
+      "email": "tes2t@mail.ru",
+      "password": "321",
+      "name": "testname",
+      "phoneNumber": "+79111137612",
+      "id": 3
+    }
+  ],
+  "chats": [
+    {
+      "interlocutor": "Adam Smith",
+      "messages": [
+        {
+          "message": "Hi!",
+          "fromUser": "adam",
+          "dateCreate": "2020"
+        },
+        {
+          "message": "How are you?",
+          "fromUser": "adam",
+          "dateCreate": "2023"
+        }
+      ]
+    },
+    {
+      "interlocutor": "Walter White",
+      "messages": [
+        {
+          "message": "I am not in danger, Skyler",
+          "fromUser": "white",
+          "dateCreate": "2020"
+        },
+        {
+          "message": "I am the danger!",
+          "fromUser": "white",
+          "dateCreate": "2023"
+        }
+      ]
     }
   ]
 }

@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -13,9 +14,11 @@ class RegistrationScreen extends StatefulWidget {
 class _RegistrationScreenState extends State<RegistrationScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  Dio dio = Dio();
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +71,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         if (value == null || value.isEmpty) {
                           return 'Phone number can not be empty';
                         }
-                        return null;
+                        if (isMobileNumberValid(value)) {
+                          return null;
+                        } else {
+                          return "Phone number is not valide!";
+                        }
                       },
                       controller: _phoneNumberController,
                       decoration: buildInputDecoration(
@@ -86,6 +93,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       obscureText: true,
                     ),
                     TextFormField(
+                      controller: _passwordController,
                       decoration: buildInputDecoration(
                           "Ещё раз пароль", 10, Icons.shield),
                       obscureText: true,
@@ -93,15 +101,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     ElevatedButton(
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
-                          var response = await http.post(
-                              Uri.parse('https://httpbin.org/post'),
-                              body: {
-                                "email": _emailController.text.trim(),
-                                "password": _passwordController.text.trim(),
-                                //todo дополнить запрос
-                              });
-                          if (response.statusCode == 200) {
-                             context.go("/chats");
+                          var response = await dio
+                              .post('http://192.168.0.14:3000/users', data: {
+                            "email": _emailController.text.trim(),
+                            //todo шифрование пароля
+                            "password": _passwordController.text.trim(),
+                            "name": _nameController.text.trim(),
+                            "phoneNumber": _phoneNumberController.text.trim(),
+                          });
+                          if (response.statusCode == 201) {
+                            context.go("/chats");
                           }
                         }
                       },
@@ -150,6 +159,18 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     );
   }
 
+  bool isMobileNumberValid(String phoneNumber) {
+    const String regexPattern = r'^(?:[+0][1-9])?[0-9]{10,12}$';
+    var regExp = RegExp(regexPattern);
+
+    if (phoneNumber.isEmpty) {
+      return false;
+    } else if (regExp.hasMatch(phoneNumber)) {
+      return true;
+    }
+    return false;
+  }
+
   InputDecoration buildInputDecoration(
       String hint, double margin, IconData iconData) {
     return InputDecoration(
@@ -167,6 +188,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     _passwordController.dispose();
     _nameController.dispose();
     _phoneNumberController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 }

@@ -2,7 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-
+import 'package:medicine_app/models/ChatNotifier.dart';
+import 'package:provider/provider.dart';
 import '../models/chat_model.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -33,6 +34,101 @@ class _ChatScreenState extends State<ChatScreen> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class ScrollableChats extends StatelessWidget {
+  const ScrollableChats({
+    super.key,
+  });
+
+  Future<List<Chat>> getUsersChats() async {
+    Dio dio = Dio();
+    List<Chat> chats = [];
+    List<dynamic> list = [];
+
+    var response = await dio.get('http://192.168.0.14:3000/chatsCards');
+    if (response.statusCode == 200) {
+      list = response.data;
+      for (int i = 0; i < list.length; i++) {
+        Map<String, dynamic> map = list[i];
+        chats.add(Chat.fromJson(map));
+      }
+    }
+    return chats;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: FutureBuilder<List<Chat>>(
+          future: getUsersChats(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return ListView.builder(
+                  itemCount: snapshot.requireData.length,
+                  itemBuilder: (context, index) {
+                    Chat chat = snapshot.requireData[index];
+                    return Consumer<ChatModel>(
+                      builder: (context, chatModel, child) {
+                        return ListTile(
+                          onTap: () {
+                            context.go("/chats/chat",
+                                extra: chat.interlocutor);
+                          },
+                          title: Text(
+                            chat.interlocutor,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          leading: const CircleAvatar(
+                            backgroundImage:
+                                AssetImage("assets/images/doctor_image.png"),
+                            //todo можно добавить фото-заглушку, если у доктора не будет аватарки
+                            backgroundColor: Colors.deepOrange,
+                          ),
+                          subtitle: Text(
+                            chat.lastText,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: Color(0xFF616161),
+                            ),
+                          ),
+                          trailing: Column(
+                            children: [
+                              Text(
+                                chat.lastDate,
+                                style: const TextStyle(
+                                  color: Color(0xFF616161),
+                                ),
+                              ),
+                              Text(
+                                chat.lastDate,
+                                style: const TextStyle(
+                                  color: Color(0xFF616161),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  });
+            } else if (snapshot.hasError) {
+              print("Ошибка!!!");
+              print(snapshot.error);
+              print(snapshot.stackTrace);
+            } else {
+              return const Center(child: CircularProgressIndicator());
+            }
+            //todo подумать что тут возвращать
+            return const Text("ds");
+          }),
     );
   }
 }
@@ -99,97 +195,6 @@ class MyBottomNavigationBar extends StatelessWidget {
       //todo надо бы вынести это в константу по проекту
 
       // onTap: (){},
-    );
-  }
-}
-
-class ScrollableChats extends StatelessWidget {
-  const ScrollableChats({
-    super.key,
-  });
-
-  Future<List<Chat>> df() async {
-    Dio dio = Dio();
-    List<Chat> chats = [];
-    List<dynamic> list = [];
-
-    var response = await dio.get('http://192.168.0.14:3000/chats');
-    if (response.statusCode == 200) {
-      list = response.data;
-      for (int i = 0; i < list.length; i++) {
-        Map<String, dynamic> map = list[i];
-        chats.add(Chat.fromJson(map));
-      }
-    }
-    return chats;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: FutureBuilder<List<Chat>>(
-          future: df(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return ListView.builder(
-                  itemCount: snapshot.requireData.length,
-                  itemBuilder: (context, index) {
-                    Chat chat = snapshot.requireData[index];
-                    return ListTile(
-                      onTap: () {
-                        context.go("/chats/chat");
-                      },
-                      title: Text(
-                        chat.interlocutor,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      leading: const CircleAvatar(
-                        backgroundImage:
-                            AssetImage("assets/images/doctor_image.png"),
-                        //todo можно добавить фото-заглушку, если у доктора не будет аватарки
-                        backgroundColor: Colors.deepOrange,
-                      ),
-                      subtitle: Text(
-                        chat.lastText,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: Color(0xFF616161),
-                        ),
-                      ),
-                      trailing: Column(
-                        children: [
-                          Text(
-                            chat.lastDate,
-                            style: const TextStyle(
-                              color: Color(0xFF616161),
-                            ),
-                          ),
-                          Text(
-                            chat.lastDate,
-                            style: const TextStyle(
-                              color: Color(0xFF616161),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  });
-            } else if (snapshot.hasError) {
-              print("Ошибка!!!");
-              print(snapshot.error);
-              print(snapshot.stackTrace);
-            } else {
-              return const Center(child: CircularProgressIndicator());
-            }
-            //todo подумать что тут возвращать
-            return Text("ds");
-
-          }),
     );
   }
 }
