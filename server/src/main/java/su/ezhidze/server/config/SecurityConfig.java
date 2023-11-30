@@ -47,7 +47,7 @@ public class SecurityConfig {
                         .requestMatchers("/chats").permitAll()
                         .requestMatchers("/addUser/**").permitAll()
                         .requestMatchers("/deleteUser/**").permitAll()
-                        .anyRequest().permitAll()
+                        .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);

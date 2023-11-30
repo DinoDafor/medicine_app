@@ -11,10 +11,10 @@ import su.ezhidze.server.service.ChatService;
 @Setter
 public class Message {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Chat chat;
 
     private String messageText;
