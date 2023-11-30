@@ -39,14 +39,18 @@ public class ChatClient {
         webSocketHttpHeaders.add("Authorization", "Bearer " + in.readLine());
         StompSession session = stompClient.connect(url, webSocketHttpHeaders, sessionHandler).get();
 
+        System.out.println("Our email: ");
+        String email = in.readLine();
+        System.out.println("Chat id: ");
+        Integer chatID = Integer.valueOf(in.readLine());
         for (; ; ) {
-            System.out.println("Our email: ");
-            String email = in.readLine();
-            System.out.println("Chat id: ");
-            Integer chatID = Integer.valueOf(in.readLine());
-            System.out.println("Message: ");
-            String message = in.readLine();
-            Message msg = new Message(email, chatID, message);
+            String line = in.readLine();
+            if (line == null) break;
+            if (line.isEmpty()) continue;
+            InputMessageModel msg = new InputMessageModel();
+            msg.setChatId(chatID);
+            msg.setSenderSubject(email);
+            msg.setMessageText(line);
             session.send("/app/private-chat", msg);
         }
     }
@@ -55,12 +59,12 @@ public class ChatClient {
 
         @Override
         public Type getPayloadType(StompHeaders headers) {
-            return Message.class;
+            return InputMessageModel.class;
         }
 
         @Override
         public void handleFrame(StompHeaders headers, Object payload) {
-            Message msg = (Message) payload;
+            InputMessageModel msg = (InputMessageModel) payload;
             System.out.println("Received : " + msg.getMessageText() + " from : " + msg.getSenderSubject());
         }
 

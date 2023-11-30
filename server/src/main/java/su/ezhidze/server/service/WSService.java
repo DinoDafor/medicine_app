@@ -29,15 +29,8 @@ public class WSService {
         for (User user : chat.getUsers()) {
             if (user.getIsOnline() /*&& !Objects.equals(user.getEmail(), message.getSenderSubject())*/) {
                 messagingTemplate.convertAndSendToUser(user.getUUID(), "/topic/private-messages", message);
-                messagingTemplate.convertAndSend("/topic/messages", message);
             }
         }
 //        chatService.addMessage(chat.getId(), new Message(message, chatService));
-    }
-
-    public void notifyFrontend(final String text) {
-        Message message = new Message();
-        message.setMessageText("123");
-        messagingTemplate.convertAndSend("/topic/messages", message);
     }
 }
