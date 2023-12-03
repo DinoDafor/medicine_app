@@ -24,11 +24,11 @@ public class ChatClient {
     public static void main(String args[]) throws Exception {
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
-        String url = "ws://localhost:8080/chat";
+        String url = "ws://ezhidze.su:8080/chat"; //Url для подключения к серверу
         WebSocketClient client = new StandardWebSocketClient();
         List<Transport> transports = new ArrayList<>(1);
         transports.add(new WebSocketTransport(client));
-        SockJsClient sockJsClient = new SockJsClient(transports);
+        SockJsClient sockJsClient = new SockJsClient(transports); //Создаём sockJs клиент
 
         WebSocketStompClient stompClient = new WebSocketStompClient(sockJsClient);
         stompClient.setMessageConverter(new MappingJackson2MessageConverter());
@@ -36,8 +36,8 @@ public class ChatClient {
         StompSessionHandler sessionHandler = new MyStompSessionHandler();
         WebSocketHttpHeaders webSocketHttpHeaders = new WebSocketHttpHeaders();
         System.out.println("jwt token:");
-        webSocketHttpHeaders.add("Authorization", "Bearer " + in.readLine());
-        StompSession session = stompClient.connect(url, webSocketHttpHeaders, sessionHandler).get();
+        webSocketHttpHeaders.add("Authorization", "Bearer " + in.readLine()); //Добавляем хедер с токеном
+        StompSession session = stompClient.connect(url, webSocketHttpHeaders, sessionHandler).get(); //Присоединяемся к серверу
 
         System.out.println("Our email: ");
         String email = in.readLine();
@@ -47,11 +47,11 @@ public class ChatClient {
             String line = in.readLine();
             if (line == null) break;
             if (line.isEmpty()) continue;
-            InputMessageModel msg = new InputMessageModel();
+            InputMessageModel msg = new InputMessageModel(); //Создаем объект класса сообщений и инициализируем его поля
             msg.setChatId(chatID);
             msg.setSenderSubject(email);
             msg.setMessageText(line);
-            session.send("/app/private-chat", msg);
+            session.send("/app/private-chat", msg); //Отправляем сообщение на сервер в чат
         }
     }
 
@@ -71,7 +71,7 @@ public class ChatClient {
         @Override
         public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
             session.subscribe("/topic/messages", this);
-            session.subscribe("/user/topic/private-messages", this);
+            session.subscribe("/user/topic/private-messages", this); //Подписываемся на получение сообщений
         }
     }
 }

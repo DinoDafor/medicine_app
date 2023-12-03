@@ -16,11 +16,19 @@ import su.ezhidze.server.repository.PatientRepository;
 import su.ezhidze.server.repository.UserRepository;
 import su.ezhidze.server.validator.Validator;
 
+import java.util.Map;
+
 @Service
 public class UserService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PatientRepository patientRepository;
+
+    @Autowired
+    private DoctorRepository doctorRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -47,5 +55,20 @@ public class UserService implements UserDetailsService {
 
     public User loadUserByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(() -> new AuthenticationFailException("User not found"));
+    }
+
+    public User patchUser(User user, Map<String, Object> fields) {
+        if (fields.get("firstName") != null) user.setFirstName((String) fields.get("firstName"));
+        if (fields.get("lastName") != null) user.setLastName((String) fields.get("lastName"));
+        if (fields.get("email") != null) {
+            if (patientRepository.findByEmail((String) fields.get("email")).isPresent() ||
+                    doctorRepository.findByEmail((String) fields.get("email")).isPresent()) {
+                throw new DuplicateEntryException("This email is already associated with an account.");
+            }
+            user.setEmail((String) fields.get("email"));
+        }
+        if (fields.get("password") != null) user.setPassword((String) fields.get("password"));
+
+        return user;
     }
 }

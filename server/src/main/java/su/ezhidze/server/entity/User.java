@@ -48,7 +48,6 @@ public class User {
         lastName = userRegistrationModel.getLastName();
         email = userRegistrationModel.getEmail();
         password = userRegistrationModel.getPassword();
-        role = userRegistrationModel.getRole();
         isOnline = false;
     }
 }

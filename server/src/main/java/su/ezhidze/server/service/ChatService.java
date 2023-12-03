@@ -9,6 +9,7 @@ import su.ezhidze.server.exception.RecordNotFoundException;
 import su.ezhidze.server.model.ChatModel;
 import su.ezhidze.server.repository.ChatRepository;
 import su.ezhidze.server.repository.DoctorRepository;
+import su.ezhidze.server.repository.MessageRepository;
 import su.ezhidze.server.repository.PatientRepository;
 
 import java.util.ArrayList;
@@ -26,6 +27,9 @@ public class ChatService {
     @Autowired
     private DoctorRepository doctorRepository;
 
+    @Autowired
+    private MessageRepository messageRepository;
+
     public ChatModel addNewChat() {
         return new ChatModel(chatRepository.save(new Chat()));
     }
@@ -38,7 +42,7 @@ public class ChatService {
         return new ArrayList<>(((Collection<Chat>) chatRepository.findAll()).stream().map(ChatModel::new).toList());
     }
 
-    public ChatModel addUser(Integer chatId, Integer userId, String role) {
+    public ChatModel joinUser(Integer chatId, Integer userId, String role) {
         Chat chat = chatRepository.findById(chatId).orElseThrow(() -> new RecordNotFoundException("Chat not found"));
         User user = new User();
 
@@ -76,8 +80,9 @@ public class ChatService {
         return new ChatModel(chatRepository.save(chat));
     }
 
-    public ChatModel deleteMessage(Integer chatId, final Message message) {
+    public ChatModel deleteMessage(Integer chatId, Integer messageId) {
         Chat chat = chatRepository.findById(chatId).orElseThrow(() -> new RecordNotFoundException("Chat not found"));
+        Message message = messageRepository.findById(messageId).orElseThrow(() -> new RecordNotFoundException("Message not found"));
 
         chat.getMessages().remove(message);
 

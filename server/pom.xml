@@ -9,8 +9,8 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>su.ezhidze</groupId>
-    <artifactId>server</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <artifactId>medAppServer</artifactId>
+    <version>1.1.2</version>
     <name>server</name>
     <description>Medicine app server</description>
     <properties>

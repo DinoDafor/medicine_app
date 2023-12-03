@@ -31,5 +31,6 @@ public class Patient extends User {
         contactNumber = patientRegistrationModel.getContactNumber();
         address = patientRegistrationModel.getAddress();
         otherRelevantInfo = patientRegistrationModel.getOtherRelevantInfo();
+        super.setRole("PATIENT");
     }
 }

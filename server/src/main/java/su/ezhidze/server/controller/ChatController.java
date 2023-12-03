@@ -4,15 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import su.ezhidze.server.exception.ExceptionBodyBuilder;
 import su.ezhidze.server.exception.RecordNotFoundException;
+import su.ezhidze.server.model.ChatModel;
 import su.ezhidze.server.model.InputMessageModel;
 import su.ezhidze.server.service.ChatService;
 import su.ezhidze.server.service.WSService;
@@ -58,7 +55,7 @@ public class ChatController {
     @GetMapping(path = "/chats", params = {"id"})
     public ResponseEntity getChats(@RequestParam Integer id) {
         try {
-            return ResponseEntity.ok(chatService.getChatById(id));
+            return ResponseEntity.ok(new ChatModel(chatService.getChatById(id)));
         } catch (RecordNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ExceptionBodyBuilder.build(HttpStatus.NOT_FOUND.value(), e.getMessage()));
         } catch (Exception e) {
@@ -66,10 +63,10 @@ public class ChatController {
         }
     }
 
-    @PutMapping(path = "/addUser")
+    @PutMapping(path = "/joinUser")
     public ResponseEntity addUser(@RequestParam Integer chatId, @RequestParam Integer userId, @RequestParam String role) {
         try {
-            return ResponseEntity.ok(chatService.addUser(chatId, userId, role));
+            return ResponseEntity.ok(chatService.joinUser(chatId, userId, role));
         } catch (RecordNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ExceptionBodyBuilder.build(HttpStatus.NOT_FOUND.value(), e.getMessage()));
         } catch (Exception e) {
@@ -81,6 +78,17 @@ public class ChatController {
     public ResponseEntity deleteUser(@RequestParam Integer chatId, @RequestParam Integer userId, @RequestParam String role) {
         try {
             return ResponseEntity.ok(chatService.deleteUser(chatId, userId, role));
+        } catch (RecordNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ExceptionBodyBuilder.build(HttpStatus.NOT_FOUND.value(), e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(ExceptionBodyBuilder.build(HttpStatus.BAD_REQUEST.value(), e.getMessage()));
+        }
+    }
+
+    @PutMapping(path = "/deleteMessage")
+    public ResponseEntity deleteMessage(@RequestParam Integer chatId, @RequestParam Integer messageId) {
+        try {
+            return ResponseEntity.ok(chatService.deleteMessage(chatId, messageId));
         } catch (RecordNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ExceptionBodyBuilder.build(HttpStatus.NOT_FOUND.value(), e.getMessage()));
         } catch (Exception e) {

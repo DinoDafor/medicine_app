@@ -33,7 +33,4 @@ public class UserRegistrationModel {
     @Pattern(regexp = "(?=\\S+$).+", message = "No whitespace allowed in the entire password")
     @Pattern(regexp = ".{8,}.+", message = "password should contain at least 8 characters")
     private String password;
-
-    @NotNull(message = "role cannot be null")
-    private String role;
 }

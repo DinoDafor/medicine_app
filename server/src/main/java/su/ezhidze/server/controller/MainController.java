@@ -34,13 +34,6 @@ public class MainController {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private PatientService patientService;
-
-    @Autowired
-    private DoctorService doctorService;
-
     public MainController(AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
@@ -65,46 +58,9 @@ public class MainController {
                     authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationModel.getEmail(), authenticationModel.getPassword()));
             String token = jwtUtil.createToken(userService.loadUserByEmail(authenticationModel.getEmail()));
             Map<String, Object> response = new java.util.HashMap<>(Map.of("token:", token));
-            if (Objects.equals(authenticationModel.getRole(), "USER")) {
-                response.putAll((new UserResponseModel(userService.loadUserByEmail(authenticationModel.getEmail()))).toMap());
-            } else if (Objects.equals(authenticationModel.getRole(), "PATIENT")) {
-                response.putAll((new PatientResponseModel(patientService.loadPatientByEmail(authenticationModel.getEmail()))).toMap());
-            } else if (Objects.equals(authenticationModel.getRole(), "DOCTOR")) {
-                response.putAll((new DoctorResponseModel(doctorService.loadDoctorByEmail(authenticationModel.getEmail()))).toMap());
-            }
+            response.putAll((new UserResponseModel(userService.loadUserByEmail(authenticationModel.getEmail()))).toMap());
             return ResponseEntity.ok(response);
         } catch (BadArgumentException e) {
-            return ResponseEntity.internalServerError().body(ExceptionBodyBuilder.build(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(ExceptionBodyBuilder.build(HttpStatus.BAD_REQUEST.value(), e.getMessage()));
-        }
-    }
-
-    @GetMapping(path = "/securityTest")
-    public ResponseEntity securityTest() {
-        try {
-            return ResponseEntity.ok("Security success!!!");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
-    }
-
-    @PostMapping(path = "/patientRegistration")
-    public ResponseEntity addNewPatient(@RequestBody PatientRegistrationModel patientRegistrationModel) {
-        try {
-            return ResponseEntity.ok(patientService.addNewPatient(patientRegistrationModel));
-        } catch (DuplicateEntryException | BadArgumentException e) {
-            return ResponseEntity.internalServerError().body(ExceptionBodyBuilder.build(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(ExceptionBodyBuilder.build(HttpStatus.BAD_REQUEST.value(), e.getMessage()));
-        }
-    }
-
-    @PostMapping(path = "/doctorRegistration")
-    public ResponseEntity addNewDoctor(@RequestBody DoctorRegistrationModel doctorRegistrationModel) {
-        try {
-            return ResponseEntity.ok(doctorService.addNewDoctor(doctorRegistrationModel));
-        } catch (DuplicateEntryException | BadArgumentException e) {
             return ResponseEntity.internalServerError().body(ExceptionBodyBuilder.build(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(ExceptionBodyBuilder.build(HttpStatus.BAD_REQUEST.value(), e.getMessage()));

@@ -13,7 +13,4 @@ public class AuthenticationModel {
 
     @NotNull(message = "Password cannot be null")
     private String password;
-
-    @NotNull(message = "Role cannot be null")
-    private String role;
 }
