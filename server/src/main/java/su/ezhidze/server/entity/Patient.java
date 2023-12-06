@@ -1,9 +1,14 @@
 package su.ezhidze.server.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
 import su.ezhidze.server.model.PatientRegistrationModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -20,8 +25,12 @@ public class Patient extends User {
 
     private String otherRelevantInfo;
 
+    @OneToMany(fetch = FetchType.EAGER)
+    private List<MedicalRecord> medicalRecords;
+
     public Patient() {
         otherRelevantInfo = "";
+        medicalRecords = new ArrayList<>();
     }
 
     public Patient(final PatientRegistrationModel patientRegistrationModel) {
@@ -31,6 +40,7 @@ public class Patient extends User {
         contactNumber = patientRegistrationModel.getContactNumber();
         address = patientRegistrationModel.getAddress();
         otherRelevantInfo = patientRegistrationModel.getOtherRelevantInfo();
+        medicalRecords = new ArrayList<>();
         super.setRole("PATIENT");
     }
 }

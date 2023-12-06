@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import su.ezhidze.server.entity.Patient;
 
+import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -18,6 +19,8 @@ public class PatientResponseModel extends UserResponseModel {
 
     private String address;
 
+    private List<MedicalRecordResponseModel> medicalRecords;
+
     private String otherRelevantInfo;
 
     public PatientResponseModel(final Patient patient) {
@@ -26,6 +29,7 @@ public class PatientResponseModel extends UserResponseModel {
         gender = patient.getGender();
         contactNumber = patient.getContactNumber();
         address = patient.getAddress();
+        medicalRecords = patient.getMedicalRecords().stream().map(MedicalRecordResponseModel::new).toList();
         otherRelevantInfo = patient.getOtherRelevantInfo();
     }
 
@@ -40,6 +44,7 @@ public class PatientResponseModel extends UserResponseModel {
                 "gender", gender,
                 "contactNumber", contactNumber,
                 "address", address,
+                "medicalRecords", medicalRecords,
                 "otherRelevantInfo", otherRelevantInfo);
     }
 }

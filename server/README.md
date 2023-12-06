@@ -206,6 +206,45 @@
 
   Пример: http://ezhidze.su:8080/deleteMessage?chatId=1&messageId=152
 
+### Medical records controller - http://ezhidze.su:8080/medApp/medicalRecords
+
+* #### http://ezhidze.su:8080/medApp/medicalRecords
+  GetMapping, вернёт список всех записей
+
+* #### http://ezhidze.su:8080/medApp/medicalRecords
+  GetMapping, вернёт список всех записей
+
+  Параметры: **Integer id**
+
+* #### http://ezhidze.su:8080/medApp/medicalRecords/add
+  PostMapping, добавить новую запись~~~~
+
+  Json тело запроса должно содержать поля:
+  * Integer patientId
+  * Integer doctorId
+  * String recordType
+  * String messageContent
+
+  Пример: 
+  `{
+  "patientId": 103,
+  "doctorId": 102,
+  "recordType": "Lab Results",
+  "messageContent": "Negotive"
+  }`
+
+* #### http://ezhidze.su:8080/medApp/medicalRecords/patch
+  PatchMapping, изменить запись
+
+  Параметры: **Integer id**
+
+  Json тело запроса должно содержать те поля, которые вы хотите изменить
+
+* #### http://ezhidze.su:8080/medApp/medicalRecords/delete
+  DeleteMapping, удалить запись
+
+  Параметры: **Integer id**
+
 # WebSockets
 
 ### ws://ezhidze.su:8080/chat

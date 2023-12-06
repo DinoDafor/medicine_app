@@ -3,6 +3,7 @@ package su.ezhidze.server.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import su.ezhidze.server.entity.MedicalRecord;
 import su.ezhidze.server.entity.Patient;
 import su.ezhidze.server.exception.AuthenticationFailException;
 import su.ezhidze.server.exception.DuplicateEntryException;
@@ -69,5 +70,11 @@ public class PatientService {
 
     public Patient loadPatientByEmail(String email) {
         return patientRepository.findByEmail(email).orElseThrow(() -> new AuthenticationFailException("Patient not found"));
+    }
+
+    public void addMedicalRecord(Integer patientId, MedicalRecord medicalRecord) {
+        Patient patient = patientRepository.findById(patientId).orElseThrow(() -> new RecordNotFoundException("Patient not found"));
+        patient.getMedicalRecords().add(medicalRecord);
+        new PatientResponseModel(patientRepository.save(patient));
     }
 }
