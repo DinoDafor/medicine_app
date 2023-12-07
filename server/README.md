@@ -13,7 +13,7 @@
   Json тело запроса должно содержать поля:
   * String firstName
   * String lastName
-  * String String email
+  * String email
   * String password
   * String specialization
   * String contactNumber
@@ -94,7 +94,7 @@
   Json тело запроса должно содержать поля:
     * String firstName
     * String lastName
-    * String String email
+    * String email
     * String password
     * String dateOfBirth
     * String gender
@@ -176,7 +176,7 @@
 
     GetMapping, получить чат по id
 
-    Параметры: **Integer id**~~~~
+    Параметры: **Integer id**
 
     Пример: http://ezhidze.su:8080/chats?id=0
 * #### http://ezhidze.su:8080/addChat 
