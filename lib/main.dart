@@ -37,8 +37,8 @@ final GoRouter _router = GoRouter(routes: [
               GoRoute(
                   path: 'chat',
                   builder: (BuildContext context, GoRouterState state) {
-                    String interlocutor = state.extra as String;
-                    return ChatWithUser(interlocutor: interlocutor);
+                    int chatId = int.parse(state.extra.toString());
+                    return ChatWithUser(chatId: chatId);
                   })
             ]),
       ]),

@@ -25,19 +25,19 @@ class ChatsDB {
         [interlocutor, lastText, lastDate]);
   }
 
-  Future<List<Chat>> fetchAll() async {
-    final database = await DatabaseService().database;
+  // Future<List<Chat>> fetchAll() async {
+  //   final database = await DatabaseService().database;
+  //
+  //   final chats = await database.rawQuery('SELECT * from $tableName');
+  //   return chats.map((chat) => Chat.fromSqfliteDatabase(chat)).toList();
+  // }
 
-    final chats = await database.rawQuery('SELECT * from $tableName');
-    return chats.map((chat) => Chat.fromSqfliteDatabase(chat)).toList();
-  }
-
-  Future<Chat> fetchById(int id) async {
-    final database = await DatabaseService().database;
-    final chat =
-        await database.rawQuery('SELECT * from $tableName WHERE id = ?', [id]);
-    return Chat.fromSqfliteDatabase(chat.first);
-  }
+  // Future<Chat> fetchById(int id) async {
+  //   final database = await DatabaseService().database;
+  //   final chat =
+  //       await database.rawQuery('SELECT * from $tableName WHERE id = ?', [id]);
+  //   return Chat.fromSqfliteDatabase(chat.first);
+  // }
 
   // Future<int> update({required int id, String? title}) async {
   //   final database = await DatabaseService().database;

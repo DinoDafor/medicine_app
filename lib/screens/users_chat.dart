@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -5,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:medicine_app/models/ChatNotifier.dart';
 import 'package:provider/provider.dart';
 import '../models/chat_model.dart';
+import '../token.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -47,13 +50,16 @@ class ScrollableChats extends StatelessWidget {
     Dio dio = Dio();
     List<Chat> chats = [];
     List<dynamic> list = [];
-
-    var response = await dio.get('http://192.168.0.14:3000/chatsCards');
+    Options options = Options(
+        headers: {HttpHeaders.authorizationHeader: 'Bearer ${Token.token}'});
+    var response = await dio
+        .get('https://5lzxc7kx-8000.euw.devtunnels.ms/chats', options: options);
     if (response.statusCode == 200) {
-      list = response.data;
-      for (int i = 0; i < list.length; i++) {
-        Map<String, dynamic> map = list[i];
-        chats.add(Chat.fromJson(map));
+      List<dynamic> rawData = response.data;
+      List<Map<String, dynamic>> chatData =
+          List<Map<String, dynamic>>.from(rawData);
+      for (var chat in chatData) {
+        chats.add(Chat.fromJson(chat));
       }
     }
     return chats;
@@ -74,11 +80,10 @@ class ScrollableChats extends StatelessWidget {
                       builder: (context, chatModel, child) {
                         return ListTile(
                           onTap: () {
-                            context.go("/chats/chat",
-                                extra: chat.interlocutor);
+                            context.go("/chats/chat", extra: chat.chatId);
                           },
                           title: Text(
-                            chat.interlocutor,
+                            chat.otherUserName,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
@@ -92,7 +97,7 @@ class ScrollableChats extends StatelessWidget {
                             backgroundColor: Colors.deepOrange,
                           ),
                           subtitle: Text(
-                            chat.lastText,
+                            chat.lastMessage.content,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
@@ -102,17 +107,18 @@ class ScrollableChats extends StatelessWidget {
                           trailing: Column(
                             children: [
                               Text(
-                                chat.lastDate,
+
+                                chat.lastMessage.timestamp,
                                 style: const TextStyle(
                                   color: Color(0xFF616161),
                                 ),
                               ),
-                              Text(
-                                chat.lastDate,
-                                style: const TextStyle(
-                                  color: Color(0xFF616161),
-                                ),
-                              ),
+                              // Text(
+                              //   chat.lastDate,
+                              //   style: const TextStyle(
+                              //     color: Color(0xFF616161),
+                              //   ),
+                              // ),
                             ],
                           ),
                         );

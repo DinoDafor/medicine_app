@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:http/http.dart' as http;
+import 'package:medicine_app/token.dart';
 
 class AuthenticationScreen extends StatefulWidget {
   const AuthenticationScreen({super.key});
@@ -37,114 +37,140 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextFormField(
-                        //todo доделать валидацию по почте
-                        // validator: (value) {
-                        //   if (value != null) {
-                        //     if (EmailValidator.validate(value)) {
-                        //       return null;
-                        //     } else {
-                        //       return "Email is not valide";
-                        //     }
-                        //   }
-                        // },
-                        controller: _emailController,
-                        decoration: InputDecoration(
-                          prefixIcon: Container(
-                            margin: const EdgeInsets.only(right: 10),
-                            child: const Icon(Icons.alternate_email),
-                          ),
-                          prefixIconConstraints:
-                              const BoxConstraints(minWidth: 0, minHeight: 0),
-                          hintText: "Email",
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextFormField(
-                        controller: _passwordController,
-                        validator: (value) {
-                          //todo добавить валидацию пароля, проверку регистров, длины и так далее
-                          if (value == null || value.isEmpty) {
-                            return 'Password can not be empty';
-                          }
-                          return null;
-                        },
-                        decoration: InputDecoration(
-                          prefixIconConstraints: const BoxConstraints(
-                            minHeight: 0,
-                            minWidth: 0,
-                          ),
-                          prefixIcon: Container(
-                              margin: const EdgeInsets.only(right: 10),
-                              child: const Icon(Icons.shield)),
-                          suffixIcon: const Text(
-                            "Забыли пароль?",
-                            style: TextStyle(
-                                color: Color(0xFF0EBE7E),
-                                fontWeight: FontWeight.bold),
-                          ),
-                          suffixIconConstraints:
-                              const BoxConstraints(minWidth: 0, minHeight: 0),
-                          hintText: "Пароль",
-                        ),
-                        obscureText: true,
-                      ),
-                    ),
-                    ElevatedButton(
-                      onPressed: () async {
-                        if (_formKey.currentState!.validate()) {
-                          var response =
-                              await dio.post('https://httpbin.org/post', data: {
-                            "username": _emailController.text.trim(),
-                            "password": _passwordController.text.trim(),
-                          });
-                          if (response.statusCode == 200) {
-                            context.go('/chats');
-                          }
-                          //todo если другой статус код, то показываем, что не пускает в аккаунт else if () {}
-                        }
-                      },
-                      style: ButtonStyle(
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                                RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18.0),
-                        )),
-                      ),
-                      child: const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 20),
-                        child: Text("Авторизироваться"),
-                      ),
-                    ),
+                    buildEmailField(),
+                    buildPasswordField(),
+                    buildAuthButton(context),
                   ],
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    "Вы у нас впервые?",
-                    style: TextStyle(
-                      fontSize: 17,
-                    ),
-                  ),
-                  TextButton(
-                      onPressed: () => context.go('/registration'),
-                      child: const Text(
-                        "Зарегистрируйтесь",
-                        style: TextStyle(
-                          fontSize: 17,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ))
-                ],
-              ),
+              buildBottomRow(context),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  ElevatedButton buildAuthButton(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () async {
+        if (_formKey.currentState!.validate()) {
+
+          var formData = FormData.fromMap({
+            "username": _emailController.text.trim(),
+            "password": _passwordController.text.trim(),
+            "grant_type":'',
+            "scope": '',
+            "client_id": '',
+            "client_secret": '',
+          });
+         var response = await dio.post( 'https://5lzxc7kx-8000.euw.devtunnels.ms/auth/login', data: formData);
+          if (response.statusCode == 200) {
+            Token.token = response.data["access_token"];
+            context.go('/chats');
+          } else if (response.statusCode == 400) {
+//todo обработать
+            print("Ошибка 400: ${response.data}");
+            //"detail": "LOGIN_BAD_CREDENTIALS"
+          } else if (response.statusCode == 422) {
+            print("Ошибка 422: ${response.data}");
+//todo обработать
+          }
+        }
+      },
+      style: ButtonStyle(
+        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(18.0),
+        )),
+      ),
+      child: const Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20),
+        child: Text("Авторизироваться"),
+      ),
+    );
+  }
+
+  Row buildBottomRow(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text(
+          "Вы у нас впервые?",
+          style: TextStyle(
+            fontSize: 17,
+          ),
+        ),
+        TextButton(
+            onPressed: () => context.go('/registration'),
+            child: const Text(
+              "Зарегистрируйтесь",
+              style: TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.bold,
+              ),
+            ))
+      ],
+    );
+  }
+
+  Padding buildPasswordField() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextFormField(
+        controller: _passwordController,
+        validator: (value) {
+          //todo добавить валидацию пароля, проверку регистров, длины и так далее
+          if (value == null || value.isEmpty) {
+            return 'Password can not be empty';
+          }
+          return null;
+        },
+        decoration: InputDecoration(
+          prefixIconConstraints: const BoxConstraints(
+            minHeight: 0,
+            minWidth: 0,
+          ),
+          prefixIcon: Container(
+              margin: const EdgeInsets.only(right: 10),
+              child: const Icon(Icons.shield)),
+          suffixIcon: const Text(
+            "Забыли пароль?",
+            style: TextStyle(
+                color: Color(0xFF0EBE7E), fontWeight: FontWeight.bold),
+          ),
+          suffixIconConstraints:
+              const BoxConstraints(minWidth: 0, minHeight: 0),
+          hintText: "Пароль",
+        ),
+        obscureText: true,
+      ),
+    );
+  }
+
+  Padding buildEmailField() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextFormField(
+        //todo доделать валидацию по почте
+        // validator: (value) {
+        //   if (value != null) {
+        //     if (EmailValidator.validate(value)) {
+        //       return null;
+        //     } else {
+        //       return "Email is not valide";
+        //     }
+        //   }
+        // },
+        controller: _emailController,
+        decoration: InputDecoration(
+          prefixIcon: Container(
+            margin: const EdgeInsets.only(right: 10),
+            child: const Icon(Icons.alternate_email),
+          ),
+          prefixIconConstraints:
+              const BoxConstraints(minWidth: 0, minHeight: 0),
+          hintText: "Email",
         ),
       ),
     );

@@ -8,6 +8,8 @@ import 'package:medicine_app/models/Message.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import '../models/chat_model.dart';
+import '../token.dart';
 import 'camera_screen.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/status.dart' as status;
@@ -15,9 +17,9 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import '../models/ChatNotifier.dart';
 
 class ChatWithUser extends StatefulWidget {
-final String interlocutor;
+  final int chatId;
 
-  const ChatWithUser({super.key, required this.interlocutor});
+  const ChatWithUser({super.key, required this.chatId});
 
   @override
   State<ChatWithUser> createState() => _ChatWithUserState();
@@ -25,11 +27,13 @@ final String interlocutor;
 
 class _ChatWithUserState extends State<ChatWithUser> {
   //todo не сохраняется чат, надо сделать
-@override
+
+  @override
   void initState() {
     // TODO: implement initState
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,8 +49,8 @@ class _ChatWithUserState extends State<ChatWithUser> {
             context.go("/chats");
           },
         ),
-        title:  Text(
-         widget.interlocutor,
+        title: Text(
+          widget.chatId.toString(),
           style: const TextStyle(
               color: Color(0xFF212121),
               fontWeight: FontWeight.bold,
@@ -109,7 +113,7 @@ class _ChatWithUserState extends State<ChatWithUser> {
           ),
         ],
       ),
-      body: ScrollableChat(interlocutor: widget.interlocutor),
+      body: ScrollableChat(chatId: widget.chatId),
     );
   }
 
@@ -125,9 +129,9 @@ class _ChatWithUserState extends State<ChatWithUser> {
 }
 
 class ScrollableChat extends StatefulWidget {
-  final String interlocutor;
+  final int chatId;
 
-  const ScrollableChat({super.key, required this.interlocutor});
+  const ScrollableChat({super.key, required this.chatId});
 
   @override
   State<ScrollableChat> createState() => _ScrollableChatState();
@@ -135,14 +139,14 @@ class ScrollableChat extends StatefulWidget {
 
 class _ScrollableChatState extends State<ScrollableChat> {
   final TextEditingController _controller = TextEditingController();
-  final String userOwner = 'me';
+  final int userOwner = 13;
   Dio dio = Dio();
   final List<Message> _messages = [];
 
   //todo сделать запрос на получение всех сообщений с доктором
 
   final _channel = WebSocketChannel.connect(
-    Uri.parse('wss://echo.websocket.events'),
+    Uri.parse('wss://echo.websocket.events/'),
   );
 
   final ItemScrollController _scrollController = ItemScrollController();
@@ -156,16 +160,18 @@ class _ScrollableChatState extends State<ScrollableChat> {
 
   Future<void> getMessages() async {
     //dynamic
-    var response = await dio.get('http://192.168.0.14:3000/chats',
-        queryParameters: {'interlocutor': widget.interlocutor});
+    Options options = Options(
+        headers: {HttpHeaders.authorizationHeader: 'Bearer ${Token.token}'});
+    var response = await dio.get(
+        'https://5lzxc7kx-8000.euw.devtunnels.ms/chat/${widget.chatId}',
+        options: options);
+
     if (response.statusCode == 200) {
-      List<dynamic> list = response.data;
-      Map<String, dynamic> map = list[0];
-      list = map["messages"];
-      for (int i = 0; i < list.length; i++) {
-        map = list[i];
-        print(map);
-        _messages.add(Message.fromJson(map));
+      List<dynamic> rawData = response.data;
+      List<Map<String, dynamic>> messData =
+      List<Map<String, dynamic>>.from(rawData);
+      for (var message in messData) {
+        _messages.add(Message.fromJson(message));
       }
     }
   }
@@ -220,12 +226,12 @@ class _ScrollableChatState extends State<ScrollableChat> {
                       itemCount: _messages.length,
                       itemBuilder: (context, index) {
                         return Align(
-                          alignment: _messages[index].fromUser == userOwner
+                          alignment: _messages[index].senderId == userOwner
                               ? Alignment.topRight
                               : Alignment.topLeft,
                           child: Container(
                             decoration: BoxDecoration(
-                              color: _messages[index].fromUser == userOwner
+                              color: _messages[index].senderId == userOwner
                                   ? const Color(0xFF0EBE7E)
                                   : const Color(0xFFF5F5F5),
                               borderRadius: BorderRadius.circular(15),
@@ -236,9 +242,9 @@ class _ScrollableChatState extends State<ScrollableChat> {
                             child: Padding(
                               padding: const EdgeInsets.all(10.0),
                               child: Text(
-                                _messages[index].message,
+                                _messages[index].content,
                                 style: TextStyle(
-                                  color: _messages[index].fromUser == userOwner
+                                  color: _messages[index].senderId == userOwner
                                       ? const Color(0xFFFFFFFF)
                                       : const Color(0xFF212121),
                                 ),
@@ -304,9 +310,18 @@ class _ScrollableChatState extends State<ScrollableChat> {
                 onPressed: () {
                   if (_controller.text.isNotEmpty) {
                     _channel.sink.add(jsonEncode(Message(
-                        message: _controller.text.trim(),
-                        fromUser: userOwner,
-                        dateCreate: "12:00")));
+                      content: _controller.text.trim(),
+                      senderId: userOwner,
+                      timestamp: DateTime.now().toString(),
+                      isRead: false,
+                      chatId: widget.chatId,
+                      //todo пока null
+                      attachments: [],
+                      //todo я хз как айди давать
+                      id: 0,
+
+
+                    )));
                     _controller.clear();
                   }
                   // setState(() {}

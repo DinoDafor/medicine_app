@@ -14,7 +14,8 @@ class RegistrationScreen extends StatefulWidget {
 class _RegistrationScreenState extends State<RegistrationScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -41,121 +42,152 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    TextFormField(
-                      validator: (value) {
-                        if (value != null) {
-                          if (EmailValidator.validate(value)) {
-                            return null;
-                          } else {
-                            return "Email is not valide";
-                          }
-                        }
-                      },
-                      controller: _emailController,
-                      decoration: buildInputDecoration(
-                          "Email ID", 10, Icons.alternate_email),
-                    ),
-                    TextFormField(
-                      controller: _nameController,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Name can not be empty';
-                        }
-                        return null;
-                      },
-                      decoration:
-                          buildInputDecoration("Ваше имя", 10, Icons.person),
-                    ),
-                    TextFormField(
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Phone number can not be empty';
-                        }
-                        if (isMobileNumberValid(value)) {
-                          return null;
-                        } else {
-                          return "Phone number is not valide!";
-                        }
-                      },
-                      controller: _phoneNumberController,
-                      decoration: buildInputDecoration(
-                          "Номер телефона", 10, Icons.phone),
-                    ),
-                    TextFormField(
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Password can not be empty';
-                        }
-                        return null;
-                      },
-                      decoration:
-                          buildInputDecoration("Пароль", 10, Icons.shield),
-                      obscureText: true,
-                    ),
-                    TextFormField(
-                      controller: _passwordController,
-                      decoration: buildInputDecoration(
-                          "Ещё раз пароль", 10, Icons.shield),
-                      obscureText: true,
-                    ),
-                    ElevatedButton(
-                      onPressed: () async {
-                        if (_formKey.currentState!.validate()) {
-                          var response = await dio
-                              .post('http://192.168.0.14:3000/users', data: {
-                            "email": _emailController.text.trim(),
-                            //todo шифрование пароля
-                            "password": _passwordController.text.trim(),
-                            "name": _nameController.text.trim(),
-                            "phoneNumber": _phoneNumberController.text.trim(),
-                          });
-                          if (response.statusCode == 201) {
-                            context.go("/chats");
-                          }
-                        }
-                      },
-                      style: ButtonStyle(
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                                RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18.0),
-                        )),
-                      ),
-                      child: const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text("Зарегистрироваться"),
-                      ),
-                    ),
+                    buildEmailField(),
+                    buildNameField(),
+                    buildPhoneField(),
+                    buildPasswordField(),
+                    buildConfirmPasswordField(),
+                    buildRegisterButton(context),
                   ],
                 ),
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  "Вы уже регистрировались?",
-                  style: TextStyle(
-                    fontSize: 17,
-                  ),
-                ),
-                TextButton(
-                    onPressed: () => context.go("/"),
-                    child: const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text(
-                        "Войти",
-                        style: TextStyle(
-                          fontSize: 17,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ))
-              ],
-            ),
+            buttomRow(context),
           ],
         ),
       ),
+    );
+  }
+
+  TextFormField buildEmailField() {
+    return TextFormField(
+      validator: (value) {
+        if (value != null) {
+          if (EmailValidator.validate(value)) {
+            return null;
+          } else {
+            return "Email is not valide";
+          }
+        }
+      },
+      controller: _emailController,
+      decoration: buildInputDecoration("Email ID", 10, Icons.alternate_email),
+    );
+  }
+
+  TextFormField buildConfirmPasswordField() {
+    return TextFormField(
+      controller: _passwordController,
+      decoration: buildInputDecoration("Ещё раз пароль", 10, Icons.shield),
+      obscureText: true,
+    );
+  }
+
+  TextFormField buildPasswordField() {
+    return TextFormField(
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Password can not be empty';
+        }
+        return null;
+      },
+      decoration: buildInputDecoration("Пароль", 10, Icons.shield),
+      obscureText: true,
+    );
+  }
+
+  TextFormField buildPhoneField() {
+    return TextFormField(
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Phone number can not be empty';
+        }
+        if (isMobileNumberValid(value)) {
+          return null;
+        } else {
+          return "Phone number is not valide!";
+        }
+      },
+      controller: _phoneNumberController,
+      decoration: buildInputDecoration("Номер телефона", 10, Icons.phone),
+    );
+  }
+
+  TextFormField buildNameField() {
+    return TextFormField(
+      controller: _nameController,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Name can not be empty';
+        }
+        return null;
+      },
+      decoration: buildInputDecoration("Ваше имя", 10, Icons.person),
+    );
+  }
+
+  ElevatedButton buildRegisterButton(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () async {
+        if (_formKey.currentState!.validate()) {
+          var response = await dio.post(
+              'https://5lzxc7kx-8000.euw.devtunnels.ms/auth/register',
+              data: {
+                "email": _emailController.text.trim(),
+                "password": _passwordController.text.trim(),
+                "is_active": true,
+                "is_superuser": false,
+                "is_verified": false,
+                "type": "patient",
+                "phone_number": _phoneNumberController.text.trim(),
+                "image_path": "string"
+              });
+          // "name": _nameController.text.trim(),
+          if (response.statusCode == 201) {
+            context.go("/chats");
+          } else if (response.statusCode == 400) {
+        //todo обработать
+          } else if (response.statusCode == 422) {
+        //todo обработать
+          }
+        }
+      },
+      style: ButtonStyle(
+        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(18.0),
+        )),
+      ),
+      child: const Padding(
+        padding: EdgeInsets.all(8.0),
+        child: Text("Зарегистрироваться"),
+      ),
+    );
+  }
+
+  Row buttomRow(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text(
+          "Вы уже регистрировались?",
+          style: TextStyle(
+            fontSize: 17,
+          ),
+        ),
+        TextButton(
+            onPressed: () => context.go("/"),
+            child: const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text(
+                "Войти",
+                style: TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ))
+      ],
     );
   }
 
