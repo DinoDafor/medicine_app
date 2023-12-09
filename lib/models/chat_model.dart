@@ -52,5 +52,18 @@ class Message {
       senderId: json['sender_id'] ?? 0,
       attachments: json['attachments'] ?? [],
     );
+
+
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      'content': content,
+      'sender_id': senderId,
+      'timestamp': timestamp,
+      'is_read': isRead,
+      'chat_id': chatId,
+      'attachments': attachments,
+      'id': id,
+    };
   }
 }

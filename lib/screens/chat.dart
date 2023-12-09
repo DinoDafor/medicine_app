@@ -139,15 +139,18 @@ class ScrollableChat extends StatefulWidget {
 
 class _ScrollableChatState extends State<ScrollableChat> {
   final TextEditingController _controller = TextEditingController();
-  final int userOwner = 13;
+  late Future<int> fd;
+  late int userOwner = 6;
   Dio dio = Dio();
   final List<Message> _messages = [];
 
   //todo сделать запрос на получение всех сообщений с доктором
-
-  final _channel = WebSocketChannel.connect(
-    Uri.parse('wss://echo.websocket.events/'),
-  );
+//https://5lzxc7kx-8000.euw.devtunnels.ms/${chat_id}/ws/${client_id}
+//   final _channel = WebSocketChannel.connect(
+//     // Uri.parse('wss://echo.websocket.events/'),
+//     Uri.parse('https://5lzxc7kx-8000.euw.devtunnels.ms/${widget.chatId}/ws/${widget.chatId}'),
+//   );
+  late final WebSocketChannel _channel;
 
   final ItemScrollController _scrollController = ItemScrollController();
 
@@ -155,31 +158,106 @@ class _ScrollableChatState extends State<ScrollableChat> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getMessages();
+    // getMyID();
+    _channel = WebSocketChannel.connect(
+      // Uri.parse('wss://echo.websocket.events/'),
+      Uri.parse(
+          'wss://5lzxc7kx-8000.euw.devtunnels.ms/ws/${widget.chatId}'),
+    );
   }
 
-  Future<void> getMessages() async {
+  Future<void> getMyID() async {
     //dynamic
     Options options = Options(
         headers: {HttpHeaders.authorizationHeader: 'Bearer ${Token.token}'});
     var response = await dio.get(
-        'https://5lzxc7kx-8000.euw.devtunnels.ms/chat/${widget.chatId}',
+        'https://5lzxc7kx-8000.euw.devtunnels.ms/users/me',
         options: options);
+    if (response.statusCode == 200) {
+      print("ID: $userOwner");
 
+      userOwner = response.data["id"];
+    }
+    userOwner = -1;
+    //todo пустой, сделать обработку
+  }
+
+  Future<List<Message>> getMessages() async {
+    //dynamic
+    Options options = Options(
+        headers: {HttpHeaders.authorizationHeader: 'Bearer ${Token.token}'});
+    var response = await dio.get(
+        'https://5lzxc7kx-8000.euw.devtunnels.ms/chats/${widget.chatId}',
+        options: options);
     if (response.statusCode == 200) {
       List<dynamic> rawData = response.data;
       List<Map<String, dynamic>> messData =
-      List<Map<String, dynamic>>.from(rawData);
+          List<Map<String, dynamic>>.from(rawData);
       for (var message in messData) {
+        print("Message: ${message["sender_id"]}");
         _messages.add(Message.fromJson(message));
       }
+      return _messages;
+      //
     }
+    //todo пустой, сделать обработку
+    return _messages;
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
+        FutureBuilder(
+            future: Future.wait([
+              // getMyID(),
+              getMessages(),
+            ]),
+            // future: getMessages(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return CircularProgressIndicator();
+              } else if (snapshot.hasError) {
+                return Text('Ошибка: ${snapshot.error}');
+              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                return const Text('Нет старых сообщений');
+              } else {
+                return Expanded(
+                  child: ListView.builder(
+                    itemCount: _messages.length,
+                    itemBuilder: (context, index) {
+                      return Align(
+                        alignment: _messages[index].senderId == userOwner
+                            ? Alignment.topRight
+                            : Alignment.topLeft,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: _messages[index].senderId == userOwner
+                                ? const Color(0xFF0EBE7E)
+                                : const Color(0xFFF5F5F5),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          constraints: BoxConstraints(
+                            maxWidth: MediaQuery.of(context).size.width * 0.7,
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Text(
+                              _messages[index].content,
+                              style: TextStyle(
+                                color: _messages[index].senderId == userOwner
+                                    ? const Color(0xFFFFFFFF)
+                                    : const Color(0xFF212121),
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              }
+            }),
         Expanded(
           child: Consumer<ChatModel>(
             builder: (context, chatModel, child) {
@@ -203,13 +281,14 @@ class _ScrollableChatState extends State<ScrollableChat> {
                             print("Ошибка в потоке. Ошибка: ${snapshot.error}");
                           }
                           if (snapshot.hasData) {
+                            print("Data from channel: ${snapshot.data}");
                             if (snapshot.data !=
                                 'echo.websocket.events sponsored by Lob.com') {
                               _messages.add(
                                   Message.fromJson(jsonDecode(snapshot.data)));
                               // chatModel.add(
                               //     Message.fromJson(jsonDecode(snapshot.data)));
-                              _scrollToBottom(_messages);
+                              // _scrollToBottom(_messages);
                             }
                           }
                         }
@@ -220,9 +299,8 @@ class _ScrollableChatState extends State<ScrollableChat> {
                         }
                     }
 
-                    return ScrollablePositionedList.separated(
-                      itemScrollController: _scrollController,
-                      //todo проблема с тем, что надо смотреть не все сообщения, а только последние N
+                    return ListView.separated(
+                      // itemScrollController: _scrollController,
                       itemCount: _messages.length,
                       itemBuilder: (context, index) {
                         return Align(
@@ -309,6 +387,30 @@ class _ScrollableChatState extends State<ScrollableChat> {
                 ),
                 onPressed: () {
                   if (_controller.text.isNotEmpty) {
+
+                    print(Message(
+                      content: _controller.text.trim(),
+                      senderId: userOwner,
+                      timestamp: DateTime.now().toString(),
+                      isRead: false,
+                      chatId: widget.chatId,
+                      //todo пока null
+                      attachments: [],
+                      //todo я хз как айди давать
+                      id: 0,
+                    ).toJson());
+                    // print(jsonEncode(Message(
+                    //   content: _controller.text.trim(),
+                    //   senderId: userOwner,
+                    //   timestamp: DateTime.now().toString(),
+                    //   isRead: false,
+                    //   chatId: widget.chatId,
+                    //   //todo пока null
+                    //   attachments: [],
+                    //   //todo я хз как айди давать
+                    //   id: 0,
+                    // ).toJson()));
+
                     _channel.sink.add(jsonEncode(Message(
                       content: _controller.text.trim(),
                       senderId: userOwner,
@@ -319,9 +421,7 @@ class _ScrollableChatState extends State<ScrollableChat> {
                       attachments: [],
                       //todo я хз как айди давать
                       id: 0,
-
-
-                    )));
+                    ).toJson()));
                     _controller.clear();
                   }
                   // setState(() {}
