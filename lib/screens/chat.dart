@@ -159,10 +159,10 @@ class _ScrollableChatState extends State<ScrollableChat> {
     // TODO: implement initState
     super.initState();
     // getMyID();
+    // getMessages();
     _channel = WebSocketChannel.connect(
       // Uri.parse('wss://echo.websocket.events/'),
-      Uri.parse(
-          'wss://5lzxc7kx-8000.euw.devtunnels.ms/ws/${widget.chatId}'),
+      Uri.parse('wss://5lzxc7kx-8000.euw.devtunnels.ms/ws/${widget.chatId}'),
     );
   }
 
@@ -208,135 +208,147 @@ class _ScrollableChatState extends State<ScrollableChat> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        FutureBuilder(
-            future: Future.wait([
-              // getMyID(),
-              getMessages(),
-            ]),
-            // future: getMessages(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return CircularProgressIndicator();
-              } else if (snapshot.hasError) {
-                return Text('Ошибка: ${snapshot.error}');
-              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return const Text('Нет старых сообщений');
-              } else {
-                return Expanded(
-                  child: ListView.builder(
-                    itemCount: _messages.length,
-                    itemBuilder: (context, index) {
-                      return Align(
-                        alignment: _messages[index].senderId == userOwner
-                            ? Alignment.topRight
-                            : Alignment.topLeft,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: _messages[index].senderId == userOwner
-                                ? const Color(0xFF0EBE7E)
-                                : const Color(0xFFF5F5F5),
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          constraints: BoxConstraints(
-                            maxWidth: MediaQuery.of(context).size.width * 0.7,
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Text(
-                              _messages[index].content,
-                              style: TextStyle(
-                                color: _messages[index].senderId == userOwner
-                                    ? const Color(0xFFFFFFFF)
-                                    : const Color(0xFF212121),
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                );
-              }
-            }),
         Expanded(
           child: Consumer<ChatModel>(
             builder: (context, chatModel, child) {
-              return StreamBuilder(
-                  stream: _channel.stream,
+              return FutureBuilder(
+                  future: getMessages(),
                   builder: (context, snapshot) {
-                    switch (snapshot.connectionState) {
-                      case ConnectionState.waiting:
-                        {
-                          return const Center(
-                              child: CircularProgressIndicator());
-                        }
-                      case ConnectionState.none:
-                        {
-                          return const Text('ConnectionState.done');
-                        }
-                      case ConnectionState.active:
-                        {
-                          if (snapshot.hasError) {
-                            //todo добавить обработчики ошибок
-                            print("Ошибка в потоке. Ошибка: ${snapshot.error}");
-                          }
-                          if (snapshot.hasData) {
-                            print("Data from channel: ${snapshot.data}");
-                            if (snapshot.data !=
-                                'echo.websocket.events sponsored by Lob.com') {
-                              _messages.add(
-                                  Message.fromJson(jsonDecode(snapshot.data)));
-                              // chatModel.add(
-                              //     Message.fromJson(jsonDecode(snapshot.data)));
-                              // _scrollToBottom(_messages);
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Text('Ошибка: ${snapshot.error}');
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Text('Нет старых сообщений');
+                    } else {
+                      return StreamBuilder(
+                          stream: _channel.stream,
+                          builder: (context, snapshot) {
+                            switch (snapshot.connectionState) {
+                              case ConnectionState.waiting:
+                                {
+                                  return ScrollablePositionedList.separated(
+                                    itemScrollController: _scrollController,
+                                    itemCount: _messages.length,
+                                    itemBuilder: (context, index) {
+                                      return Align(
+                                        alignment:
+                                        _messages[index].senderId == userOwner
+                                            ? Alignment.topRight
+                                            : Alignment.topLeft,
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color:
+                                            _messages[index].senderId == userOwner
+                                                ? const Color(0xFF0EBE7E)
+                                                : const Color(0xFFF5F5F5),
+                                            borderRadius: BorderRadius.circular(15),
+                                          ),
+                                          constraints: BoxConstraints(
+                                            maxWidth:
+                                            MediaQuery.of(context).size.width *
+                                                0.7,
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(10.0),
+                                            child: Text(
+                                              _messages[index].content,
+                                              style: TextStyle(
+                                                color: _messages[index].senderId ==
+                                                    userOwner
+                                                    ? const Color(0xFFFFFFFF)
+                                                    : const Color(0xFF212121),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    separatorBuilder:
+                                        (BuildContext context, int index) {
+                                      return const SizedBox(
+                                        height: 5,
+                                      );
+                                    },
+                                  );
+                                }
+                              case ConnectionState.none:
+                                {
+                                  return const Text('ConnectionState.done');
+                                }
+                              case ConnectionState.active:
+                                {
+                                  if (snapshot.hasError) {
+                                    //todo добавить обработчики ошибок
+                                    print(
+                                        "Ошибка в потоке. Ошибка: ${snapshot.error}");
+                                  }
+                                  if (snapshot.hasData) {
+                                    print(
+                                        "Data from channel: ${snapshot.data}");
+                                    if (snapshot.data !=
+                                        'echo.websocket.events sponsored by Lob.com') {
+                                      _messages.add(Message.fromJson(
+                                          jsonDecode(snapshot.data)));
+                                      // chatModel.add(
+                                      //     Message.fromJson(jsonDecode(snapshot.data)));
+                                      _scrollToBottom(_messages);
+                                    }
+                                  }
+                                }
+                              case ConnectionState.done:
+                                {
+                                  //todo делать реконнект?
+                                  return const Text('ConnectionState.done');
+                                }
                             }
-                          }
-                        }
-                      case ConnectionState.done:
-                        {
-                          //todo делать реконнект?
-                          return const Text('ConnectionState.done');
-                        }
-                    }
 
-                    return ListView.separated(
-                      // itemScrollController: _scrollController,
-                      itemCount: _messages.length,
-                      itemBuilder: (context, index) {
-                        return Align(
-                          alignment: _messages[index].senderId == userOwner
-                              ? Alignment.topRight
-                              : Alignment.topLeft,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: _messages[index].senderId == userOwner
-                                  ? const Color(0xFF0EBE7E)
-                                  : const Color(0xFFF5F5F5),
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            constraints: BoxConstraints(
-                              maxWidth: MediaQuery.of(context).size.width * 0.7,
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Text(
-                                _messages[index].content,
-                                style: TextStyle(
-                                  color: _messages[index].senderId == userOwner
-                                      ? const Color(0xFFFFFFFF)
-                                      : const Color(0xFF212121),
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                      separatorBuilder: (BuildContext context, int index) {
-                        return const SizedBox(
-                          height: 5,
-                        );
-                      },
-                    );
+                            return ScrollablePositionedList.separated(
+                              itemScrollController: _scrollController,
+                              itemCount: _messages.length,
+                              itemBuilder: (context, index) {
+                                return Align(
+                                  alignment:
+                                      _messages[index].senderId == userOwner
+                                          ? Alignment.topRight
+                                          : Alignment.topLeft,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color:
+                                          _messages[index].senderId == userOwner
+                                              ? const Color(0xFF0EBE7E)
+                                              : const Color(0xFFF5F5F5),
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    constraints: BoxConstraints(
+                                      maxWidth:
+                                          MediaQuery.of(context).size.width *
+                                              0.7,
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(10.0),
+                                      child: Text(
+                                        _messages[index].content,
+                                        style: TextStyle(
+                                          color: _messages[index].senderId ==
+                                                  userOwner
+                                              ? const Color(0xFFFFFFFF)
+                                              : const Color(0xFF212121),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                              separatorBuilder:
+                                  (BuildContext context, int index) {
+                                return const SizedBox(
+                                  height: 5,
+                                );
+                              },
+                            );
+                          });
+                    }
                   });
             },
           ),
@@ -387,7 +399,6 @@ class _ScrollableChatState extends State<ScrollableChat> {
                 ),
                 onPressed: () {
                   if (_controller.text.isNotEmpty) {
-
                     print(Message(
                       content: _controller.text.trim(),
                       senderId: userOwner,
