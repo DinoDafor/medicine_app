@@ -39,12 +39,12 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/medApp/**").permitAll()
-                        .requestMatchers("/addChat").permitAll()
-                        .requestMatchers("/chats/**").permitAll()
-                        .requestMatchers("/joinUser/**").permitAll()
-                        .requestMatchers("/deleteUser/**").permitAll()
-                        .requestMatchers("/deleteMessage/**").permitAll()
+                        .requestMatchers("/registration").permitAll()
+                        .requestMatchers("/authentication").permitAll()
+                        .requestMatchers("/medApp/doctors/registration").permitAll()
+                        .requestMatchers("/medApp/doctors/authentication").permitAll()
+                        .requestMatchers("/medApp/patients/authentication").permitAll()
+                        .requestMatchers("/medApp/patients/authentication").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
