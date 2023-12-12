@@ -31,6 +31,6 @@ public class UserRegistrationModel {
     @Pattern(regexp = "(?=.*[A-Z]).+", message = "An upper case letter must occur at least once in password")
     @Pattern(regexp = "(?=.*[@#$%^&+=]).+", message = "A special character(@#$%^&+=) must occur at least once in password")
     @Pattern(regexp = "(?=\\S+$).+", message = "No whitespace allowed in the entire password")
-    @Pattern(regexp = ".{8,}.+", message = "password should contain at least 8 characters")
+    @Pattern(regexp = ".{7,}.+", message = "password should contain at least 8 characters")
     private String password;
 }
