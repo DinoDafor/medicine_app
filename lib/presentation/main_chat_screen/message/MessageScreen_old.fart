@@ -1,0 +1,185 @@
+import 'package:flutter/material.dart';
+import 'package:medicine_app/core/app_export.dart';
+import 'package:medicine_app/widgets/app_bar/appbar_leading_image.dart';
+import 'package:medicine_app/widgets/app_bar/appbar_title.dart';
+import 'package:medicine_app/widgets/app_bar/appbar_trailing_image.dart';
+import 'package:medicine_app/widgets/app_bar/custom_app_bar.dart';
+import 'package:medicine_app/widgets/custom_floating_button.dart';
+import 'package:medicine_app/widgets/custom_text_form_field.dart';
+
+// ignore_for_file: must_be_immutable
+class OnehundredsevenScreen extends StatelessWidget {
+  OnehundredsevenScreen({Key? key}) : super(key: key);
+
+  TextEditingController iconsmileComponentAdditionalIcController =
+  TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    mediaQueryData = MediaQuery.of(context);
+    return Scaffold(
+        backgroundColor: appTheme.whiteA700,
+        resizeToAvoidBottomInset: false,
+        appBar: _buildAppBar(context),
+        body: SafeArea(
+          child: Container(
+              width: double.maxFinite,
+              padding: EdgeInsets.symmetric(vertical: 35.v),
+              child: Column(mainAxisSize: MainAxisSize.min, children: [
+                SizedBox(height: 18.v),
+                Container(
+                    padding: EdgeInsets.symmetric(horizontal: 24.h),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                              padding: EdgeInsets.only(left: 66.h),
+                              child: _buildAutoLayoutHorizontal(context)),
+                          SizedBox(height: 20.v),
+                          Padding(
+                              padding: EdgeInsets.only(left: 66.h),
+                              child: _buildAutoLayoutHorizontal(context)),
+                          SizedBox(height: 20.v),
+                          Container(
+                              margin: EdgeInsets.only(right: 66.h),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 24.h, vertical: 15.v),
+                              decoration: AppDecoration.fillGray.copyWith(
+                                  borderRadius:
+                                  BorderRadiusStyle.customBorderBL20),
+                              child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Padding(
+                                        padding: EdgeInsets.only(
+                                            top: 2.v, bottom: 1.v),
+                                        child: Text("Добрый день, Маша 😁",
+                                            style: CustomTextStyles
+                                                .titleMediumGray900)),
+                                    Padding(
+                                        padding: EdgeInsets.only(
+                                            left: 22.h, top: 10.v),
+                                        child: Text("12:01",
+                                            style:
+                                            theme.textTheme.labelLarge))
+                                  ])),
+                          SizedBox(height: 20.v),
+                          Padding(
+                              padding: EdgeInsets.only(right: 66.h),
+                              child: _buildAutoLayoutHorizontal(context))
+                        ])),
+                Spacer()
+              ])),
+        ),
+        bottomNavigationBar: _buildThemeLightComponentChat(context));
+  }
+
+  /// Section Widget
+  PreferredSizeWidget _buildAppBar(BuildContext context) {
+    return CustomAppBar(
+        leadingWidth: 52.h,
+        leading: AppbarLeadingImage(
+            imagePath: ImageConstant.imgArrowLeft,
+            margin: EdgeInsets.only(left: 24.h, top: 12.v, bottom: 15.v),
+            onTap: () {
+              onTapArrowLeft(context);
+            }),
+        title: AppbarTitle(
+            text: "Виктор Комаров", margin: EdgeInsets.only(left: 16.h)),
+        actions: [
+          AppbarTrailingImage(
+              imagePath: ImageConstant.imgSearch,
+              margin: EdgeInsets.only(left: 24.h, top: 12.v, right: 15.h)),
+          AppbarTrailingImage(
+              imagePath: ImageConstant.imgIconlyLightMore,
+              margin: EdgeInsets.only(left: 20.h, top: 12.v, right: 39.h))
+        ]);
+  }
+
+  /// Section Widget
+  Widget _buildThemeLightComponentChat(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(left: 24.h, right: 24.h, bottom: 35.v),
+      child: Row(children: [
+        Expanded(
+          child: CustomTextFormField(
+              controller: iconsmileComponentAdditionalIcController,
+              hintText: "Введите сообщение...",
+              textInputAction: TextInputAction.done,
+              prefix: Container(
+                  margin: EdgeInsets.fromLTRB(20.h, 18.v, 12.h, 18.v),
+                  child: CustomImageView(
+                      imagePath: ImageConstant
+                          .imgIconsmileComponentadditionalIcons,
+                      height: 20.adaptSize,
+                      width: 20.adaptSize)),
+              prefixConstraints: BoxConstraints(maxHeight: 56.v),
+              suffix: Container(
+                  margin: EdgeInsets.fromLTRB(28.h, 18.v, 30.h, 18.v),
+                  child: CustomImageView(
+                      imagePath: ImageConstant
+                          .imgIconpaperclipComponentadditionalIcons,
+                      height: 20.adaptSize,
+                      width: 20.adaptSize)),
+              suffixConstraints: BoxConstraints(maxHeight: 56.v)),
+        ),
+        SizedBox(width: 25),
+        CustomFloatingButton(
+            height: 52,
+            width: 52,
+            backgroundColor: appTheme.tealA700,
+            child: CustomImageView(
+                imagePath: ImageConstant.imgSend, height: 26.0.v, width: 26.0.h)),
+      ]),
+    );
+  }
+
+
+  /// Common widget
+  Widget _buildAutoLayoutHorizontal(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 24.h, vertical: 13.v),
+      decoration: AppDecoration.fillTealA
+          .copyWith(borderRadius: BorderRadiusStyle.customBorderTL20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 174.h,
+            margin: EdgeInsets.only(top: 3.v),
+            child: Text(
+                "Я Маша, и я сильно обожглась 😢",
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.titleMedium!.copyWith(
+                    color: Colors.white, // Установка белого цвета для контраста
+                    height: 1.40
+                )
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(left: 29.h, top: 37.v),
+            child: Text(
+                "12:00",
+                style: CustomTextStyles.labelLargeGray300
+            ),
+          ),
+          CustomImageView(
+              imagePath: ImageConstant.imgIconDoubleCheck,
+              height: 16.adaptSize,
+              width: 16.adaptSize,
+              margin: EdgeInsets.only(left: 4.h, top: 36.v, bottom: 2.v)
+          )
+        ],
+      ),
+    );
+  }
+
+
+  /// Navigates back to the previous screen.
+  onTapArrowLeft(BuildContext context) {
+    Navigator.pop(context);
+  }
+}
