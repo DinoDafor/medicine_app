@@ -1,8 +1,8 @@
-import 'package:dio/dio.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:http/http.dart' as http;
+import 'package:medicine_app/bloc/authentication_bloc.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
@@ -19,7 +19,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  Dio dio = Dio();
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +26,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       body: Form(
         key: _formKey,
         child: Column(
-          // mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Expanded(
               child: Padding(
@@ -42,6 +40,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+                    //todo Правильно ли я сделал что декопозировал именно так поля?
                     buildEmailField(),
                     buildNameField(),
                     buildPhoneField(),
@@ -61,6 +60,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   TextFormField buildEmailField() {
     return TextFormField(
+      //todo вынести валидацию из UI
       validator: (value) {
         if (value != null) {
           if (EmailValidator.validate(value)) {
@@ -85,6 +85,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   TextFormField buildPasswordField() {
     return TextFormField(
+      //todo вынести валидацию из UI
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Password can not be empty';
@@ -98,6 +99,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   TextFormField buildPhoneField() {
     return TextFormField(
+      //todo вынести валидацию из UI
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Phone number can not be empty';
@@ -116,6 +118,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   TextFormField buildNameField() {
     return TextFormField(
       controller: _nameController,
+      //todo вынести валидацию из UI
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Name can not be empty';
@@ -129,28 +132,36 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   ElevatedButton buildRegisterButton(BuildContext context) {
     return ElevatedButton(
       onPressed: () async {
-        if (_formKey.currentState!.validate()) {
-          var response = await dio.post(
-              'https://5lzxc7kx-8000.euw.devtunnels.ms/auth/register',
-              data: {
-                "email": _emailController.text.trim(),
-                "password": _passwordController.text.trim(),
-                "is_active": true,
-                "is_superuser": false,
-                "is_verified": false,
-                "type": "patient",
-                "phone_number": _phoneNumberController.text.trim(),
-                "image_path": "string"
-              });
-          // "name": _nameController.text.trim(),
-          if (response.statusCode == 201) {
-            context.go("/chats");
-          } else if (response.statusCode == 400) {
-        //todo обработать
-          } else if (response.statusCode == 422) {
-        //todo обработать
-          }
-        }
+        BlocProvider.of<AuthenticationBloc>(context).add(AuthenticationSighUpEvent(
+            email: _emailController.text,
+            password: _passwordController.text,
+            userName: _nameController.text,
+            phoneNumber: _phoneNumberController.text));
+
+        // if (_formKey.currentState!.validate()) {
+        //   // var response = await dio.post(
+        //   //     'https://5lzxc7kx-8000.euw.devtunnels.ms/auth/register',
+        //   //     data: {
+        //   //       "email": _emailController.text.trim(),
+        //   //       "password": _passwordController.text.trim(),
+        //   //       "is_active": true,
+        //   //       "is_superuser": false,
+        //   //       "is_verified": false,
+        //   //       "type": "patient",
+        //   //       "phone_number": _phoneNumberController.text.trim(),
+        //   //       "image_path": "string"
+        //   //     });
+        //
+        //   // if (response.statusCode == 201) {
+        //   //   context.go("/chats");
+        //   // } else if (response.statusCode == 400) {
+        //   //   //todo обработать
+        //   // } else if (response.statusCode == 422) {
+        //   //   //todo обработать
+        //   // }
+        //
+        //
+        // }
       },
       style: ButtonStyle(
         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -158,9 +169,20 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           borderRadius: BorderRadius.circular(18.0),
         )),
       ),
-      child: const Padding(
-        padding: EdgeInsets.all(8.0),
-        child: Text("Зарегистрироваться"),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: BlocConsumer<AuthenticationBloc, AuthenticationState>(
+          listener: (context, state) {
+            if (state is AuthenticationSuccessState) {
+              context.go("/chats");
+            }
+          },
+          builder: (context, state) {
+            return state is AuthenticationLoadingState && state.isLoading
+                ? const Text("...")
+                : const Text("Зарегистрироваться");
+          },
+        ),
       ),
     );
   }
@@ -190,7 +212,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       ],
     );
   }
-
+  //todo Вынести логику из UI
   bool isMobileNumberValid(String phoneNumber) {
     const String regexPattern = r'^(?:[+0][1-9])?[0-9]{10,12}$';
     var regExp = RegExp(regexPattern);

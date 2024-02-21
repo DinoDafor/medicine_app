@@ -7,7 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:medicine_app/models/ChatNotifier.dart';
 import 'package:provider/provider.dart';
 import '../models/chat_model.dart';
-import '../token.dart';
+import '../utils/token.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});

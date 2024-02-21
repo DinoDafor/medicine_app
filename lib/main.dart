@@ -1,6 +1,8 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:medicine_app/bloc/authentication_bloc.dart';
 import 'package:medicine_app/models/ChatNotifier.dart';
 import 'package:medicine_app/models/Message.dart';
 import 'package:medicine_app/screens/authentication_screen.dart';
@@ -49,17 +51,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      routerConfig: _router,
-      theme: ThemeData().copyWith(
-        colorScheme: ThemeData().colorScheme.copyWith(
-              primary: Color(0xFF0EBE7E),
-            ),
+    return BlocProvider(
+      create: (context) => AuthenticationBloc(),
+      child: MaterialApp.router(
+        routerConfig: _router,
+        theme: ThemeData().copyWith(
+          colorScheme: ThemeData().colorScheme.copyWith(
+            primary: Color(0xFF0EBE7E),
+          ),
+        ),
+        debugShowCheckedModeBanner: false,
+        // home: Scaffold(
+        //   body: AuthenticationScreen(),
+        // ),
       ),
-      debugShowCheckedModeBanner: false,
-      // home: Scaffold(
-      //   body: AuthenticationScreen(),
-      // ),
     );
   }
 }

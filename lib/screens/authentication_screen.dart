@@ -1,8 +1,7 @@
-import 'package:dio/dio.dart';
-import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:medicine_app/token.dart';
+import 'package:medicine_app/bloc/authentication_bloc.dart';
 
 class AuthenticationScreen extends StatefulWidget {
   const AuthenticationScreen({super.key});
@@ -15,7 +14,6 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  final Dio dio = Dio();
 
   @override
   Widget build(BuildContext context) {
@@ -51,66 +49,31 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
     );
   }
 
-  ElevatedButton buildAuthButton(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () async {
-        if (_formKey.currentState!.validate()) {
-
-          var formData = FormData.fromMap({
-            "username": _emailController.text.trim(),
-            "password": _passwordController.text.trim(),
-            "grant_type":'',
-            "scope": '',
-            "client_id": '',
-            "client_secret": '',
-          });
-         var response = await dio.post( 'https://5lzxc7kx-8000.euw.devtunnels.ms/auth/login', data: formData);
-          if (response.statusCode == 200) {
-            Token.token = response.data["access_token"];
-            context.go('/chats');
-          } else if (response.statusCode == 400) {
-//todo обработать
-            print("Ошибка 400: ${response.data}");
-            //"detail": "LOGIN_BAD_CREDENTIALS"
-          } else if (response.statusCode == 422) {
-            print("Ошибка 422: ${response.data}");
-//todo обработать
-          }
-        }
-      },
-      style: ButtonStyle(
-        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-            RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18.0),
-        )),
-      ),
-      child: const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20),
-        child: Text("Авторизироваться"),
-      ),
-    );
-  }
-
-  Row buildBottomRow(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Text(
-          "Вы у нас впервые?",
-          style: TextStyle(
-            fontSize: 17,
+  Padding buildEmailField() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextFormField(
+        //todo доделать валидацию по почте
+        // validator: (value) {
+        //   if (value != null) {
+        //     if (EmailValidator.validate(value)) {
+        //       return null;
+        //     } else {
+        //       return "Email is not valide";
+        //     }
+        //   }
+        // },
+        controller: _emailController,
+        decoration: InputDecoration(
+          prefixIcon: Container(
+            margin: const EdgeInsets.only(right: 10),
+            child: const Icon(Icons.alternate_email),
           ),
+          prefixIconConstraints:
+              const BoxConstraints(minWidth: 0, minHeight: 0),
+          hintText: "Email",
         ),
-        TextButton(
-            onPressed: () => context.go('/registration'),
-            child: const Text(
-              "Зарегистрируйтесь",
-              style: TextStyle(
-                fontSize: 17,
-                fontWeight: FontWeight.bold,
-              ),
-            ))
-      ],
+      ),
     );
   }
 
@@ -148,31 +111,79 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
     );
   }
 
-  Padding buildEmailField() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: TextFormField(
-        //todo доделать валидацию по почте
-        // validator: (value) {
-        //   if (value != null) {
-        //     if (EmailValidator.validate(value)) {
-        //       return null;
-        //     } else {
-        //       return "Email is not valide";
-        //     }
-        //   }
-        // },
-        controller: _emailController,
-        decoration: InputDecoration(
-          prefixIcon: Container(
-            margin: const EdgeInsets.only(right: 10),
-            child: const Icon(Icons.alternate_email),
-          ),
-          prefixIconConstraints:
-              const BoxConstraints(minWidth: 0, minHeight: 0),
-          hintText: "Email",
+  ElevatedButton buildAuthButton(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () async {
+        BlocProvider.of<AuthenticationBloc>(context).add(AuthenticationSighInEvent(_emailController.text, _passwordController.text));
+
+//         if (_formKey.currentState!.validate()) {
+//
+//           var formData = FormData.fromMap({
+//             "username": _emailController.text.trim(),
+//             "password": _passwordController.text.trim(),
+//             "grant_type": '',
+//             "scope": '',
+//             "client_id": '',
+//             "client_secret": '',
+//           });
+//          var response = await dio.post( 'https://5lzxc7kx-8000.euw.devtunnels.ms/auth/login', data: formData);
+//           if (response.statusCode == 200) {
+//             Token.token = response.data["access_token"];
+//             context.go('/chats');
+//           } else if (response.statusCode == 400) {
+// //todo обработать
+//             print("Ошибка 400: ${response.data}");
+//             //"detail": "LOGIN_BAD_CREDENTIALS"
+//           } else if (response.statusCode == 422) {
+//             print("Ошибка 422: ${response.data}");
+// //todo обработать
+//           }
+//         }
+      },
+      style: ButtonStyle(
+        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(18.0),
+        )),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: BlocConsumer<AuthenticationBloc, AuthenticationState>(
+          listener: (context, state) {
+            if (state is AuthenticationSuccessState) {
+              context.go('/chats');
+            }
+          },
+          builder: (context, state) {
+            return state is AuthenticationLoadingState && state.isLoading
+                ? const Text("...")
+                : const Text("Авторизироваться");
+          },
         ),
       ),
+    );
+  }
+
+  Row buildBottomRow(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text(
+          "Вы у нас впервые?",
+          style: TextStyle(
+            fontSize: 17,
+          ),
+        ),
+        TextButton(
+            onPressed: () => context.go('/registration'),
+            child: const Text(
+              "Зарегистрируйтесь",
+              style: TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.bold,
+              ),
+            ))
+      ],
     );
   }
 

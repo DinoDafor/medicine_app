@@ -9,7 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import '../models/chat_model.dart';
-import '../token.dart';
+import '../utils/token.dart';
 import 'camera_screen.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/status.dart' as status;
@@ -50,7 +50,8 @@ class _ChatWithUserState extends State<ChatWithUser> {
           },
         ),
         title: Text(
-          widget.chatId.toString(),
+          "Доктор Ливси",
+          // widget.chatId.toString(),
           style: const TextStyle(
               color: Color(0xFF212121),
               fontWeight: FontWeight.bold,
@@ -217,7 +218,7 @@ class _ScrollableChatState extends State<ScrollableChat> {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return Center(child: CircularProgressIndicator());
                     } else if (snapshot.hasError) {
-                      return Text('Ошибка: ${snapshot.error}');
+                      return Text('Ошибка!: ${snapshot.error}');
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                       return const Text('Нет старых сообщений');
                     } else {
