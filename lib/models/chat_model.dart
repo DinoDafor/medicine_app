@@ -1,69 +1,29 @@
+import 'message_model.dart';
+
 class Chat {
   final int chatId;
+
+  //todo нейминг
   final int otherUserId;
-  final String otherUserName;
-  final String otherUserImage;
+
+  final String chatName;
+
+  //todo отдельные http запросы для картинок
   final Message lastMessage;
 
   Chat({
     required this.chatId,
     required this.otherUserId,
-    required this.otherUserName,
-    required this.otherUserImage,
+    required this.chatName,
     required this.lastMessage,
   });
 
   factory Chat.fromJson(Map<String, dynamic> json) {
     return Chat(
-      chatId: json['chat_id'] ?? 0,
-      otherUserId: json['other_user_id'] ?? 0,
-      otherUserName: json['other_user_name'] ?? "",
-      otherUserImage: json['other_user_image'] ?? "",
-      lastMessage: Message.fromJson(json['last_message'] ?? {}),
+      chatId: json['chatId'] ?? 0,
+      otherUserId: json['otherUserId'] ?? 0,
+      chatName: json['chatName'] ?? "",
+      lastMessage: Message.fromJson(json['lastMessage'] ?? {}),
     );
-  }
-}
-class Message {
-  final String content;
-  final String timestamp;
-  final bool isRead;
-  final int id;
-  final int chatId;
-  final int senderId;
-  final List<dynamic> attachments;
-
-  Message({
-    required this.content,
-    required this.timestamp,
-    required this.isRead,
-    required this.id,
-    required this.chatId,
-    required this.senderId,
-    required this.attachments,
-  });
-
-  factory Message.fromJson(Map<String, dynamic> json) {
-    return Message(
-      content: json['content'] ?? "",
-      timestamp: json['timestamp'] ?? "",
-      isRead: json['is_read'] ?? false,
-      id: json['id'] ?? 0,
-      chatId: json['chat_id'] ?? 0,
-      senderId: json['sender_id'] ?? 0,
-      attachments: json['attachments'] ?? [],
-    );
-
-
-  }
-  Map<String, dynamic> toJson() {
-    return {
-      'content': content,
-      'sender_id': senderId,
-      'timestamp': timestamp,
-      'is_read': isRead,
-      'chat_id': chatId,
-      'attachments': attachments,
-      'id': id,
-    };
   }
 }

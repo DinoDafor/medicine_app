@@ -1,13 +1,10 @@
-import 'dart:io';
-
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:medicine_app/models/ChatNotifier.dart';
-import 'package:provider/provider.dart';
+import '../bloc/chat_bloc.dart';
+import '../bloc/chats_bloc.dart';
 import '../models/chat_model.dart';
-import '../utils/token.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -17,6 +14,12 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  @override
+  void initState() {
+    BlocProvider.of<ChatsBloc>(context).add(ChatsLoadingEvent());
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
@@ -46,96 +49,85 @@ class ScrollableChats extends StatelessWidget {
     super.key,
   });
 
-  Future<List<Chat>> getUsersChats() async {
-    Dio dio = Dio();
-    List<Chat> chats = [];
-    List<dynamic> list = [];
-    Options options = Options(
-        headers: {HttpHeaders.authorizationHeader: 'Bearer ${Token.token}'});
-    var response = await dio
-        .get('https://5lzxc7kx-8000.euw.devtunnels.ms/chats', options: options);
-    if (response.statusCode == 200) {
-      List<dynamic> rawData = response.data;
-      List<Map<String, dynamic>> chatData =
-          List<Map<String, dynamic>>.from(rawData);
-      for (var chat in chatData) {
-        chats.add(Chat.fromJson(chat));
-      }
-    }
-    return chats;
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: FutureBuilder<List<Chat>>(
-          future: getUsersChats(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return ListView.builder(
-                  itemCount: snapshot.requireData.length,
-                  itemBuilder: (context, index) {
-                    Chat chat = snapshot.requireData[index];
-                    return Consumer<ChatModel>(
-                      builder: (context, chatModel, child) {
-                        return ListTile(
-                          onTap: () {
-                            context.go("/chats/chat", extra: chat.chatId);
-                          },
-                          title: Text(
-                            chat.otherUserName,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          leading: const CircleAvatar(
-                            backgroundImage:
-                                AssetImage("assets/images/doctor_image.png"),
-                            //todo можно добавить фото-заглушку, если у доктора не будет аватарки
-                            backgroundColor: Colors.deepOrange,
-                          ),
-                          subtitle: Text(
-                            chat.lastMessage.content,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              color: Color(0xFF616161),
-                            ),
-                          ),
-                          trailing: Column(
-                            children: [
-                              Text(
+    return Expanded(child: BlocBuilder<ChatsBloc, ChatsState>(
+      // buildWhen: (previousState, state) {
+      //   if (previousState != state) {
+      //     return true;
+      //   }
+      //   else {
+      //     return false;
+      //   }
+      //
+      // },
+      builder: (context, state) {
 
-                                chat.lastMessage.timestamp,
-                                style: const TextStyle(
-                                  color: Color(0xFF616161),
-                                ),
-                              ),
-                              // Text(
-                              //   chat.lastDate,
-                              //   style: const TextStyle(
-                              //     color: Color(0xFF616161),
-                              //   ),
-                              // ),
-                            ],
+        //todo можно по-другому?
+        var chatsBloc = BlocProvider.of<ChatsBloc>(context);
+        ChatsState chatsBlocState = chatsBloc.state;
+        if (chatsBlocState is ChatsInitialLoadedSuccessfulState) {
+          return ListView.builder(
+              itemCount: chatsBlocState.chats.length,
+              itemBuilder: (context, index) {
+                Chat chat = chatsBlocState.chats[index];
+                return BlocListener<ChatsBloc, ChatsState>(
+                  listener: (context, state) {
+                    if (state is ChatsClickSuccessfulState) {
+                      context.go("/chats/chat", extra: chat.chatId);
+                    }
+                  },
+                  child: ListTile(
+                    onTap: () {
+                      chatsBloc.add(ChatsClickEvent(chatId: chat.chatId));
+                      BlocProvider.of<ChatBloc>(context).add(ChatLoadingEvent(chatId: chat.chatId));
+                    },
+                    title: Text(
+                      chat.chatName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    leading: const CircleAvatar(
+                      backgroundImage:
+                          AssetImage("assets/images/doctor_image.png"),
+                      //todo можно добавить фото-заглушку, если у доктора не будет аватарки
+                      backgroundColor: Colors.deepOrange,
+                    ),
+                    subtitle: Text(
+                      chat.lastMessage.content,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: Color(0xFF616161),
+                      ),
+                    ),
+                    trailing: Column(
+                      children: [
+                        Text(
+                          chat.lastMessage.timestamp,
+                          style: const TextStyle(
+                            color: Color(0xFF616161),
                           ),
-                        );
-                      },
-                    );
-                  });
-            } else if (snapshot.hasError) {
-              print("Ошибка!!!");
-              print(snapshot.error);
-              print(snapshot.stackTrace);
-            } else {
-              return const Center(child: CircularProgressIndicator());
-            }
-            //todo подумать что тут возвращать
-            return const Text("ds");
-          }),
-    );
+                        ),
+                        // Text(
+                        //   chat.lastDate,
+                        //   style: const TextStyle(
+                        //     color: Color(0xFF616161),
+                        //   ),
+                        // ),
+                      ],
+                    ),
+                  ),
+                );
+              });
+        }
+        print(BlocProvider.of<ChatsBloc>(context).state);
+        return const Text("Где чат?");
+      },
+    ));
   }
 }
 
@@ -199,8 +191,6 @@ class MyBottomNavigationBar extends StatelessWidget {
         ),
       ],
       //todo надо бы вынести это в константу по проекту
-
-      // onTap: (){},
     );
   }
 }
