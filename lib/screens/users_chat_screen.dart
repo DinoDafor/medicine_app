@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:go_router/go_router.dart';
+import 'package:medicine_app/bloc/navigation_bloc.dart';
 import '../bloc/chat_bloc.dart';
 import '../bloc/chats_bloc.dart';
 import '../models/chat_model.dart';
@@ -74,7 +74,7 @@ class ScrollableChats extends StatelessWidget {
                 return BlocListener<ChatsBloc, ChatsState>(
                   listener: (context, state) {
                     if (state is ChatsClickSuccessfulState) {
-                      context.go("/chats/chat", extra: chat.chatId);
+                      BlocProvider.of<NavigationBloc>(context).add(NavigationToChatScreenEvent(context: context, chatId: chat.chatId));
                     }
                   },
                   child: ListTile(
@@ -124,7 +124,6 @@ class ScrollableChats extends StatelessWidget {
                 );
               });
         }
-        print(BlocProvider.of<ChatsBloc>(context).state);
         return const Text("Где чат?");
       },
     ));

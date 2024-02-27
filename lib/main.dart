@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:medicine_app/bloc/authentication_bloc.dart';
+import 'package:medicine_app/bloc/navigation_bloc.dart';
 import 'package:medicine_app/screens/authentication_screen.dart';
 import 'package:medicine_app/screens/chat_screen.dart';
 import 'package:medicine_app/screens/registration_screen.dart';
@@ -59,6 +60,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => ChatBloc(),
+        ),
+        BlocProvider(
+          create: (context) => NavigationBloc(),
         ),
       ],
       child: MaterialApp.router(

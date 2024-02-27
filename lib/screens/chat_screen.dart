@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:medicine_app/bloc/navigation_bloc.dart';
 import 'package:medicine_app/models/message_model.dart';
 import 'package:web_socket_channel/status.dart' as status;
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -9,8 +10,6 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import '../bloc/chat_bloc.dart';
 
 class ChatWithUser extends StatefulWidget {
-
-
   const ChatWithUser({super.key});
 
   @override
@@ -22,7 +21,6 @@ class _ChatWithUserState extends State<ChatWithUser> {
 
   @override
   void initState() {
-
     super.initState();
   }
 
@@ -38,7 +36,8 @@ class _ChatWithUserState extends State<ChatWithUser> {
             fit: BoxFit.scaleDown,
           ),
           onPressed: () {
-            context.go("/chats");
+            BlocProvider.of<NavigationBloc>(context)
+                .add(NavigationToChatsScreenEvent(context: context));
           },
         ),
         title: const Text(
@@ -113,8 +112,6 @@ class _ChatWithUserState extends State<ChatWithUser> {
 }
 
 class ScrollableChat extends StatefulWidget {
-
-
   const ScrollableChat({super.key});
 
   @override
@@ -124,6 +121,7 @@ class ScrollableChat extends StatefulWidget {
 class _ScrollableChatState extends State<ScrollableChat> {
   final TextEditingController _textController = TextEditingController();
   final ItemScrollController _scrollController = ItemScrollController();
+
   //todo пока так
   int userOwner = 0;
 
@@ -141,43 +139,32 @@ class _ScrollableChatState extends State<ScrollableChat> {
           child: BlocBuilder<ChatBloc, ChatState>(
             builder: (context, state) {
               // var chatBlocState = chatBloc.state;
-              if(state is ChatLoadedSuccessfulState){
-               List<Message> _messages =  state.messages;
-                print(_messages[0].content);
-                print(_messages.length);
-                // return Text("data");
+              if (state is ChatLoadedSuccessfulState) {
+                List<Message> _messages = state.messages;
                 return ScrollablePositionedList.separated(
                   itemScrollController: _scrollController,
                   itemCount: _messages.length,
                   itemBuilder: (context, index) {
                     return Align(
-                      alignment:
-                      _messages[index].senderId == userOwner
+                      alignment: _messages[index].senderId == userOwner
                           ? Alignment.topRight
                           : Alignment.topLeft,
                       child: Container(
                         decoration: BoxDecoration(
-                          color:
-                          _messages[index].senderId == userOwner
+                          color: _messages[index].senderId == userOwner
                               ? const Color(0xFF0EBE7E)
                               : const Color(0xFFF5F5F5),
                           borderRadius: BorderRadius.circular(15),
                         ),
                         constraints: BoxConstraints(
-                          maxWidth:
-                          MediaQuery
-                              .of(context)
-                              .size
-                              .width *
-                              0.7,
+                          maxWidth: MediaQuery.of(context).size.width * 0.7,
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(10.0),
                           child: Text(
                             _messages[index].content,
                             style: TextStyle(
-                              color: _messages[index].senderId ==
-                                  userOwner
+                              color: _messages[index].senderId == userOwner
                                   ? const Color(0xFFFFFFFF)
                                   : const Color(0xFF212121),
                             ),
@@ -186,16 +173,13 @@ class _ScrollableChatState extends State<ScrollableChat> {
                       ),
                     );
                   },
-                  separatorBuilder:
-                      (BuildContext context, int index) {
+                  separatorBuilder: (BuildContext context, int index) {
                     return const SizedBox(
                       height: 5,
                     );
                   },
                 );
-
-              }
-              else {
+              } else {
                 return const Text("AAA");
               }
             },

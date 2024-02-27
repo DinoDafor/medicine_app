@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:medicine_app/bloc/authentication_bloc.dart';
 
+import '../bloc/navigation_bloc.dart';
+
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
 
@@ -132,11 +134,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   ElevatedButton buildRegisterButton(BuildContext context) {
     return ElevatedButton(
       onPressed: () async {
-        BlocProvider.of<AuthenticationBloc>(context).add(AuthenticationSighUpEvent(
-            email: _emailController.text,
-            password: _passwordController.text,
-            userName: _nameController.text,
-            phoneNumber: _phoneNumberController.text));
+        BlocProvider.of<AuthenticationBloc>(context).add(
+            AuthenticationSighUpEvent(
+                email: _emailController.text,
+                password: _passwordController.text,
+                userName: _nameController.text,
+                phoneNumber: _phoneNumberController.text));
 
         // if (_formKey.currentState!.validate()) {
         //   // var response = await dio.post(
@@ -174,7 +177,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         child: BlocConsumer<AuthenticationBloc, AuthenticationState>(
           listener: (context, state) {
             if (state is AuthenticationSuccessState) {
-              context.go("/chats");
+              BlocProvider.of<NavigationBloc>(context)
+                  .add(NavigationToChatsScreenEvent(context: context));
             }
           },
           builder: (context, state) {
@@ -198,7 +202,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           ),
         ),
         TextButton(
-            onPressed: () => context.go("/"),
+            onPressed: () {
+              BlocProvider.of<NavigationBloc>(context)
+                  .add(NavigationToAuthenticationScreenEvent(context: context));
+            },
             child: const Padding(
               padding: EdgeInsets.all(8.0),
               child: Text(
@@ -212,6 +219,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       ],
     );
   }
+
   //todo Вынести логику из UI
   bool isMobileNumberValid(String phoneNumber) {
     const String regexPattern = r'^(?:[+0][1-9])?[0-9]{10,12}$';

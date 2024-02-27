@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:medicine_app/bloc/authentication_bloc.dart';
+import 'package:medicine_app/bloc/navigation_bloc.dart';
 
 class AuthenticationScreen extends StatefulWidget {
   const AuthenticationScreen({super.key});
@@ -150,10 +151,12 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: BlocConsumer<AuthenticationBloc, AuthenticationState>(
           listener: (context, state) {
+            //todo возможно убрать ненужный стейт, точнее иф
             if (state is AuthenticationSuccessState) {
-              context.go('/chats');
+              BlocProvider.of<NavigationBloc>(context).add(NavigationToChatsScreenEvent(context: context));
             }
           },
+          //todo сделать кнопку загрузки
           builder: (context, state) {
             return state is AuthenticationLoadingState && state.isLoading
                 ? const Text("...")
@@ -175,7 +178,9 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
           ),
         ),
         TextButton(
-            onPressed: () => context.go('/registration'),
+            onPressed: () {
+              BlocProvider.of<NavigationBloc>(context).add(NavigationToRegistrationScreenEvent(context: context));
+            },
             child: const Text(
               "Зарегистрируйтесь",
               style: TextStyle(
