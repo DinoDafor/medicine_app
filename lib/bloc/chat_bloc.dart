@@ -17,6 +17,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     });
     on<ChatNewMessageEvent>(_showNewMessage);
     on<ChatLoadingEvent>(_getMessages);
+    //todo пока пусть будет удаление из общего локального листа
+    on<ChatLeavingEvent>(_deleteMessagesFromLocalList);
   }
   _showNewMessage(ChatNewMessageEvent event, Emitter<ChatState> emit){
     // _chatService
@@ -24,6 +26,10 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   _getMessages(ChatLoadingEvent event, Emitter<ChatState> emit) async{
     List<Message> messages = await _chatService.getMessages(event.chatId);
     emit(ChatLoadedSuccessfulState(messages: messages));
+  }
+  _deleteMessagesFromLocalList(ChatLeavingEvent event, Emitter<ChatState>emitter) {
+    _chatService.deleteMessagesFromLocalList();
+    // event.messages.clear();
   }
 
 }

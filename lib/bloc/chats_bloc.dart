@@ -16,7 +16,6 @@ class ChatsBloc extends Bloc<ChatsEvent, ChatsState> {
   ChatsBloc() : super(ChatsInitial()) {
     on<ChatsEvent>((event, emit) {});
     on<ChatsLoadingEvent>(_getChats);
-    on<ChatsClickEvent>(_navigateToChat);
   }
 
   _getChats(ChatsLoadingEvent event, Emitter<ChatsState> emit) async {
@@ -25,7 +24,5 @@ class ChatsBloc extends Bloc<ChatsEvent, ChatsState> {
     emit(ChatsInitialLoadedSuccessfulState(chats: chatsList));
   }
 
-  _navigateToChat(ChatsClickEvent event, Emitter<ChatsState> emit) {
-    emit(ChatsClickSuccessfulState());
-  }
+
 }

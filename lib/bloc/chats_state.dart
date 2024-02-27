@@ -10,7 +10,3 @@ class ChatsInitialLoadedSuccessfulState extends ChatsState {
 
   ChatsInitialLoadedSuccessfulState({required this.chats});
 }
-
-class ChatsClickSuccessfulState extends ChatsState {
-
-}

@@ -11,3 +11,7 @@ class ChatLoadingEvent  extends ChatEvent {
 
   ChatLoadingEvent({required this.chatId});
 }
+
+class ChatLeavingEvent  extends ChatEvent {
+
+}

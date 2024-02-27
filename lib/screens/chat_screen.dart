@@ -36,6 +36,7 @@ class _ChatWithUserState extends State<ChatWithUser> {
             fit: BoxFit.scaleDown,
           ),
           onPressed: () {
+            BlocProvider.of<ChatBloc>(context).add(ChatLeavingEvent());
             BlocProvider.of<NavigationBloc>(context)
                 .add(NavigationToChatsScreenEvent(context: context));
           },
@@ -97,6 +98,7 @@ class _ChatWithUserState extends State<ChatWithUser> {
                     title: const Text("Отправить чат"),
                     onTap: () {
                       // sendChat();
+                      //todo
                       Navigator.pop(context);
                     },
                   ),

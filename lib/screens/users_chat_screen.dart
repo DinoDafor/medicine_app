@@ -66,60 +66,55 @@ class ScrollableChats extends StatelessWidget {
         //todo можно по-другому?
         var chatsBloc = BlocProvider.of<ChatsBloc>(context);
         ChatsState chatsBlocState = chatsBloc.state;
+        //todo сделать состояние загрузки и показывать индикатор загрузки при другом стейте
         if (chatsBlocState is ChatsInitialLoadedSuccessfulState) {
           return ListView.builder(
               itemCount: chatsBlocState.chats.length,
               itemBuilder: (context, index) {
                 Chat chat = chatsBlocState.chats[index];
-                return BlocListener<ChatsBloc, ChatsState>(
-                  listener: (context, state) {
-                    if (state is ChatsClickSuccessfulState) {
-                      BlocProvider.of<NavigationBloc>(context).add(NavigationToChatScreenEvent(context: context, chatId: chat.chatId));
-                    }
+                return ListTile(
+                  onTap: () {
+                    chatsBloc.add(ChatsClickEvent(chatId: chat.chatId));
+                    BlocProvider.of<NavigationBloc>(context).add(NavigationToChatScreenEvent(context: context, chatId: chat.chatId));
+                    BlocProvider.of<ChatBloc>(context).add(ChatLoadingEvent(chatId: chat.chatId));
                   },
-                  child: ListTile(
-                    onTap: () {
-                      chatsBloc.add(ChatsClickEvent(chatId: chat.chatId));
-                      BlocProvider.of<ChatBloc>(context).add(ChatLoadingEvent(chatId: chat.chatId));
-                    },
-                    title: Text(
-                      chat.chatName,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
+                  title: Text(
+                    chat.chatName,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
                     ),
-                    leading: const CircleAvatar(
-                      backgroundImage:
-                          AssetImage("assets/images/doctor_image.png"),
-                      //todo можно добавить фото-заглушку, если у доктора не будет аватарки
-                      backgroundColor: Colors.deepOrange,
+                  ),
+                  leading: const CircleAvatar(
+                    backgroundImage:
+                        AssetImage("assets/images/doctor_image.png"),
+                    //todo можно добавить фото-заглушку, если у доктора не будет аватарки
+                    backgroundColor: Colors.deepOrange,
+                  ),
+                  subtitle: Text(
+                    chat.lastMessage.content,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: Color(0xFF616161),
                     ),
-                    subtitle: Text(
-                      chat.lastMessage.content,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: Color(0xFF616161),
-                      ),
-                    ),
-                    trailing: Column(
-                      children: [
-                        Text(
-                          chat.lastMessage.timestamp,
-                          style: const TextStyle(
-                            color: Color(0xFF616161),
-                          ),
+                  ),
+                  trailing: Column(
+                    children: [
+                      Text(
+                        chat.lastMessage.timestamp,
+                        style: const TextStyle(
+                          color: Color(0xFF616161),
                         ),
-                        // Text(
-                        //   chat.lastDate,
-                        //   style: const TextStyle(
-                        //     color: Color(0xFF616161),
-                        //   ),
-                        // ),
-                      ],
-                    ),
+                      ),
+                      // Text(
+                      //   chat.lastDate,
+                      //   style: const TextStyle(
+                      //     color: Color(0xFF616161),
+                      //   ),
+                      // ),
+                    ],
                   ),
                 );
               });

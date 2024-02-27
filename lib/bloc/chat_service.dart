@@ -22,13 +22,19 @@ class ChatService {
       List<Map<String, dynamic>> chatData =
           List<Map<String, dynamic>>.from(response.data);
       _messages.addAll(chatData.map((message) => Message.fromJson(message)));
-      print("Длина в гет ${_messages.length}");
-      print("Айди ${chatId}");
       return _messages;
       //
     }
     //todo пустой, сделать обработку
     return _messages;
+  }
+
+  // todo saveMessages(){
+  //
+  // }
+
+  deleteMessagesFromLocalList(){
+    _messages.clear();
   }
 
   fddf(int chatId) {

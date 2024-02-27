@@ -16,3 +16,9 @@ class ChatLoadedSuccessfulState extends ChatState {
 
   ChatLoadedSuccessfulState({required this.messages});
 }
+
+class ChatLeavedState extends ChatState {
+  final List<Message> messages;
+
+  ChatLeavedState({required this.messages});
+}
