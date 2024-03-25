@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
 import 'package:medicine_app/bloc/navigation_bloc.dart';
 import 'package:medicine_app/models/message_model.dart';
-import 'package:web_socket_channel/status.dart' as status;
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../bloc/chat_bloc.dart';
@@ -125,12 +123,12 @@ class _ScrollableChatState extends State<ScrollableChat> {
   final ItemScrollController _scrollController = ItemScrollController();
 
   //todo пока так
-  int userOwner = 0;
+  int userOwner = 1;
 
   @override
   void initState() {
     super.initState();
-    // BlocProvider.of<ChatBloc>(context).add(ChatLoadingEvent(2));
+    BlocProvider.of<ChatBloc>(context).add(ChatLoadingEvent( chatId: 1));
   }
 
   @override
@@ -142,18 +140,18 @@ class _ScrollableChatState extends State<ScrollableChat> {
             builder: (context, state) {
               // var chatBlocState = chatBloc.state;
               if (state is ChatLoadedSuccessfulState) {
-                List<Message> _messages = state.messages;
+                List<Message> messages = state.messages;
                 return ScrollablePositionedList.separated(
                   itemScrollController: _scrollController,
-                  itemCount: _messages.length,
+                  itemCount: messages.length,
                   itemBuilder: (context, index) {
                     return Align(
-                      alignment: _messages[index].senderId == userOwner
+                      alignment: messages[index].senderId == userOwner
                           ? Alignment.topRight
                           : Alignment.topLeft,
                       child: Container(
                         decoration: BoxDecoration(
-                          color: _messages[index].senderId == userOwner
+                          color: messages[index].senderId == userOwner
                               ? const Color(0xFF0EBE7E)
                               : const Color(0xFFF5F5F5),
                           borderRadius: BorderRadius.circular(15),
@@ -164,9 +162,9 @@ class _ScrollableChatState extends State<ScrollableChat> {
                         child: Padding(
                           padding: const EdgeInsets.all(10.0),
                           child: Text(
-                            _messages[index].content,
+                            messages[index].text,
                             style: TextStyle(
-                              color: _messages[index].senderId == userOwner
+                              color: messages[index].senderId == userOwner
                                   ? const Color(0xFFFFFFFF)
                                   : const Color(0xFF212121),
                             ),

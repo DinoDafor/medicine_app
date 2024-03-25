@@ -19,8 +19,7 @@ class ChatsBloc extends Bloc<ChatsEvent, ChatsState> {
   }
 
   _getChats(ChatsLoadingEvent event, Emitter<ChatsState> emit) async {
-    List<Chat> chatsList = await _chatService.getUsersChats();
-
+    List<Chat> chatsList = await _chatService.getConversations();
     emit(ChatsInitialLoadedSuccessfulState(chats: chatsList));
   }
 

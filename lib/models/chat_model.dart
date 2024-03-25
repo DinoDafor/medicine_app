@@ -1,29 +1,26 @@
 import 'message_model.dart';
 
 class Chat {
-  final int chatId;
-
-  //todo нейминг
-  final int otherUserId;
-
-  final String chatName;
-
-  //todo отдельные http запросы для картинок
-  final Message lastMessage;
+  int id;
+  int firstParticipantId;
+  int secondParticipantId;
+  List<Message> messages;
 
   Chat({
-    required this.chatId,
-    required this.otherUserId,
-    required this.chatName,
-    required this.lastMessage,
+    required this.id,
+    required this.firstParticipantId,
+    required this.secondParticipantId,
+    required this.messages,
   });
 
   factory Chat.fromJson(Map<String, dynamic> json) {
+    var list = json['messages'] as List;
+    List<Message> messages = list.map((i) => Message.fromJson(i)).toList();
     return Chat(
-      chatId: json['chatId'] ?? 0,
-      otherUserId: json['otherUserId'] ?? 0,
-      chatName: json['chatName'] ?? "",
-      lastMessage: Message.fromJson(json['lastMessage'] ?? {}),
+      id: json["id"],
+      firstParticipantId: json["firstParticipantId"],
+      secondParticipantId: json["secondParticipantId"],
+      messages: messages,
     );
   }
 }

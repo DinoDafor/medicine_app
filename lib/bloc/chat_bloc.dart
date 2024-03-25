@@ -24,7 +24,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     // _chatService
   }
   _getMessages(ChatLoadingEvent event, Emitter<ChatState> emit) async{
-    List<Message> messages = await _chatService.getMessages(event.chatId);
+    List<Message> messages = _chatService.getMessagesFromConversations(event.chatId);
     emit(ChatLoadedSuccessfulState(messages: messages));
   }
   _deleteMessagesFromLocalList(ChatLeavingEvent event, Emitter<ChatState>emitter) {

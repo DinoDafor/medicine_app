@@ -1,5 +1,3 @@
 class Token {
- static String token = '';
-
-
+  static String token = '';
 }

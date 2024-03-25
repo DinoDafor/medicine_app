@@ -1,27 +1,30 @@
-//Логика взаимодействия по http
 import 'package:dio/dio.dart';
 
 class AuthService {
   final Dio _dio = Dio();
-  final String _URL = '';
 
   //todo async await statuscode exepstions try catch
-  void sighUpUser(
+  Future<Response> sighUpUser(
       String email, String password, String userName, String phoneNumber) async {
-    // var response = await _dio.post(_URL, data: {
-    //   "email": email.trim(),
-    //   "password": password.trim(),
-    //   "user_name": userName.trim(),
-    //   "phone_number": phoneNumber.trim(),
-    // });
-
+    //todo прокидываем исключение?
+    //todo URL
+      var response = await _dio.post('http://10.0.2.2:8080/auth/register', data: {
+        "email": email.trim(),
+        "password": password.trim(),
+        "name": userName.trim(),
+        "phoneNumber": phoneNumber.trim(),
+        //todo confirm password
+        "confirmPassword": password.trim(),
+      });
+      return response;
   }
 
-  void sighInUser(String email, String password) async {
-    // var response = await _dio.post( 'https://5lzxc7kx-8000.euw.devtunnels.ms/auth/login', data: {
-    //   "username": email.trim(),
-    //   "password": password.trim(),
-    // });
+  Future<Response> sighInUser(String email, String password) async {
+    var response = await _dio.post( 'http://10.0.2.2:8080/auth/login', data: {
+      "email": email.trim(),
+      "password": password.trim(),
+    });
+    return response;
 
   }
 }

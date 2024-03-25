@@ -134,36 +134,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   ElevatedButton buildRegisterButton(BuildContext context) {
     return ElevatedButton(
       onPressed: () async {
-        BlocProvider.of<AuthenticationBloc>(context).add(
-            AuthenticationSighUpEvent(
-                email: _emailController.text,
-                password: _passwordController.text,
-                userName: _nameController.text,
-                phoneNumber: _phoneNumberController.text));
 
         // if (_formKey.currentState!.validate()) {
-        //   // var response = await dio.post(
-        //   //     'https://5lzxc7kx-8000.euw.devtunnels.ms/auth/register',
-        //   //     data: {
-        //   //       "email": _emailController.text.trim(),
-        //   //       "password": _passwordController.text.trim(),
-        //   //       "is_active": true,
-        //   //       "is_superuser": false,
-        //   //       "is_verified": false,
-        //   //       "type": "patient",
-        //   //       "phone_number": _phoneNumberController.text.trim(),
-        //   //       "image_path": "string"
-        //   //     });
-        //
-        //   // if (response.statusCode == 201) {
-        //   //   context.go("/chats");
-        //   // } else if (response.statusCode == 400) {
-        //   //   //todo обработать
-        //   // } else if (response.statusCode == 422) {
-        //   //   //todo обработать
-        //   // }
-        //
-        //
+            BlocProvider.of<AuthenticationBloc>(context).add(
+                AuthenticationSighUpEvent(
+                    email: _emailController.text,
+                    password: _passwordController.text,
+                    userName: _nameController.text,
+                    phoneNumber: _phoneNumberController.text));
         // }
       },
       style: ButtonStyle(
@@ -177,6 +155,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         child: BlocConsumer<AuthenticationBloc, AuthenticationState>(
           listener: (context, state) {
             if (state is AuthenticationSuccessState) {
+              //todo delete
               BlocProvider.of<NavigationBloc>(context)
                   .add(NavigationToChatsScreenEvent(context: context));
             }

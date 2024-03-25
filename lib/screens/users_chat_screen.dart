@@ -52,15 +52,6 @@ class ScrollableChats extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(child: BlocBuilder<ChatsBloc, ChatsState>(
-      // buildWhen: (previousState, state) {
-      //   if (previousState != state) {
-      //     return true;
-      //   }
-      //   else {
-      //     return false;
-      //   }
-      //
-      // },
       builder: (context, state) {
 
         //todo можно по-другому?
@@ -74,15 +65,16 @@ class ScrollableChats extends StatelessWidget {
                 Chat chat = chatsBlocState.chats[index];
                 return ListTile(
                   onTap: () {
-                    chatsBloc.add(ChatsClickEvent(chatId: chat.chatId));
-                    BlocProvider.of<NavigationBloc>(context).add(NavigationToChatScreenEvent(context: context, chatId: chat.chatId));
-                    BlocProvider.of<ChatBloc>(context).add(ChatLoadingEvent(chatId: chat.chatId));
+                    chatsBloc.add(ChatsClickEvent(chatId: chat.id));
+                    BlocProvider.of<NavigationBloc>(context).add(NavigationToChatScreenEvent(context: context, chatId: chat.id));
+                    BlocProvider.of<ChatBloc>(context).add(ChatLoadingEvent(chatId: chat.id));
                   },
-                  title: Text(
-                    chat.chatName,
+                  title: const Text(
+                    "Заглушка",
+                    // chat.chatName,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -93,7 +85,7 @@ class ScrollableChats extends StatelessWidget {
                     backgroundColor: Colors.deepOrange,
                   ),
                   subtitle: Text(
-                    chat.lastMessage.content,
+                    chat.messages[0].text,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
@@ -103,7 +95,8 @@ class ScrollableChats extends StatelessWidget {
                   trailing: Column(
                     children: [
                       Text(
-                        chat.lastMessage.timestamp,
+                        //todo timestamp
+                        chat.messages[0].sendTimestamp.toString(),
                         style: const TextStyle(
                           color: Color(0xFF616161),
                         ),
@@ -267,8 +260,13 @@ class NavBar extends StatelessWidget {
             ),
           ),
         ),
-        SvgPicture.asset(
-          "assets/icons/Search.svg",
+        GestureDetector(
+          child: SvgPicture.asset(
+            "assets/icons/Search.svg",
+          ),
+          onTap: () {
+
+          },
         ),
         const SizedBox(width: 10),
         SvgPicture.asset(

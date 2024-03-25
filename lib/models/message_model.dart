@@ -1,47 +1,42 @@
 class Message {
-  final int chatId;
-  final String content;
-  //todo long?
-  final String timestamp;
-  final bool isRead;
-  //inc from back
-  final int id;
-//client side
-  final int senderId;
-  final List<dynamic> attachments;
+  int senderId;
+  int recipientId;
+  String text;
+  int sendTimestamp;
+  Status status;
+  Type type;
 
   Message({
-    required this.content,
-    required this.timestamp,
-    required this.isRead,
-    required this.id,
-    required this.chatId,
     required this.senderId,
-    required this.attachments,
+    required this.recipientId,
+    required this.text,
+    required this.sendTimestamp,
+    required this.status,
+    required this.type,
   });
 
   factory Message.fromJson(Map<String, dynamic> json) {
     return Message(
-      content: json['content'] ?? "",
-      timestamp: json['timestamp'] ?? "",
-      isRead: json['isRead'] ?? false,
-      id: json['id'] ?? 0,
-      chatId: json['chatId'] ?? 0,
-      senderId: json['senderId'] ?? 0,
-      attachments: json['attachments'] ?? [],
-    );
-
-
+        senderId: json["senderId"],
+        recipientId: json["recipientId"],
+        text: json["text"],
+        sendTimestamp: json["sendTimestamp"],
+        status: Status.values.byName(json["status"]),
+        type: Type.values.byName(json["type"]));
   }
+
   Map<String, dynamic> toJson() {
     return {
-      'content': content,
       'senderId': senderId,
-      'timestamp': timestamp,
-      'is_read': isRead,
-      'chatId': chatId,
-      'attachments': attachments,
-      'id': id,
+      'recipientId': recipientId,
+      'text': text,
+      'sendTimestamp': sendTimestamp,
+      'status': status.name,
+      'type': type.name,
     };
   }
 }
+
+enum Status { CONFIRMATION, UNREAD, READ }
+
+enum Type { MESSAGE, MESSAGE_SENT }
