@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:medicine_app/bloc/navigation_bloc.dart';
 import '../bloc/chat_bloc.dart';
 import '../bloc/chats_bloc.dart';
@@ -62,7 +63,6 @@ class ScrollableChats extends StatelessWidget {
       //
       // },
       builder: (context, state) {
-
         //todo можно по-другому?
         var chatsBloc = BlocProvider.of<ChatsBloc>(context);
         ChatsState chatsBlocState = chatsBloc.state;
@@ -75,8 +75,11 @@ class ScrollableChats extends StatelessWidget {
                 return ListTile(
                   onTap: () {
                     chatsBloc.add(ChatsClickEvent(chatId: chat.chatId));
-                    BlocProvider.of<NavigationBloc>(context).add(NavigationToChatScreenEvent(context: context, chatId: chat.chatId));
-                    BlocProvider.of<ChatBloc>(context).add(ChatLoadingEvent(chatId: chat.chatId));
+                    BlocProvider.of<NavigationBloc>(context).add(
+                        NavigationToChatScreenEvent(
+                            context: context, chatId: chat.chatId));
+                    BlocProvider.of<ChatBloc>(context)
+                        .add(ChatLoadingEvent(chatId: chat.chatId));
                   },
                   title: Text(
                     chat.chatName,
@@ -125,18 +128,26 @@ class ScrollableChats extends StatelessWidget {
   }
 }
 
-class MyBottomNavigationBar extends StatelessWidget {
+class MyBottomNavigationBar extends StatefulWidget {
   const MyBottomNavigationBar({
     super.key,
   });
 
   @override
+  State<MyBottomNavigationBar> createState() => _MyBottomNavigationBarState();
+}
+
+class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
+  int _selectedIndex = 0;
+
+  @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
+      onTap: _onItemTapped,
       type: BottomNavigationBarType.fixed,
       unselectedItemColor: Colors.grey,
       selectedItemColor: const Color(0xFF0EBE7E),
-      currentIndex: 2,
+      currentIndex: _selectedIndex,
       items: [
         BottomNavigationBarItem(
           icon: SvgPicture.asset('assets/icons/home_icon.svg'),
@@ -186,6 +197,15 @@ class MyBottomNavigationBar extends StatelessWidget {
       ],
       //todo надо бы вынести это в константу по проекту
     );
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+      if (index == 0) {
+        context.go("/addPill");
+      }
+    });
   }
 }
 
