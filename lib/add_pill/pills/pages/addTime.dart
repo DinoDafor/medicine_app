@@ -59,218 +59,225 @@ class _AddTimePageState extends State<AddTimePage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scrollbar(
-        child: CupertinoPageScaffold(
-          navigationBar: CupertinoNavigationBar(),
-          child: Padding(
-            padding: const EdgeInsets.only(top: 0.0),
-            child: Scrollbar(
-              child: Container(
-                color: const Color.fromARGB(255, 226, 226, 226),
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height * 0.895,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    SizedBox(
-                      height: 76,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text("${widget.name}",
-                          style: TextStyle(fontSize: 24)),
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        height: 88,
-                        //child: Center(
-                        child: Center(
-                            child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child:
-                              Text("Выберите лучшее время для приема лекарств"),
-                        )),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.blue),
+    return Material(
+      child: SafeArea(
+        child: Scrollbar(
+          child: CupertinoPageScaffold(
+            navigationBar: CupertinoNavigationBar(),
+            child: Padding(
+              padding: const EdgeInsets.only(top: 0.0),
+              child: Scrollbar(
+                child: Container(
+                  color: const Color.fromARGB(255, 226, 226, 226),
+                  width: MediaQuery.of(context).size.width,
+
+                  /// height: MediaQuery.of(context).size.height * 0.895,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizedBox(
+                        height: 76,
                       ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Container(
-                      ///color: Colors.red,
-                      height: MediaQuery.of(context).size.height * 0.49,
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text("${widget.name}",
+                            style: TextStyle(fontSize: 24)),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          height: 88,
+                          //child: Center(
+                          child: Center(
+                              child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                                "Выберите лучшее время для приема лекарств"),
+                          )),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.blue),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Container(
+                        ///color: Colors.red,
+                        height: MediaQuery.of(context).size.height * 0.49,
 
-                      ///height: 100,
-                      child: ListView.builder(
-                        itemCount: widget.partOfTheDay.length,
-                        itemBuilder: (context, index) {
-                          log("In ListView builder ${widget.partOfTheDay.length}");
-                          switch (widget.partOfTheDay[index]) {
-                            case 0:
-                              {
-                                return Container(
+                        ///height: 100,
+                        child: ListView.builder(
+                          itemCount: widget.partOfTheDay.length,
+                          itemBuilder: (context, index) {
+                            log("In ListView builder ${widget.partOfTheDay.length}");
+                            switch (widget.partOfTheDay[index]) {
+                              case 0:
+                                {
+                                  return Container(
 
-                                    ///height: 300,
-                                    child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                      Text("Утро",
+                                      ///height: 300,
+                                      child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                        Text("Утро",
+                                            style: TextStyle(
+                                                color: Colors.orange,
+                                                fontSize: 17)),
+                                        TimeCard(
+                                            DayForDrink.morning,
+                                            widget.name,
+                                            widget.countOfDays,
+                                            widget.repetition),
+                                      ]));
+                                }
+
+                              case 1:
+                                {
+                                  return Container(
+
+                                      ///height: 300,
+                                      child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                        Text(
+                                          "День",
                                           style: TextStyle(
-                                              color: Colors.orange,
-                                              fontSize: 17)),
-                                      TimeCard(
-                                          DayForDrink.morning,
-                                          widget.name,
-                                          widget.countOfDays,
-                                          widget.repetition),
-                                    ]));
-                              }
+                                              color: Colors.green,
+                                              fontSize: 17),
+                                        ),
+                                        TimeCard(
+                                            DayForDrink.day,
+                                            widget.name,
+                                            widget.countOfDays,
+                                            widget.repetition),
+                                      ]));
+                                }
 
-                            case 1:
-                              {
-                                return Container(
+                              case 2:
+                                {
+                                  return Container(
 
-                                    ///height: 300,
-                                    child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                      Text(
-                                        "День",
-                                        style: TextStyle(
-                                            color: Colors.green, fontSize: 17),
-                                      ),
-                                      TimeCard(
-                                          DayForDrink.day,
-                                          widget.name,
-                                          widget.countOfDays,
-                                          widget.repetition),
-                                    ]));
-                              }
+                                      ///height: 300,
+                                      child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                        Text(
+                                          "Вечер",
+                                          style: TextStyle(
+                                              color: Color.fromARGB(
+                                                  255, 176, 128, 59),
+                                              fontSize: 17),
+                                        ),
+                                        TimeCard(
+                                            DayForDrink.evening,
+                                            widget.name,
+                                            widget.countOfDays,
+                                            widget.repetition),
+                                      ]));
+                                }
 
-                            case 2:
-                              {
-                                return Container(
+                              case 3:
+                                {
+                                  return Container(
 
-                                    ///height: 300,
-                                    child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                      Text(
-                                        "Вечер",
-                                        style: TextStyle(
-                                            color: Color.fromARGB(
-                                                255, 176, 128, 59),
-                                            fontSize: 17),
-                                      ),
-                                      TimeCard(
-                                          DayForDrink.evening,
-                                          widget.name,
-                                          widget.countOfDays,
-                                          widget.repetition),
-                                    ]));
-                              }
-
-                            case 3:
-                              {
-                                return Container(
-
-                                    ///height: 300,
-                                    child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                      Text(
-                                        "Ночь",
-                                        style: TextStyle(
-                                            color: Colors.purple, fontSize: 17),
-                                      ),
-                                      TimeCard(
-                                          DayForDrink.night,
-                                          widget.name,
-                                          widget.countOfDays,
-                                          widget.repetition),
-                                    ]));
-                              }
-                          }
-                        },
-                        padding: EdgeInsets.all(8),
-                      ),
-                    ),
-                    // SizedBox(
-                    //   height: 2,
-                    // ),
-                    Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: CupertinoButton(
-                        child: Text("Установить"),
-                        onPressed: () async {
-                          print(timeList);
-                          for (int i = 0; i < 4; i++) {
-                            for (int j = 0; j < widget.countOfDays; j++) {
-                              var uuid = Uuid().v4();
-                              log("UUiD $uuid");
-
-                              // Route route = CupertinoPageRoute(builder: (context) => const AddPhilsPage());
-                              //     Navigator.push(context, route);
-                              ///идет заполнение сущности, чтобы затем ее кинуть в блок
-                              log("widget.repet = ${widget.repetition}");
-                              if (timeList[i] == null) continue;
-                              if (widget.repetition == "Через день" &&
-                                  (j % 2 == 1)) continue;
-                              log("J is $j");
-                              PillModel pill = PillModel(
-                                id: uuid.toString(),
-                                name: widget.name,
-                                image: widget.image,
-                                countOfPills: widget.countOfPills,
-                                ////durationToTake: widget._state.counterDays,
-                                repetition: widget.repetition,
-
-                                status: StatusEnum.ATTENTION,
-                                specificToDrink: widget.specificToDrink,
-                                timeToDrink: (widget.repetition == "Через день")
-                                    ? timeList[i].add(Duration(days: j))
-                                    : timeList[i].add(Duration(days: j)),
-                                description: widget.description,
-                              );
-
-                              BlocProvider.of<PillBloc>(context)
-                                  .add(AddPillBloc(pill: pill));
+                                      ///height: 300,
+                                      child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                        Text(
+                                          "Ночь",
+                                          style: TextStyle(
+                                              color: Colors.purple,
+                                              fontSize: 17),
+                                        ),
+                                        TimeCard(
+                                            DayForDrink.night,
+                                            widget.name,
+                                            widget.countOfDays,
+                                            widget.repetition),
+                                      ]));
+                                }
                             }
-                          }
-
-                          timeList = [null, null, null, null];
-                          log("Time List after for $timeList");
-                          CustomButton.days = [];
-                          Route route = CupertinoPageRoute(builder: (context) {
-                            return BlocProvider<PillBloc>(
-                                create: (context) => sl<PillBloc>(),
-                                child: DragListScreen());
-                          });
-                          Navigator.push(
-                            context,
-                            route,
-                          );
-
-                          ///return;
-                          ///  widget._state.time = timeList;
-                        },
-                        color: Colors.green,
-                        padding:
-                            EdgeInsets.symmetric(vertical: 5, horizontal: 95),
+                          },
+                          padding: EdgeInsets.all(8),
+                        ),
                       ),
-                    ),
-                  ],
+                      // SizedBox(
+                      //   height: 2,
+                      // ),
+                      Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: CupertinoButton(
+                          child: Text("Установить"),
+                          onPressed: () async {
+                            print(timeList);
+                            for (int i = 0; i < 4; i++) {
+                              for (int j = 0; j < widget.countOfDays; j++) {
+                                var uuid = Uuid().v4();
+                                log("UUiD $uuid");
+
+                                // Route route = CupertinoPageRoute(builder: (context) => const AddPhilsPage());
+                                //     Navigator.push(context, route);
+                                ///идет заполнение сущности, чтобы затем ее кинуть в блок
+                                log("widget.repet = ${widget.repetition}");
+                                if (timeList[i] == null) continue;
+                                if (widget.repetition == "Через день" &&
+                                    (j % 2 == 1)) continue;
+                                log("J is $j");
+                                PillModel pill = PillModel(
+                                  id: uuid.toString(),
+                                  name: widget.name,
+                                  image: widget.image,
+                                  countOfPills: widget.countOfPills,
+                                  ////durationToTake: widget._state.counterDays,
+                                  repetition: widget.repetition,
+
+                                  status: StatusEnum.ATTENTION,
+                                  specificToDrink: widget.specificToDrink,
+                                  timeToDrink:
+                                      (widget.repetition == "Через день")
+                                          ? timeList[i].add(Duration(days: j))
+                                          : timeList[i].add(Duration(days: j)),
+                                  description: widget.description,
+                                );
+
+                                BlocProvider.of<PillBloc>(context)
+                                    .add(AddPillBloc(pill: pill));
+                              }
+                            }
+
+                            timeList = [null, null, null, null];
+                            log("Time List after for $timeList");
+                            CustomButton.days = [];
+                            Route route =
+                                CupertinoPageRoute(builder: (context) {
+                              return BlocProvider<PillBloc>(
+                                  create: (context) => sl<PillBloc>(),
+                                  child: DragListScreen());
+                            });
+                            Navigator.push(
+                              context,
+                              route,
+                            );
+
+                            ///return;
+                            ///  widget._state.time = timeList;
+                          },
+                          color: Colors.green,
+                          padding:
+                              EdgeInsets.symmetric(vertical: 5, horizontal: 95),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

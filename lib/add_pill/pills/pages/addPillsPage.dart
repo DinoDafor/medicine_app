@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:medicine_app/add_pill/pills/components/app_bar_cupertino.dart';
 import 'package:medicine_app/add_pill/pills/components/appbar_mode.dart';
 
@@ -12,17 +13,19 @@ class AddPhilsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return CupertinoPageScaffold(
-      child: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              AppBarCupertino(mode: AppBarMode.ADD),
+    return Material(
+      child: CupertinoPageScaffold(
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                AppBarCupertino(mode: AppBarMode.ADD),
 
-              ///CustomButton("dfd"),
+                ///CustomButton("dfd"),
 
-              new PageForProvider()
-            ],
+                new PageForProvider()
+              ],
+            ),
           ),
         ),
       ),

@@ -23,22 +23,24 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.0),
-              child: NavBar(),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            HorizontalTab(),
-            ScrollableChats(),
-            MyBottomNavigationBar()
-          ],
+    return const MaterialApp(
+      home: Scaffold(
+        body: SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10.0),
+                child: NavBar(),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              HorizontalTab(),
+              ScrollableChats(),
+              MyBottomNavigationBar()
+            ],
+          ),
         ),
       ),
     );
