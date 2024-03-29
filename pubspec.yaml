@@ -58,6 +58,7 @@ dependencies:
   huawei_hmsavailability: ^6.11.0+301
   alarm: ^2.1.0
   local_auth: ^2.2.0
+  smooth_page_indicator: ^1.1.0
 
   flutter:
     sdk: flutter

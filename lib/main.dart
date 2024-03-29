@@ -15,6 +15,7 @@ import 'package:medicine_app/add_pill/pills/widget/drag_list.dart';
 import 'package:medicine_app/add_pill/service_locator.dart';
 import 'package:medicine_app/bloc/authentication_bloc.dart';
 import 'package:medicine_app/bloc/navigation_bloc.dart';
+import 'package:medicine_app/onBoarding/generalScreen.dart';
 import 'package:medicine_app/screens/authentication_screen.dart';
 import 'package:medicine_app/screens/chat_screen.dart';
 import 'package:medicine_app/screens/registration_screen.dart';
@@ -40,9 +41,14 @@ final GoRouter _router = GoRouter(routes: [
   GoRoute(
       path: '/',
       builder: (BuildContext context, GoRouterState state) {
-        return const AuthenticationScreen();
+        return AuthenticationScreen();
       },
       routes: [
+        GoRoute(
+            path: 'authentication',
+            builder: (BuildContext context, GoRouterState state) {
+              return const AuthenticationScreen();
+            }),
         GoRoute(
             path: 'registration',
             builder: (BuildContext context, GoRouterState state) {

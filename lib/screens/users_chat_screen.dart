@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:medicine_app/add_pill/pills/pages/drag_list_screen.dart';
 import 'package:medicine_app/bloc/navigation_bloc.dart';
 import '../bloc/chat_bloc.dart';
 import '../bloc/chats_bloc.dart';
@@ -21,30 +22,105 @@ class _ChatScreenState extends State<ChatScreen> {
     super.initState();
   }
 
+  final List<Widget> pages = [
+    DragListScreen(),
+    ScrollableChats(),
+  ];
+  int _selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       home: Scaffold(
-        body: SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10.0),
-                child: NavBar(),
+        body: pages[_selectedIndex],
+        bottomNavigationBar: BottomNavigationBar(
+          onTap: _onItemTapped,
+          type: BottomNavigationBarType.fixed,
+          unselectedItemColor: Colors.grey,
+          selectedItemColor: const Color(0xFF0EBE7E),
+          currentIndex: _selectedIndex,
+          items: [
+            BottomNavigationBarItem(
+              icon: SvgPicture.asset('assets/icons/home_icon.svg'),
+              label: 'Главная',
+              activeIcon: SvgPicture.asset(
+                'assets/icons/home_icon.svg',
+                colorFilter:
+                    const ColorFilter.mode(Color(0xFF0EBE7E), BlendMode.srcIn),
               ),
-              SizedBox(
-                height: 10,
+            ),
+            BottomNavigationBarItem(
+              icon: SvgPicture.asset('assets/icons/calendar_icon.svg'),
+              label: 'Календарь',
+              activeIcon: SvgPicture.asset(
+                'assets/icons/calendar_icon.svg',
+                colorFilter:
+                    const ColorFilter.mode(Color(0xFF0EBE7E), BlendMode.srcIn),
               ),
-              HorizontalTab(),
-              ScrollableChats(),
-              MyBottomNavigationBar()
-            ],
-          ),
+            ),
+            BottomNavigationBarItem(
+              icon: SvgPicture.asset('assets/icons/document_icon.svg'),
+              label: 'Чаты',
+              activeIcon: SvgPicture.asset(
+                'assets/icons/document_icon.svg',
+                colorFilter:
+                    const ColorFilter.mode(Color(0xFF0EBE7E), BlendMode.srcIn),
+              ),
+            ),
+            BottomNavigationBarItem(
+              icon: SvgPicture.asset('assets/icons/paper_icon.svg'),
+              label: 'Статьи',
+              activeIcon: SvgPicture.asset(
+                'assets/icons/paper_icon.svg',
+                colorFilter:
+                    const ColorFilter.mode(Color(0xFF0EBE7E), BlendMode.srcIn),
+              ),
+            ),
+            BottomNavigationBarItem(
+              icon: SvgPicture.asset('assets/icons/profile_icon.svg'),
+              label: 'Профиль',
+              activeIcon: SvgPicture.asset(
+                'assets/icons/profile_icon.svg',
+                colorFilter:
+                    const ColorFilter.mode(Color(0xFF0EBE7E), BlendMode.srcIn),
+              ),
+            ),
+          ],
+          //todo надо бы вынести это в константу по проекту
         ),
       ),
     );
   }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+//   @override
+//   Widget build(BuildContext context) {
+//     return const MaterialApp(
+//       home: Scaffold(
+//         body: SafeArea(
+//           child: Column(
+//             mainAxisSize: MainAxisSize.min,
+//             children: <Widget>[
+//               Padding(
+//                 padding: EdgeInsets.symmetric(horizontal: 10.0),
+//                 child: NavBar(),
+//               ),
+//               SizedBox(
+//                 height: 10,
+//               ),
+//               HorizontalTab(),
+//               context.go()
+//               MyBottomNavigationBar()
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
 }
 
 class ScrollableChats extends StatelessWidget {
@@ -70,61 +146,81 @@ class ScrollableChats extends StatelessWidget {
         ChatsState chatsBlocState = chatsBloc.state;
         //todo сделать состояние загрузки и показывать индикатор загрузки при другом стейте
         if (chatsBlocState is ChatsInitialLoadedSuccessfulState) {
-          return ListView.builder(
-              itemCount: chatsBlocState.chats.length,
-              itemBuilder: (context, index) {
-                Chat chat = chatsBlocState.chats[index];
-                return ListTile(
-                  onTap: () {
-                    chatsBloc.add(ChatsClickEvent(chatId: chat.chatId));
-                    BlocProvider.of<NavigationBloc>(context).add(
-                        NavigationToChatScreenEvent(
-                            context: context, chatId: chat.chatId));
-                    BlocProvider.of<ChatBloc>(context)
-                        .add(ChatLoadingEvent(chatId: chat.chatId));
-                  },
-                  title: Text(
-                    chat.chatName,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
+          return SafeArea(
+            child: Scaffold(
+              body: SafeArea(
+                child: Column(children: [
+                  SizedBox(
+                    height: 30,
                   ),
-                  leading: const CircleAvatar(
-                    backgroundImage:
-                        AssetImage("assets/images/doctor_image.png"),
-                    //todo можно добавить фото-заглушку, если у доктора не будет аватарки
-                    backgroundColor: Colors.deepOrange,
-                  ),
-                  subtitle: Text(
-                    chat.lastMessage.content,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: Color(0xFF616161),
-                    ),
-                  ),
-                  trailing: Column(
-                    children: [
-                      Text(
-                        chat.lastMessage.timestamp,
-                        style: const TextStyle(
-                          color: Color(0xFF616161),
-                        ),
-                      ),
-                      // Text(
-                      //   chat.lastDate,
-                      //   style: const TextStyle(
-                      //     color: Color(0xFF616161),
-                      //   ),
-                      // ),
-                    ],
-                  ),
-                );
-              });
+                  const HorizontalTab(),
+                  ListView.builder(
+                      itemCount: chatsBlocState.chats.length,
+                      itemBuilder: (context, index) {
+                        Chat chat = chatsBlocState.chats[index];
+                        return ListTile(
+                          onTap: () {
+                            chatsBloc.add(ChatsClickEvent(chatId: chat.chatId));
+                            BlocProvider.of<NavigationBloc>(context).add(
+                                NavigationToChatScreenEvent(
+                                    context: context, chatId: chat.chatId));
+                            BlocProvider.of<ChatBloc>(context)
+                                .add(ChatLoadingEvent(chatId: chat.chatId));
+                          },
+                          title: Text(
+                            chat.chatName,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          leading: const CircleAvatar(
+                            backgroundImage:
+                                AssetImage("assets/images/doctor_image.png"),
+                            //todo можно добавить фото-заглушку, если у доктора не будет аватарки
+                            backgroundColor: Colors.deepOrange,
+                          ),
+                          subtitle: Text(
+                            chat.lastMessage.content,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: Color(0xFF616161),
+                            ),
+                          ),
+                          trailing: Column(
+                            children: [
+                              Text(
+                                chat.lastMessage.timestamp,
+                                style: const TextStyle(
+                                  color: Color(0xFF616161),
+                                ),
+                              ),
+                              // Text(
+                              //   chat.lastDate,
+                              //   style: const TextStyle(
+                              //     color: Color(0xFF616161),
+                              //   ),
+                              // ),
+                            ],
+                          ),
+                        );
+                      }),
+                ]),
+              ),
+            ),
+          );
+        } else {
+          return const Scaffold(
+            body: SafeArea(
+              child: Column(
+                children: [HorizontalTab(), Text("Где чат?")],
+              ),
+            ),
+          );
         }
-        return const Text("Где чат?");
+        // return const Text("Где чат?");
       },
     ));
   }
@@ -140,7 +236,7 @@ class MyBottomNavigationBar extends StatefulWidget {
 }
 
 class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 2;
 
   @override
   Widget build(BuildContext context) {
