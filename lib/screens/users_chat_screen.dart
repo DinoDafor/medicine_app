@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:medicine_app/bloc/navigation_bloc.dart';
+import 'package:medicine_app/utils/conversation.dart';
 import '../bloc/chat_bloc.dart';
 import '../bloc/chats_bloc.dart';
 import '../models/chat_model.dart';
@@ -69,8 +70,8 @@ class ScrollableChats extends StatelessWidget {
                     BlocProvider.of<NavigationBloc>(context).add(NavigationToChatScreenEvent(context: context, chatId: chat.id));
                     BlocProvider.of<ChatBloc>(context).add(ChatLoadingEvent(chatId: chat.id));
                   },
-                  title: const Text(
-                    "Заглушка",
+                  title:  Text(
+                    Conversation.idName[chat.firstParticipantId].toString(),
                     // chat.chatName,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

@@ -15,8 +15,6 @@ class ChatWithUser extends StatefulWidget {
 }
 
 class _ChatWithUserState extends State<ChatWithUser> {
-  //todo не сохраняется чат, надо сделать
-
   @override
   void initState() {
     super.initState();
@@ -106,7 +104,7 @@ class _ChatWithUserState extends State<ChatWithUser> {
           ),
         ],
       ),
-      body: ScrollableChat(),
+      body: const ScrollableChat(),
     );
   }
 }
@@ -128,7 +126,7 @@ class _ScrollableChatState extends State<ScrollableChat> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<ChatBloc>(context).add(ChatLoadingEvent( chatId: 1));
+    BlocProvider.of<ChatBloc>(context).add(ChatLoadingEvent(chatId: 1));
   }
 
   @override
@@ -230,8 +228,20 @@ class _ScrollableChatState extends State<ScrollableChat> {
                   shape: const CircleBorder(),
                 ),
                 onPressed: () {
-                  // if (_textController.text.isNotEmpty) {
-                  // }
+                  if (_textController.text.trim().isNotEmpty) {
+                    print("зашли в отправку сообщения");
+                    Message sendMessage = Message(
+                        //todo: hardcode
+                        senderId: 1,
+                        recipientId: 96,
+                        text: _textController.text.trim(),
+                        sendTimestamp: DateTime.now().microsecondsSinceEpoch,
+                        status: Status.CONFIRMATION,
+                        type: Type.MESSAGE_SENT);
+                    BlocProvider.of<ChatBloc>(context)
+                        .add(ChatSendMessageEvent(message: sendMessage));
+                    print("отправили сообщение");
+                  }
                 },
                 child: SvgPicture.asset(
                   "assets/icons/send_arrow.svg",
@@ -275,7 +285,6 @@ class _ScrollableChatState extends State<ScrollableChat> {
 
   @override
   void dispose() {
-    // _channel.sink.close(status.goingAway);
     _textController.dispose();
     super.dispose();
   }

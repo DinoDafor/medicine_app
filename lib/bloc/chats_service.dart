@@ -14,6 +14,7 @@ class UsersChatsService {
 
     Options options = Options(
         headers: {HttpHeaders.authorizationHeader: 'Bearer ${Token.token}'});
+    //todo: hardcode
     var response = await _dio.get("http://10.0.2.2:8080/conversations/1",
         options: options);
 
@@ -21,6 +22,15 @@ class UsersChatsService {
       List<Map<String, dynamic>> chatData =
           List<Map<String, dynamic>>.from(response.data);
       chats.addAll(chatData.map((chat) => Chat.fromJson(chat)));
+      //todo: refactor
+      chats.forEach((element) async {
+        var response_1 = await _dio.get(
+            "http://10.0.2.2:8080/users/${element.firstParticipantId}",
+            options: options);
+        Conversation.idName[element.firstParticipantId] =
+            response_1.data["name"];
+      });
+      //todo: refactor
       Conversation.conversations.addAll(chats);
     }
     return chats;

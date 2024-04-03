@@ -1,28 +1,51 @@
+import 'dart:convert';
+
 import 'package:medicine_app/utils/conversation.dart';
+import 'package:medicine_app/utils/token.dart';
+import 'package:stomp_dart_client/stomp.dart';
+import 'package:stomp_dart_client/stomp_config.dart';
+import 'package:stomp_dart_client/stomp_frame.dart';
 
 import '../models/chat_model.dart';
 import '../models/message_model.dart';
 
 class ChatService {
+  static const String destination = '/app/message';
+  static const String destinationFrom = '/user/specific';
+  late StompClient stompClient;
   final List<Message> _messages = [];
-  //todo для эндпоинта получения сообщений
-  // Future<List<Message>> getMessages(int chatId) async {
-  //   //,
-  //   //         options: options
-  //   // Options options = Options(
-  //   //     headers: {HttpHeaders.authorizationHeader: 'Bearer ${Token.token}'});
-  //   var response =
-  //   await _dio.get(_URL, queryParameters: {"chatId": chatId});
-  //   if (response.statusCode == 200) {
-  //     List<Map<String, dynamic>> chatData =
-  //         List<Map<String, dynamic>>.from(response.data);
-  //     _messages.addAll(chatData.map((message) => Message.fromJson(message)));
-  //     return _messages;
-  //     //
-  //   }
-  //   //todo пустой, сделать обработку
-  //   return _messages;
-  // }
+
+  ChatService() {
+    stompClient = StompClient(
+      config: StompConfig(
+        url: 'ws://10.0.2.2:8080/irecipe-chat',
+        onConnect: onConnect,
+        beforeConnect: () async {
+          print('beforeConnect...');
+        },
+        onWebSocketError: (dynamic error) => print(error.toString()),
+        stompConnectHeaders: {'Authorization': 'Bearer ${Token.token}'},
+        webSocketConnectHeaders: {'Authorization': 'Bearer ${Token.token}'},
+      ),
+    );
+
+    stompClient.activate();
+  }
+
+  void onConnect(StompFrame frame) {
+    print("Callback for when STOMP has successfully connected!");
+
+    stompClient.subscribe(
+      headers: {'Authorization': 'Bearer ${Token.token}'},
+      destination: destinationFrom,
+      callback: (frame) {
+        print("зашли в коллбек подписки");
+        print(frame.body);
+        // List<dynamic>? result = json.decode(frame.body!);
+        // print(result);
+      },
+    );
+  }
 
   List<Message> getMessagesFromConversations(int chatId) {
     Chat chat = Conversation.conversations
@@ -31,7 +54,7 @@ class ChatService {
     return _messages;
   }
 
-  deleteMessagesFromLocalList() {
+  void deleteMessagesFromLocalList() {
     _messages.clear();
   }
 }
