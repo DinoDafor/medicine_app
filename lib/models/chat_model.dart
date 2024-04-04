@@ -1,6 +1,6 @@
 import 'message_model.dart';
 
-class Chat {
+class Chat implements Comparable<Chat> {
   int id;
   int firstParticipantId;
   int secondParticipantId;
@@ -22,5 +22,17 @@ class Chat {
       secondParticipantId: json["secondParticipantId"],
       messages: messages,
     );
+  }
+
+  @override
+  int compareTo(Chat other) {
+    // Сравниваем последние сообщения в чатах
+    int thisTimestamp = this.messages.isNotEmpty
+        ? this.messages.last.sendTimestamp
+        : 0; // Значение по умолчанию, если нет сообщений
+    int otherTimestamp = other.messages.isNotEmpty
+        ? other.messages.last.sendTimestamp
+        : 0; // Значение по умолчанию, если нет сообщений
+    return otherTimestamp.compareTo(thisTimestamp);
   }
 }

@@ -115,7 +115,9 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
   ElevatedButton buildAuthButton(BuildContext context) {
     return ElevatedButton(
       onPressed: () async {
-        BlocProvider.of<AuthenticationBloc>(context).add(AuthenticationSighInEvent(_emailController.text, _passwordController.text));
+        BlocProvider.of<AuthenticationBloc>(context).add(
+            AuthenticationSighInEvent(
+                _emailController.text, _passwordController.text));
 
 //         if (_formKey.currentState!.validate()) {
 //
@@ -153,13 +155,13 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
           listener: (context, state) {
             //todo возможно убрать ненужный стейт, точнее иф
             if (state is AuthenticationSuccessState) {
-              BlocProvider.of<NavigationBloc>(context).add(NavigationToChatsScreenEvent(context: context));
+              BlocProvider.of<NavigationBloc>(context)
+                  .add(NavigationToChatsScreenEvent(context: context));
             }
           },
-          //todo сделать кнопку загрузки
           builder: (context, state) {
             return state is AuthenticationLoadingState && state.isLoading
-                ? const Text("...")
+                ? const CircularProgressIndicator(backgroundColor: Colors.white)
                 : const Text("Авторизироваться");
           },
         ),
@@ -179,7 +181,8 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
         ),
         TextButton(
             onPressed: () {
-              BlocProvider.of<NavigationBloc>(context).add(NavigationToRegistrationScreenEvent(context: context));
+              BlocProvider.of<NavigationBloc>(context)
+                  .add(NavigationToRegistrationScreenEvent(context: context));
             },
             child: const Text(
               "Зарегистрируйтесь",

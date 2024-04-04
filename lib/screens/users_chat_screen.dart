@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:medicine_app/bloc/navigation_bloc.dart';
 import 'package:medicine_app/utils/conversation.dart';
 import '../bloc/chat_bloc.dart';
@@ -54,7 +55,6 @@ class ScrollableChats extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(child: BlocBuilder<ChatsBloc, ChatsState>(
       builder: (context, state) {
-
         //todo можно по-другому?
         var chatsBloc = BlocProvider.of<ChatsBloc>(context);
         ChatsState chatsBlocState = chatsBloc.state;
@@ -63,30 +63,33 @@ class ScrollableChats extends StatelessWidget {
           return ListView.builder(
               itemCount: chatsBlocState.chats.length,
               itemBuilder: (context, index) {
+                //todo: мы должны передавать сортированные данные для ListView.builder
                 Chat chat = chatsBlocState.chats[index];
                 return ListTile(
                   onTap: () {
                     chatsBloc.add(ChatsClickEvent(chatId: chat.id));
-                    BlocProvider.of<NavigationBloc>(context).add(NavigationToChatScreenEvent(context: context, chatId: chat.id));
-                    BlocProvider.of<ChatBloc>(context).add(ChatLoadingEvent(chatId: chat.id));
+                    BlocProvider.of<NavigationBloc>(context).add(
+                        NavigationToChatScreenEvent(
+                            context: context, chatId: chat.id));
+                    BlocProvider.of<ChatBloc>(context)
+                        .add(ChatLoadingEvent(chatId: chat.id));
                   },
-                  title:  Text(
+                  title: Text(
                     Conversation.idName[chat.firstParticipantId].toString(),
                     // chat.chatName,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   leading: const CircleAvatar(
                     backgroundImage:
                         AssetImage("assets/images/doctor_image.png"),
-                    //todo можно добавить фото-заглушку, если у доктора не будет аватарки
                     backgroundColor: Colors.deepOrange,
                   ),
                   subtitle: Text(
-                    chat.messages[0].text,
+                    chat.messages.last.text,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
@@ -95,9 +98,11 @@ class ScrollableChats extends StatelessWidget {
                   ),
                   trailing: Column(
                     children: [
+                      //TODO:
                       Text(
-                        //todo timestamp
-                        chat.messages[0].sendTimestamp.toString(),
+                        DateFormat('dd/MM/yyyy').format(
+                            DateTime.fromMillisecondsSinceEpoch(
+                                chat.messages.last.sendTimestamp)),
                         style: const TextStyle(
                           color: Color(0xFF616161),
                         ),
@@ -113,7 +118,7 @@ class ScrollableChats extends StatelessWidget {
                 );
               });
         }
-        return const Text("Где чат?");
+        return const Center(child: CircularProgressIndicator());
       },
     ));
   }
@@ -265,9 +270,7 @@ class NavBar extends StatelessWidget {
           child: SvgPicture.asset(
             "assets/icons/Search.svg",
           ),
-          onTap: () {
-
-          },
+          onTap: () {},
         ),
         const SizedBox(width: 10),
         SvgPicture.asset(

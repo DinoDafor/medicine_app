@@ -5,6 +5,7 @@ import 'package:medicine_app/utils/conversation.dart';
 
 import '../models/chat_model.dart';
 import '../utils/token.dart';
+import '../utils/user.dart';
 
 class UsersChatsService {
   final Dio _dio = Dio();
@@ -14,23 +15,28 @@ class UsersChatsService {
 
     Options options = Options(
         headers: {HttpHeaders.authorizationHeader: 'Bearer ${Token.token}'});
-    //todo: hardcode
-    var response = await _dio.get("http://10.0.2.2:8080/conversations/1",
-        options: options);
+    var conversationsResponse = await _dio
+        .get("http://10.0.2.2:8080/conversations/${User.id}", options: options);
 
-    if (response.statusCode == 200) {
+    if (conversationsResponse.statusCode == 200) {
       List<Map<String, dynamic>> chatData =
-          List<Map<String, dynamic>>.from(response.data);
+          List<Map<String, dynamic>>.from(conversationsResponse.data);
       chats.addAll(chatData.map((chat) => Chat.fromJson(chat)));
-      //todo: refactor
-      chats.forEach((element) async {
-        var response_1 = await _dio.get(
-            "http://10.0.2.2:8080/users/${element.firstParticipantId}",
-            options: options);
-        Conversation.idName[element.firstParticipantId] =
-            response_1.data["name"];
+      //TODO: надо как-то правильно сортировать чаты здесь
+      chats.sort();
+      //TODO: ещё надо делать сортировку сообщений для каждого Chat))
+
+      //TODO: Забирает ВСЕ с сервера, надо по частям сделать
+      await Future.forEach(chats, (Chat chat) async {
+        var userResponse = await _dio.get(
+          "http://10.0.2.2:8080/users/${chat.firstParticipantId}",
+          options: options,
+        );
+        Conversation.idName[chat.firstParticipantId] =
+            userResponse.data["name"];
       });
       //todo: refactor
+
       Conversation.conversations.addAll(chats);
     }
     return chats;
