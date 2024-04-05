@@ -59,6 +59,8 @@ dependencies:
   alarm: ^2.1.0
   local_auth: ^2.2.0
   smooth_page_indicator: ^1.1.0
+  dash_chat_2: ^0.0.20
+  chat_gpt_sdk: ^3.0.4
 
   flutter:
     sdk: flutter
