@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:medicine_app/bloc/navigation_bloc.dart';
+import 'package:medicine_app/models/chat_model.dart';
+import 'package:medicine_app/models/chat_model.dart';
 import 'package:medicine_app/models/message_model.dart';
+import 'package:medicine_app/utils/conversation.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../bloc/chat_bloc.dart';
@@ -38,14 +41,31 @@ class _ChatWithUserState extends State<ChatWithUser> {
                 .add(NavigationToChatsScreenEvent(context: context));
           },
         ),
-        title: const Text(
-          //todo hardcode
-          "Доктор Ливси",
-          // widget.chatId.toString(),
-          style: TextStyle(
-              color: Color(0xFF212121),
-              fontWeight: FontWeight.bold,
-              fontSize: 24),
+        title: BlocBuilder<ChatBloc, ChatState>(
+          builder: (context, state) {
+            if (state is ChatLoadedSuccessfulState) {
+              print("мапа при отрисовке: ");
+              print(Conversation.idName);
+              return Text(
+                //todo hardcode
+                Conversation.idName[state.interlocutorId].toString(),
+                // widget.chatId.toString(),
+                style: const TextStyle(
+                    color: Color(0xFF212121),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24),
+              );
+            }
+            return const Text(
+              //todo hardcode
+              "Ошибка в логике программы",
+              // widget.chatId.toString(),
+              style: TextStyle(
+                  color: Color(0xFF212121),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 24),
+            );
+          },
         ),
         actions: [
           SvgPicture.asset(
@@ -152,7 +172,10 @@ class _ScrollableChatState extends State<ScrollableChat> {
                           borderRadius: BorderRadius.circular(15),
                         ),
                         constraints: BoxConstraints(
-                          maxWidth: MediaQuery.of(context).size.width * 0.7,
+                          maxWidth: MediaQuery
+                              .of(context)
+                              .size
+                              .width * 0.7,
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(10.0),
@@ -225,15 +248,21 @@ class _ScrollableChatState extends State<ScrollableChat> {
                   shape: const CircleBorder(),
                 ),
                 onPressed: () {
-                  if (_textController.text.trim().isNotEmpty) {
-                    var chatState = BlocProvider.of<ChatBloc>(context).state;
+                  if (_textController.text
+                      .trim()
+                      .isNotEmpty) {
+                    var chatState = BlocProvider
+                        .of<ChatBloc>(context)
+                        .state;
                     if (chatState is ChatLoadedSuccessfulState) {
                       print("зашли в отправку сообщения");
                       Message sendMessage = Message(
                           senderId: User.id,
                           recipientId: chatState.interlocutorId,
                           text: _textController.text.trim(),
-                          sendTimestamp: DateTime.now().millisecondsSinceEpoch,
+                          sendTimestamp: DateTime
+                              .now()
+                              .millisecondsSinceEpoch,
                           status: Status.CONFIRMATION,
                           type: Type.MESSAGE_SENT);
                       BlocProvider.of<ChatBloc>(context).add(

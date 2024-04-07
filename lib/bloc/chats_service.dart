@@ -11,7 +11,7 @@ class UsersChatsService {
   final Dio _dio = Dio();
 
   Future<List<Chat>> getConversations() async {
-    List<Chat> chats = [];
+    List<Chat> allChatsOfUser = [];
 
     Options options = Options(
         headers: {HttpHeaders.authorizationHeader: 'Bearer ${Token.token}'});
@@ -21,24 +21,37 @@ class UsersChatsService {
     if (conversationsResponse.statusCode == 200) {
       List<Map<String, dynamic>> chatData =
           List<Map<String, dynamic>>.from(conversationsResponse.data);
-      chats.addAll(chatData.map((chat) => Chat.fromJson(chat)));
-      //TODO: надо как-то правильно сортировать чаты здесь
-      chats.sort();
-      //TODO: ещё надо делать сортировку сообщений для каждого Chat))
+      allChatsOfUser.addAll(chatData.map((chat) => Chat.fromJson(chat)));
 
+      //TODO: надо как-то правильно сортировать чаты здесь
+      allChatsOfUser.sort();
+      //TODO: ещё надо делать сортировку сообщений для каждого Chat))
+      print("сколько чатов: ");
+      print(allChatsOfUser.length);
       //TODO: Забирает ВСЕ с сервера, надо по частям сделать
-      await Future.forEach(chats, (Chat chat) async {
-        var userResponse = await _dio.get(
-          "http://10.0.2.2:8080/users/${chat.firstParticipantId}",
-          options: options,
-        );
-        Conversation.idName[chat.firstParticipantId] =
-            userResponse.data["name"];
+      await Future.forEach(allChatsOfUser, (Chat chat) async {
+        dynamic userResponse;
+        if (User.id == chat.firstParticipantId) {
+          userResponse = await _dio.get(
+            "http://10.0.2.2:8080/users/${chat.secondParticipantId}",
+            options: options,
+          );
+          Conversation.idName[chat.secondParticipantId] =
+              userResponse.data["name"];
+        } else {
+          userResponse = await _dio.get(
+            "http://10.0.2.2:8080/users/${chat.firstParticipantId}",
+            options: options,
+          );
+          Conversation.idName[chat.firstParticipantId] =
+              userResponse.data["name"];
+        }
       });
       //todo: refactor
-
-      Conversation.conversations.addAll(chats);
+      print("После добавления в мапу ");
+      print(Conversation.idName);
+      Conversation.conversations.addAll(allChatsOfUser);
     }
-    return chats;
+    return allChatsOfUser;
   }
 }

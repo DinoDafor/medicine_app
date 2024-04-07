@@ -7,6 +7,7 @@ import 'package:medicine_app/utils/conversation.dart';
 import '../bloc/chat_bloc.dart';
 import '../bloc/chats_bloc.dart';
 import '../models/chat_model.dart';
+import '../utils/user.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -71,11 +72,17 @@ class ScrollableChats extends StatelessWidget {
                     BlocProvider.of<NavigationBloc>(context).add(
                         NavigationToChatScreenEvent(
                             context: context, chatId: chat.id));
-                    BlocProvider.of<ChatBloc>(context)
-                        .add(ChatLoadingEvent(chatId: chat.id, interlocutorId: chat.firstParticipantId));
+                    print("Айди собеседника: ${chat.firstParticipantId}");
+                    BlocProvider.of<ChatBloc>(context).add(ChatLoadingEvent(
+                        chatId: chat.id,
+                        interlocutorId: User.id == chat.firstParticipantId
+                            ? chat.secondParticipantId
+                            : chat.firstParticipantId));
                   },
                   title: Text(
-                    Conversation.idName[chat.firstParticipantId].toString(),
+                    Conversation.idName[User.id == chat.firstParticipantId
+                        ? chat.secondParticipantId
+                        : chat.firstParticipantId].toString(),
                     // chat.chatName,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
