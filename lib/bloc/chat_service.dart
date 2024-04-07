@@ -54,6 +54,13 @@ class ChatService {
     return _messages;
   }
 
+  void addMessageToConversation(int chatId, Message message) {
+    Conversation.conversations
+        .firstWhere((element) => element.id == chatId)
+        .messages
+        .add(message);
+  }
+
   void deleteMessagesFromLocalList() {
     _messages.clear();
   }

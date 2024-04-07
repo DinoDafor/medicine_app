@@ -6,6 +6,7 @@ import 'package:medicine_app/models/message_model.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../bloc/chat_bloc.dart';
+import '../utils/user.dart';
 
 class ChatWithUser extends StatefulWidget {
   const ChatWithUser({super.key});
@@ -38,7 +39,7 @@ class _ChatWithUserState extends State<ChatWithUser> {
           },
         ),
         title: const Text(
-          //todo сделать динамически
+          //todo hardcode
           "Доктор Ливси",
           // widget.chatId.toString(),
           style: TextStyle(
@@ -120,13 +121,9 @@ class _ScrollableChatState extends State<ScrollableChat> {
   final TextEditingController _textController = TextEditingController();
   final ItemScrollController _scrollController = ItemScrollController();
 
-  //todo пока так
-  int userOwner = 1;
-
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<ChatBloc>(context).add(ChatLoadingEvent(chatId: 1));
   }
 
   @override
@@ -144,12 +141,12 @@ class _ScrollableChatState extends State<ScrollableChat> {
                   itemCount: messages.length,
                   itemBuilder: (context, index) {
                     return Align(
-                      alignment: messages[index].senderId == userOwner
+                      alignment: messages[index].senderId == User.id
                           ? Alignment.topRight
                           : Alignment.topLeft,
                       child: Container(
                         decoration: BoxDecoration(
-                          color: messages[index].senderId == userOwner
+                          color: messages[index].senderId == User.id
                               ? const Color(0xFF0EBE7E)
                               : const Color(0xFFF5F5F5),
                           borderRadius: BorderRadius.circular(15),
@@ -162,7 +159,7 @@ class _ScrollableChatState extends State<ScrollableChat> {
                           child: Text(
                             messages[index].text,
                             style: TextStyle(
-                              color: messages[index].senderId == userOwner
+                              color: messages[index].senderId == User.id
                                   ? const Color(0xFFFFFFFF)
                                   : const Color(0xFF212121),
                             ),
@@ -229,18 +226,25 @@ class _ScrollableChatState extends State<ScrollableChat> {
                 ),
                 onPressed: () {
                   if (_textController.text.trim().isNotEmpty) {
-                    print("зашли в отправку сообщения");
-                    Message sendMessage = Message(
-                        //todo: hardcode
-                        senderId: 1,
-                        recipientId: 96,
-                        text: _textController.text.trim(),
-                        sendTimestamp: DateTime.now().microsecondsSinceEpoch,
-                        status: Status.CONFIRMATION,
-                        type: Type.MESSAGE_SENT);
-                    BlocProvider.of<ChatBloc>(context)
-                        .add(ChatSendMessageEvent(message: sendMessage));
-                    print("отправили сообщение");
+                    var chatState = BlocProvider.of<ChatBloc>(context).state;
+                    if (chatState is ChatLoadedSuccessfulState) {
+                      print("зашли в отправку сообщения");
+                      Message sendMessage = Message(
+                          senderId: User.id,
+                          recipientId: chatState.interlocutorId,
+                          text: _textController.text.trim(),
+                          sendTimestamp: DateTime.now().millisecondsSinceEpoch,
+                          status: Status.CONFIRMATION,
+                          type: Type.MESSAGE_SENT);
+                      BlocProvider.of<ChatBloc>(context).add(
+                          ChatSendMessageEvent(
+                              message: sendMessage,
+                              chatId: chatState.chatId,
+                              messages: chatState.messages,
+                              interlocutorId: chatState.interlocutorId));
+                      _textController.clear();
+                      print("отправили сообщение");
+                    }
                   }
                 },
                 child: SvgPicture.asset(

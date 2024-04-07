@@ -72,7 +72,7 @@ class ScrollableChats extends StatelessWidget {
                         NavigationToChatScreenEvent(
                             context: context, chatId: chat.id));
                     BlocProvider.of<ChatBloc>(context)
-                        .add(ChatLoadingEvent(chatId: chat.id));
+                        .add(ChatLoadingEvent(chatId: chat.id, interlocutorId: chat.firstParticipantId));
                   },
                   title: Text(
                     Conversation.idName[chat.firstParticipantId].toString(),
