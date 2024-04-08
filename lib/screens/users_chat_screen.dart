@@ -1,12 +1,19 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:medicine_app/add_pill/pills/pages/drag_list_screen.dart';
+=======
+import 'package:intl/intl.dart';
+>>>>>>> remotes/origin/master
 import 'package:medicine_app/bloc/navigation_bloc.dart';
+import 'package:medicine_app/utils/conversation.dart';
 import '../bloc/chat_bloc.dart';
 import '../bloc/chats_bloc.dart';
 import '../models/chat_model.dart';
+import '../utils/user.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -131,96 +138,79 @@ class ScrollableChats extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(child: BlocBuilder<ChatsBloc, ChatsState>(
-      // buildWhen: (previousState, state) {
-      //   if (previousState != state) {
-      //     return true;
-      //   }
-      //   else {
-      //     return false;
-      //   }
-      //
-      // },
       builder: (context, state) {
         //todo можно по-другому?
         var chatsBloc = BlocProvider.of<ChatsBloc>(context);
         ChatsState chatsBlocState = chatsBloc.state;
         //todo сделать состояние загрузки и показывать индикатор загрузки при другом стейте
         if (chatsBlocState is ChatsInitialLoadedSuccessfulState) {
-          return SafeArea(
-            child: Scaffold(
-              body: SafeArea(
-                child: Column(children: [
-                  SizedBox(
-                    height: 30,
+          return ListView.builder(
+              itemCount: chatsBlocState.chats.length,
+              itemBuilder: (context, index) {
+                //todo: мы должны передавать сортированные данные для ListView.builder
+                Chat chat = chatsBlocState.chats[index];
+                return ListTile(
+                  onTap: () {
+                    chatsBloc.add(ChatsClickEvent(chatId: chat.id));
+                    BlocProvider.of<NavigationBloc>(context).add(
+                        NavigationToChatScreenEvent(
+                            context: context, chatId: chat.id));
+                    print("Айди собеседника: ${chat.firstParticipantId}");
+                    BlocProvider.of<ChatBloc>(context).add(ChatLoadingEvent(
+                        chatId: chat.id,
+                        interlocutorId: User.id == chat.firstParticipantId
+                            ? chat.secondParticipantId
+                            : chat.firstParticipantId));
+                  },
+                  title: Text(
+                    Conversation.idName[User.id == chat.firstParticipantId
+                            ? chat.secondParticipantId
+                            : chat.firstParticipantId]
+                        .toString(),
+                    // chat.chatName,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  const HorizontalTab(),
-                  ListView.builder(
-                      itemCount: chatsBlocState.chats.length,
-                      itemBuilder: (context, index) {
-                        Chat chat = chatsBlocState.chats[index];
-                        return ListTile(
-                          onTap: () {
-                            chatsBloc.add(ChatsClickEvent(chatId: chat.chatId));
-                            BlocProvider.of<NavigationBloc>(context).add(
-                                NavigationToChatScreenEvent(
-                                    context: context, chatId: chat.chatId));
-                            BlocProvider.of<ChatBloc>(context)
-                                .add(ChatLoadingEvent(chatId: chat.chatId));
-                          },
-                          title: Text(
-                            chat.chatName,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          leading: const CircleAvatar(
-                            backgroundImage:
-                                AssetImage("assets/images/doctor_image.png"),
-                            //todo можно добавить фото-заглушку, если у доктора не будет аватарки
-                            backgroundColor: Colors.deepOrange,
-                          ),
-                          subtitle: Text(
-                            chat.lastMessage.content,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              color: Color(0xFF616161),
-                            ),
-                          ),
-                          trailing: Column(
-                            children: [
-                              Text(
-                                chat.lastMessage.timestamp,
-                                style: const TextStyle(
-                                  color: Color(0xFF616161),
-                                ),
-                              ),
-                              // Text(
-                              //   chat.lastDate,
-                              //   style: const TextStyle(
-                              //     color: Color(0xFF616161),
-                              //   ),
-                              // ),
-                            ],
-                          ),
-                        );
-                      }),
-                ]),
-              ),
-            ),
-          );
-        } else {
-          return const Scaffold(
-            body: SafeArea(
-              child: Column(
-                children: [HorizontalTab(), Text("Где чат?")],
-              ),
-            ),
-          );
+                  leading: const CircleAvatar(
+                    backgroundImage:
+                        AssetImage("assets/images/doctor_image.png"),
+                    backgroundColor: Colors.deepOrange,
+                  ),
+                  subtitle: Text(
+                    chat.messages.last.text,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: Color(0xFF616161),
+                    ),
+                  ),
+                  trailing: Column(
+                    children: [
+                      //TODO:
+                      Text(
+                        DateFormat('dd/MM/yyyy').format(
+                            DateTime.fromMillisecondsSinceEpoch(
+                                chat.messages.last.sendTimestamp)),
+                        style: const TextStyle(
+                          color: Color(0xFF616161),
+                        ),
+                      ),
+                      // Text(
+                      //   chat.lastDate,
+                      //   style: const TextStyle(
+                      //     color: Color(0xFF616161),
+                      //   ),
+                      // ),
+                    ],
+                  ),
+                );
+              });
         }
         // return const Text("Где чат?");
+        return const Center(child: CircularProgressIndicator());
       },
     ));
   }
@@ -230,13 +220,6 @@ class MyBottomNavigationBar extends StatefulWidget {
   const MyBottomNavigationBar({
     super.key,
   });
-
-  @override
-  State<MyBottomNavigationBar> createState() => _MyBottomNavigationBarState();
-}
-
-class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
-  int _selectedIndex = 2;
 
   @override
   Widget build(BuildContext context) {
@@ -295,15 +278,6 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
       ],
       //todo надо бы вынести это в константу по проекту
     );
-  }
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-      if (index == 0) {
-        context.go("/addPill");
-      }
-    });
   }
 }
 
@@ -385,8 +359,11 @@ class NavBar extends StatelessWidget {
             ),
           ),
         ),
-        SvgPicture.asset(
-          "assets/icons/Search.svg",
+        GestureDetector(
+          child: SvgPicture.asset(
+            "assets/icons/Search.svg",
+          ),
+          onTap: () {},
         ),
         const SizedBox(width: 10),
         SvgPicture.asset(

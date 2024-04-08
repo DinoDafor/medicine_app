@@ -1,7 +1,9 @@
 //todo что это?
 import 'package:bloc/bloc.dart';
+import 'package:medicine_app/utils/token.dart';
 import 'package:meta/meta.dart';
 
+import '../utils/user.dart';
 import 'authentication_service.dart';
 
 part 'authentication_event.dart';
@@ -19,25 +21,40 @@ class AuthenticationBloc
     on<AuthenticationSighOutEvent>((event, emit) {});
   }
 
-  _signUp(AuthenticationSighUpEvent event, Emitter<AuthenticationState> emit) {
+  _signUp(AuthenticationSighUpEvent event,
+      Emitter<AuthenticationState> emit) async {
     emit(AuthenticationLoadingState(isLoading: true));
-    //todo сделать норм запросы http
-    _authService.sighUpUser(
+
+    var signUpResponse = await _authService.sighUpUser(
         event.email, event.password, event.userName, event.phoneNumber);
+    if (signUpResponse.statusCode == 200) {
+      Token.token = signUpResponse.data["token"];
+      // emit() state для на страницу с чатами
+    } else if (signUpResponse.statusCode == 401) {
+      //todo обработать
+      print("401 ошибка!!!");
+      // emit() state ошибка
+    }
 
     emit(AuthenticationSuccessState());
     emit(AuthenticationLoadingState(isLoading: false));
   }
 
-  _signIn(AuthenticationSighInEvent event, Emitter<AuthenticationState> emit) {
+  _signIn(AuthenticationSighInEvent event,
+      Emitter<AuthenticationState> emit) async {
     emit(AuthenticationLoadingState(isLoading: true));
-    //todo сделать норм запросы http
-    _authService.sighInUser(event.email, event.password);
 
-    emit(AuthenticationSuccessState());
+    var signInResponse =
+        await _authService.sighInUser(event.email, event.password);
+    if (signInResponse.statusCode == 200) {
+      Token.token = signInResponse.data["token"];
+      User.email = event.email;
+      var userResponse = await _authService.getUser(User.email);
+      User.id = userResponse.data["id"];
 
-    emit(AuthenticationLoadingState(isLoading: false));
+      emit(AuthenticationSuccessState());
+      emit(AuthenticationLoadingState(isLoading: false));
+    } else if (signInResponse.statusCode == 401) {
+    } else if (signInResponse.statusCode == 400) {}
   }
-
-  _signOut() {}
 }
