@@ -15,9 +15,12 @@ import 'package:medicine_app/add_pill/pills/widget/drag_list.dart';
 import 'package:medicine_app/add_pill/service_locator.dart';
 import 'package:medicine_app/bloc/authentication_bloc.dart';
 import 'package:medicine_app/bloc/navigation_bloc.dart';
+import 'package:medicine_app/gpt/pages/chat_gpt.dart';
+
 import 'package:medicine_app/onBoarding/generalScreen.dart';
 import 'package:medicine_app/screens/authentication_screen.dart';
 import 'package:medicine_app/screens/chat_screen.dart';
+import 'package:medicine_app/screens/chat_screen_new.dart';
 import 'package:medicine_app/screens/registration_screen.dart';
 import 'package:medicine_app/screens/users_chat_screen.dart';
 import 'package:medicine_app/add_pill/service_locator.dart' as di;
@@ -56,7 +59,11 @@ final GoRouter _router = GoRouter(routes: [
             }),
         GoRoute(
           path: 'addPill',
-          builder: (context, state) => DragListScreen(),
+          builder: (context, state) => ChatPage(),
+        ),
+        GoRoute(
+          path: 'chatGPT',
+          builder: (context, state) => const ChatPage(),
         ),
         GoRoute(
             path: 'chats',
@@ -69,7 +76,7 @@ final GoRouter _router = GoRouter(routes: [
                   path: 'chat',
                   builder: (BuildContext context, GoRouterState state) {
                     // int chatId = int.parse(state.extra.toString());
-                    return const ChatWithUser();
+                    return const ChatScreenNew();
                   })
             ]),
       ]),

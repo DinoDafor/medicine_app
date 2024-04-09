@@ -5,10 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:medicine_app/add_pill/pills/pages/drag_list_screen.dart';
-=======
 import 'package:intl/intl.dart';
->>>>>>> remotes/origin/master
 import 'package:medicine_app/bloc/navigation_bloc.dart';
+import 'package:medicine_app/screens/chat_screen_new.dart';
 import 'package:medicine_app/utils/conversation.dart';
 import '../bloc/chat_bloc.dart';
 import '../bloc/chats_bloc.dart';
@@ -30,7 +29,7 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   final List<Widget> pages = [
-    DragListScreen(),
+    ChatScreenNew(),
     ScrollableChats(),
   ];
   int _selectedIndex = 0;
@@ -222,6 +221,13 @@ class MyBottomNavigationBar extends StatefulWidget {
   });
 
   @override
+  State<MyBottomNavigationBar> createState() => _MyBottomNavigationBarState();
+}
+
+class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
+  int _selectedIndex = 1;
+
+  @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
       onTap: _onItemTapped,
@@ -278,6 +284,16 @@ class MyBottomNavigationBar extends StatefulWidget {
       ],
       //todo надо бы вынести это в константу по проекту
     );
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+      if (index == 1) {
+        log("HEEEEEEEEEEEEEEEEEEEEEEEEEEEElp");
+        context.go("/chatGPT");
+      }
+    });
   }
 }
 

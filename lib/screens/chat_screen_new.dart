@@ -1,48 +1,57 @@
-import 'dart:convert';
-
-import 'package:chat_gpt_sdk/chat_gpt_sdk.dart';
 import 'package:dash_chat_2/dash_chat_2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:medicine_app/bloc/chat_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:medicine_app/bloc/navigation_bloc.dart';
-import 'package:medicine_app/gpt/consts.dart';
+import 'package:medicine_app/models/chat_model.dart';
+import 'package:medicine_app/models/chat_model.dart';
+import 'package:medicine_app/models/message_model.dart';
 import 'package:medicine_app/utils/conversation.dart';
+import 'package:medicine_app/utils/user.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
-class ChatPage extends StatefulWidget {
-  const ChatPage({super.key});
+import '../bloc/chat_bloc.dart';
+
+class ChatScreenNew extends StatefulWidget {
+  const ChatScreenNew({super.key});
 
   @override
-  State<ChatPage> createState() => _ChatPageState();
+  State<ChatScreenNew> createState() => _ChatScreenNewState();
 }
 
-class _ChatPageState extends State<ChatPage> {
-  final ChatUser _chatUser =
-      ChatUser(id: '1', firstName: "Mikhael", lastName: "Kreslavskii");
-
-  final ChatUser _gptChatUser =
-      ChatUser(id: '2', firstName: "Chat", lastName: "GPT");
-
-  final _openAI = OpenAI.instance.build(
-      token: OPENAI_API_KEY,
-      baseOption: HttpSetup(receiveTimeout: const Duration(seconds: 7)),
-      enableLog: true);
-
+class _ChatScreenNewState extends State<ChatScreenNew> {
+  final ChatUser _currentUser = ChatUser(id: User.id.toString());
   List<ChatMessage> _messages = <ChatMessage>[];
-  List<Map<String, dynamic>> _messagesHistory = [];
-  ChatUser _systemUser = ChatUser(id: '3');
-
-  List<ChatUser> _typingUser = <ChatUser>[];
+  late ChatUser _recipentUser;
   @override
   void initState() {
-    _messagesHistory.add({'role': 'system', 'content': SYSTEM_PROMPT});
-    ChatMessage initialPrompt = ChatMessage(
-        user: _systemUser, createdAt: DateTime.now(), text: SYSTEM_PROMPT);
+    var chatState = BlocProvider.of<ChatBloc>(context).state;
 
-    getChatResponse(initialPrompt);
+    if (chatState is ChatLoadedSuccessfulState) {
+      List<Message> messages = chatState.messages;
 
-    ///_messages.add(ChatMessage(user: user, createdAt: createdAt))
+      for (var message in messages) {
+        print("Init state ${message.senderId.toString()} sender");
+        print("Init state ${_currentUser.id}");
+        if (message.senderId.toString() == _currentUser.id) {
+          ChatMessage m = ChatMessage(
+              user: _currentUser,
+              createdAt: DateTime.now(),
+              text: message.text);
+          _messages.insert(0, m);
+        } else {
+          _recipentUser = ChatUser(id: message.recipientId.toString());
+          ChatMessage m = ChatMessage(
+              user: _recipentUser,
+              createdAt: DateTime.now(),
+              text: message.text);
+          _messages.insert(0, m);
+        }
+      }
+    }
+
     // TODO: implement initState
     super.initState();
   }
@@ -149,13 +158,7 @@ class _ChatPageState extends State<ChatPage> {
         ],
       ),
       body: DashChat(
-          messageOptions: MessageOptions(
-            currentUserContainerColor: Color.fromARGB(255, 14, 190, 126),
-            textColor: Colors.white,
-            borderRadius: 20,
-          ),
-          currentUser: _chatUser,
-          typingUsers: _typingUser,
+          currentUser: _currentUser,
           onSend: (ChatMessage m) {
             getChatResponse(m);
           },
@@ -164,45 +167,32 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Future<void> getChatResponse(ChatMessage m) async {
-    setState(() {
-      if (m.user != _systemUser) {
+    var chatState = BlocProvider.of<ChatBloc>(context).state;
+
+    if (chatState is ChatLoadedSuccessfulState) {
+      print('My id ${User.id}');
+      print('Friend id ${chatState.interlocutorId}');
+      ChatUser _recipientUser =
+          ChatUser(id: chatState.interlocutorId.toString());
+      setState(() {
         _messages.insert(0, m);
-      }
+      });
 
-      _typingUser.add(_gptChatUser);
-    });
+      print("зашли в отправку сообщения");
+      Message sendMessage = Message(
+          senderId: User.id,
+          recipientId: chatState.interlocutorId,
+          text: m.text,
+          sendTimestamp: DateTime.now().millisecondsSinceEpoch,
+          status: Status.CONFIRMATION,
+          type: Type.MESSAGE_SENT);
+      BlocProvider.of<ChatBloc>(context).add(ChatSendMessageEvent(
+          message: sendMessage,
+          chatId: chatState.chatId,
+          messages: chatState.messages,
+          interlocutorId: chatState.interlocutorId));
 
-    _messagesHistory.addAll(_messages.reversed.map((m) {
-      if (m.user == _chatUser) {
-        return {
-          'role': "user",
-          'content': m.text,
-        };
-      }
-      if (m.user == _gptChatUser) {
-        return {
-          'role': "assistant",
-          'content': m.text,
-        };
-      }
-      return {'role': 'system', 'content': m.text};
-    }).toList());
-
-    final request = ChatCompleteText(
-        model: Gpt4ChatModel(), messages: _messagesHistory, maxToken: 200);
-    final response = await _openAI.onChatCompletion(request: request);
-    for (var element in response!.choices) {
-      if (element.message != null) {
-        _messages.insert(
-            0,
-            ChatMessage(
-                user: _gptChatUser,
-                createdAt: DateTime.now(),
-                text: element.message!.content));
-      }
+      print("отправили сообщение");
     }
-    setState(() {
-      _typingUser.remove(_gptChatUser);
-    });
   }
 }
