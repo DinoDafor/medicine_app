@@ -307,7 +307,7 @@ class HorizontalTab extends StatefulWidget {
 }
 
 class _HorizontalTabState extends State<HorizontalTab> {
-  final List<String> lst = ['Сообщения', 'Звонки', 'Видеозвонки'];
+  final List<String> lst = ['Сообщения', 'ИИ-помощник'];
   int number = 0;
 
   @override
@@ -318,7 +318,7 @@ class _HorizontalTabState extends State<HorizontalTab> {
           scrollDirection: Axis.horizontal,
           itemCount: lst.length,
           itemBuilder: (context, index) => SizedBox(
-                width: 140,
+                width: MediaQuery.of(context).size.width / 2,
                 child: GestureDetector(
                   onTap: () {
                     number = index;
