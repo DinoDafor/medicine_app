@@ -8,7 +8,7 @@ import 'package:medicine_app/add_pill/pills/pages/drag_list_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:medicine_app/bloc/navigation_bloc.dart';
 import 'package:medicine_app/giga/pages/gigachat_page.dart';
-import 'package:medicine_app/gpt/pages/chat_gpt.dart';
+
 import 'package:medicine_app/screens/chat_screen_new.dart';
 import 'package:medicine_app/utils/conversation.dart';
 import '../bloc/chat_bloc.dart';
