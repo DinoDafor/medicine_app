@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:dio/io.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -15,6 +18,7 @@ import 'package:medicine_app/add_pill/pills/widget/drag_list.dart';
 import 'package:medicine_app/add_pill/service_locator.dart';
 import 'package:medicine_app/bloc/authentication_bloc.dart';
 import 'package:medicine_app/bloc/navigation_bloc.dart';
+import 'package:medicine_app/giga/pages/gigachat_page.dart';
 import 'package:medicine_app/gpt/pages/chat_gpt.dart';
 
 import 'package:medicine_app/onBoarding/generalScreen.dart';
@@ -28,7 +32,17 @@ import 'package:medicine_app/add_pill/service_locator.dart' as di;
 import 'bloc/chat_bloc.dart';
 import 'bloc/chats_bloc.dart';
 
+class MyHttpoverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+  }
+}
+
 void main() async {
+  HttpOverrides.global = new MyHttpoverrides();
   await di.init();
   await Hive.initFlutter();
   Hive.registerAdapter(PillEntityAdapter());
@@ -63,7 +77,7 @@ final GoRouter _router = GoRouter(routes: [
         ),
         GoRoute(
           path: 'chatGPT',
-          builder: (context, state) => const ChatPage(),
+          builder: (context, state) => const GigaChatPage(),
         ),
         GoRoute(
             path: 'chats',

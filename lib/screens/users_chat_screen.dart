@@ -7,6 +7,8 @@ import 'package:go_router/go_router.dart';
 import 'package:medicine_app/add_pill/pills/pages/drag_list_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:medicine_app/bloc/navigation_bloc.dart';
+import 'package:medicine_app/giga/pages/gigachat_page.dart';
+import 'package:medicine_app/gpt/pages/chat_gpt.dart';
 import 'package:medicine_app/screens/chat_screen_new.dart';
 import 'package:medicine_app/utils/conversation.dart';
 import '../bloc/chat_bloc.dart';
@@ -28,70 +30,69 @@ class _ChatScreenState extends State<ChatScreen> {
     super.initState();
   }
 
-  final List<Widget> pages = [
-    ChatScreenNew(),
-    ScrollableChats(),
-  ];
+  final List<Widget> pages = [ScrollableChats(), GigaChatPage()];
   int _selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        body: pages[_selectedIndex],
-        bottomNavigationBar: BottomNavigationBar(
-          onTap: _onItemTapped,
-          type: BottomNavigationBarType.fixed,
-          unselectedItemColor: Colors.grey,
-          selectedItemColor: const Color(0xFF0EBE7E),
-          currentIndex: _selectedIndex,
-          items: [
-            BottomNavigationBarItem(
-              icon: SvgPicture.asset('assets/icons/home_icon.svg'),
-              label: 'Главная',
-              activeIcon: SvgPicture.asset(
-                'assets/icons/home_icon.svg',
-                colorFilter:
-                    const ColorFilter.mode(Color(0xFF0EBE7E), BlendMode.srcIn),
+      home: SafeArea(
+        child: Scaffold(
+          body: pages[_selectedIndex],
+          bottomNavigationBar: BottomNavigationBar(
+            onTap: _onItemTapped,
+            type: BottomNavigationBarType.fixed,
+            unselectedItemColor: Colors.grey,
+            selectedItemColor: const Color(0xFF0EBE7E),
+            currentIndex: _selectedIndex,
+            items: [
+              BottomNavigationBarItem(
+                icon: SvgPicture.asset('assets/icons/home_icon.svg'),
+                label: 'Главная',
+                activeIcon: SvgPicture.asset(
+                  'assets/icons/home_icon.svg',
+                  colorFilter: const ColorFilter.mode(
+                      Color(0xFF0EBE7E), BlendMode.srcIn),
+                ),
               ),
-            ),
-            BottomNavigationBarItem(
-              icon: SvgPicture.asset('assets/icons/calendar_icon.svg'),
-              label: 'Календарь',
-              activeIcon: SvgPicture.asset(
-                'assets/icons/calendar_icon.svg',
-                colorFilter:
-                    const ColorFilter.mode(Color(0xFF0EBE7E), BlendMode.srcIn),
+              BottomNavigationBarItem(
+                icon: SvgPicture.asset('assets/icons/calendar_icon.svg'),
+                label: 'Календарь',
+                activeIcon: SvgPicture.asset(
+                  'assets/icons/calendar_icon.svg',
+                  colorFilter: const ColorFilter.mode(
+                      Color(0xFF0EBE7E), BlendMode.srcIn),
+                ),
               ),
-            ),
-            BottomNavigationBarItem(
-              icon: SvgPicture.asset('assets/icons/document_icon.svg'),
-              label: 'Чаты',
-              activeIcon: SvgPicture.asset(
-                'assets/icons/document_icon.svg',
-                colorFilter:
-                    const ColorFilter.mode(Color(0xFF0EBE7E), BlendMode.srcIn),
+              BottomNavigationBarItem(
+                icon: SvgPicture.asset('assets/icons/document_icon.svg'),
+                label: 'Чаты',
+                activeIcon: SvgPicture.asset(
+                  'assets/icons/document_icon.svg',
+                  colorFilter: const ColorFilter.mode(
+                      Color(0xFF0EBE7E), BlendMode.srcIn),
+                ),
               ),
-            ),
-            BottomNavigationBarItem(
-              icon: SvgPicture.asset('assets/icons/paper_icon.svg'),
-              label: 'Статьи',
-              activeIcon: SvgPicture.asset(
-                'assets/icons/paper_icon.svg',
-                colorFilter:
-                    const ColorFilter.mode(Color(0xFF0EBE7E), BlendMode.srcIn),
+              BottomNavigationBarItem(
+                icon: SvgPicture.asset('assets/icons/paper_icon.svg'),
+                label: 'Статьи',
+                activeIcon: SvgPicture.asset(
+                  'assets/icons/paper_icon.svg',
+                  colorFilter: const ColorFilter.mode(
+                      Color(0xFF0EBE7E), BlendMode.srcIn),
+                ),
               ),
-            ),
-            BottomNavigationBarItem(
-              icon: SvgPicture.asset('assets/icons/profile_icon.svg'),
-              label: 'Профиль',
-              activeIcon: SvgPicture.asset(
-                'assets/icons/profile_icon.svg',
-                colorFilter:
-                    const ColorFilter.mode(Color(0xFF0EBE7E), BlendMode.srcIn),
+              BottomNavigationBarItem(
+                icon: SvgPicture.asset('assets/icons/profile_icon.svg'),
+                label: 'Профиль',
+                activeIcon: SvgPicture.asset(
+                  'assets/icons/profile_icon.svg',
+                  colorFilter: const ColorFilter.mode(
+                      Color(0xFF0EBE7E), BlendMode.srcIn),
+                ),
               ),
-            ),
-          ],
-          //todo надо бы вынести это в константу по проекту
+            ],
+            //todo надо бы вынести это в константу по проекту
+          ),
         ),
       ),
     );
@@ -289,10 +290,10 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      if (index == 1) {
-        log("HEEEEEEEEEEEEEEEEEEEEEEEEEEEElp");
-        context.go("/chatGPT");
-      }
+      // if (index == 1) {
+      //   log("HEEEEEEEEEEEEEEEEEEEEEEEEEEEElp");
+      //   context.go("/chatGPT");
+      // }
     });
   }
 }
@@ -354,6 +355,20 @@ class _HorizontalTabState extends State<HorizontalTab> {
                 ),
               )),
     );
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      number = index;
+
+      // if (index == 1) {
+      //   log("Go to chat gpt");
+      //   context.go("/chatGPT");
+      // } else {
+      //   log("Go to scrolable chat");
+      //   context.go("/chats");
+      // }
+    });
   }
 }
 

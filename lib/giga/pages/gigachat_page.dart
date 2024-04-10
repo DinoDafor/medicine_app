@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:chat_gpt_sdk/chat_gpt_sdk.dart';
 import 'package:dash_chat_2/dash_chat_2.dart';
@@ -7,27 +8,24 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:medicine_app/bloc/chat_bloc.dart';
 import 'package:medicine_app/bloc/navigation_bloc.dart';
+import 'package:medicine_app/giga/consts.dart';
 import 'package:medicine_app/gpt/consts.dart';
 import 'package:medicine_app/utils/conversation.dart';
+import 'package:http/http.dart' as http;
 
-class ChatPage extends StatefulWidget {
-  const ChatPage({super.key});
+class GigaChatPage extends StatefulWidget {
+  const GigaChatPage({super.key});
 
   @override
-  State<ChatPage> createState() => _ChatPageState();
+  State<GigaChatPage> createState() => _ChatPageState();
 }
 
-class _ChatPageState extends State<ChatPage> {
+class _ChatPageState extends State<GigaChatPage> {
   final ChatUser _chatUser =
       ChatUser(id: '1', firstName: "Mikhael", lastName: "Kreslavskii");
 
   final ChatUser _gptChatUser =
-      ChatUser(id: '2', firstName: "Chat", lastName: "GPT");
-
-  final _openAI = OpenAI.instance.build(
-      token: OPENAI_API_KEY,
-      baseOption: HttpSetup(receiveTimeout: const Duration(seconds: 7)),
-      enableLog: true);
+      ChatUser(id: '2', firstName: "Giga", lastName: "Chat");
 
   List<ChatMessage> _messages = <ChatMessage>[];
   List<Map<String, dynamic>> _messagesHistory = [];
@@ -36,9 +34,9 @@ class _ChatPageState extends State<ChatPage> {
   List<ChatUser> _typingUser = <ChatUser>[];
   @override
   void initState() {
-    _messagesHistory.add({'role': 'system', 'content': SYSTEM_PROMPT});
-    ChatMessage initialPrompt = ChatMessage(
-        user: _systemUser, createdAt: DateTime.now(), text: SYSTEM_PROMPT);
+    _messagesHistory.add({'role': 'system', 'content': PROMPT});
+    ChatMessage initialPrompt =
+        ChatMessage(user: _systemUser, createdAt: DateTime.now(), text: PROMPT);
 
     getChatResponse(initialPrompt);
 
@@ -149,9 +147,10 @@ class _ChatPageState extends State<ChatPage> {
         ],
       ),
       body: DashChat(
+          inputOptions: InputOptions(alwaysShowSend: true),
           messageOptions: MessageOptions(
             currentUserContainerColor: Color.fromARGB(255, 14, 190, 126),
-            textColor: Colors.white,
+            textColor: Colors.black,
             borderRadius: 20,
           ),
           currentUser: _chatUser,
@@ -188,19 +187,58 @@ class _ChatPageState extends State<ChatPage> {
       return {'role': 'system', 'content': m.text};
     }).toList());
 
-    final request = ChatCompleteText(
-        model: Gpt4ChatModel(), messages: _messagesHistory, maxToken: 200);
-    final response = await _openAI.onChatCompletion(request: request);
-    for (var element in response!.choices) {
-      if (element.message != null) {
+    final url = "https://gigachat.devices.sberbank.ru/api/v1/chat/completions";
+    final headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer ${API_TOKEN}'
+    };
+    final body = {
+      "model": "GigaChat",
+      "messages": _messagesHistory,
+      "temperature": 1,
+      "top_p": 0.1,
+      "n": 1,
+      "stream": false,
+      "max_tokens": 512,
+      "repetition_penalty": 1,
+      "update_interval": 0
+    };
+    // HttpClient client = new HttpClient();
+    // client.badCertificateCallback =
+    //     ((X509Certificate cert, String host, int port) => true);
+    // HttpClientRequest request = await client.postUrl(Uri.parse(url));
+
+    // request.headers.set('Content-Type', 'application/json');
+    // request.headers.set('Accept', 'application/json');
+    // request.headers.set('Authorization', 'Bearer ${API_TOKEN}');
+
+    // request.add(utf8.encode(json.encode(body)));
+
+    // HttpClientResponse response = await request.close();
+
+    // if (response.statusCode == 200) {
+    //   print("Weeee");
+    // } else {
+    //   print("Unsuccess");
+    // }
+    final response = await http.post(Uri.parse(url),
+        headers: headers, body: jsonEncode(body));
+    print(response.statusCode);
+    print(response.body);
+    if (response.statusCode == 200) {
+      print("Success");
+      String content =
+          jsonDecode(response.body)['choices'][0]['message']['content'];
+      print('${content}');
+      if (content != null) {
         _messages.insert(
             0,
             ChatMessage(
-                user: _gptChatUser,
-                createdAt: DateTime.now(),
-                text: element.message!.content));
+                user: _gptChatUser, createdAt: DateTime.now(), text: content));
       }
     }
+
     setState(() {
       _typingUser.remove(_gptChatUser);
     });
