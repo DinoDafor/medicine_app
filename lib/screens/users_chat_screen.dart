@@ -72,7 +72,6 @@ class ScrollableChats extends StatelessWidget {
                     BlocProvider.of<NavigationBloc>(context).add(
                         NavigationToChatScreenEvent(
                             context: context, chatId: chat.id));
-                    print("Айди собеседника: ${chat.firstParticipantId}");
                     BlocProvider.of<ChatBloc>(context).add(ChatLoadingEvent(
                         chatId: chat.id,
                         interlocutorId: User.id == chat.firstParticipantId
@@ -81,8 +80,9 @@ class ScrollableChats extends StatelessWidget {
                   },
                   title: Text(
                     Conversation.idName[User.id == chat.firstParticipantId
-                        ? chat.secondParticipantId
-                        : chat.firstParticipantId].toString(),
+                            ? chat.secondParticipantId
+                            : chat.firstParticipantId]
+                        .toString(),
                     // chat.chatName,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

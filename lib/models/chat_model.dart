@@ -35,4 +35,20 @@ class Chat implements Comparable<Chat> {
         : 0; // Значение по умолчанию, если нет сообщений
     return otherTimestamp.compareTo(thisTimestamp);
   }
+
+  int getLatestSendTime() {
+    int latestSendTime = 0;
+    for (Message message in messages) {
+      if (message.sendTimestamp > latestSendTime) {
+        latestSendTime = message.sendTimestamp;
+      }
+    }
+    return latestSendTime;
+  }
+
+  void sortMessagesBySendTime() {
+    messages.sort((message1, message2) {
+      return message1.sendTimestamp.compareTo(message2.sendTimestamp);
+    });
+  }
 }

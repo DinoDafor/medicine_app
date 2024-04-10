@@ -21,14 +21,21 @@ class UsersChatsService {
     if (conversationsResponse.statusCode == 200) {
       List<Map<String, dynamic>> chatData =
           List<Map<String, dynamic>>.from(conversationsResponse.data);
+
       allChatsOfUser.addAll(chatData.map((chat) => Chat.fromJson(chat)));
 
-      //TODO: надо как-то правильно сортировать чаты здесь
-      allChatsOfUser.sort();
-      //TODO: ещё надо делать сортировку сообщений для каждого Chat))
-      print("сколько чатов: ");
-      print(allChatsOfUser.length);
-      //TODO: Забирает ВСЕ с сервера, надо по частям сделать
+      //СОРТИРОВКА CHATOV,
+      //TODO: СОРТИРОВКА СООБЩЕНИЙ В ЧАТЕ
+      allChatsOfUser.sort((chat1, chat2) {
+        int timestamp1 = chat1.getLatestSendTime();
+        int timestamp2 = chat2.getLatestSendTime();
+        return timestamp1.compareTo(timestamp2);
+      });
+      allChatsOfUser = allChatsOfUser.reversed.toList();
+      for (Chat chat in allChatsOfUser) {
+        chat.sortMessagesBySendTime();
+      }
+
       await Future.forEach(allChatsOfUser, (Chat chat) async {
         dynamic userResponse;
         if (User.id == chat.firstParticipantId) {
@@ -48,8 +55,6 @@ class UsersChatsService {
         }
       });
       //todo: refactor
-      print("После добавления в мапу ");
-      print(Conversation.idName);
       Conversation.conversations.addAll(allChatsOfUser);
     }
     return allChatsOfUser;

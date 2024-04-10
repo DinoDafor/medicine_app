@@ -57,9 +57,7 @@ class _ChatWithUserState extends State<ChatWithUser> {
               );
             }
             return const Text(
-              //todo hardcode
               "Ошибка в логике программы",
-              // widget.chatId.toString(),
               style: TextStyle(
                   color: Color(0xFF212121),
                   fontWeight: FontWeight.bold,
