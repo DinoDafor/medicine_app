@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:medicine_app/bloc/navigation_bloc.dart';
-import 'package:medicine_app/models/chat_model.dart';
-import 'package:medicine_app/models/chat_model.dart';
 import 'package:medicine_app/models/message_model.dart';
 import 'package:medicine_app/utils/conversation.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../bloc/chat_bloc.dart';
+import '../bloc/chats_bloc.dart';
 import '../utils/user.dart';
 
 class ChatWithUser extends StatefulWidget {
@@ -170,10 +169,7 @@ class _ScrollableChatState extends State<ScrollableChat> {
                           borderRadius: BorderRadius.circular(15),
                         ),
                         constraints: BoxConstraints(
-                          maxWidth: MediaQuery
-                              .of(context)
-                              .size
-                              .width * 0.7,
+                          maxWidth: MediaQuery.of(context).size.width * 0.7,
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(10.0),
@@ -246,21 +242,15 @@ class _ScrollableChatState extends State<ScrollableChat> {
                   shape: const CircleBorder(),
                 ),
                 onPressed: () {
-                  if (_textController.text
-                      .trim()
-                      .isNotEmpty) {
-                    var chatState = BlocProvider
-                        .of<ChatBloc>(context)
-                        .state;
+                  if (_textController.text.trim().isNotEmpty) {
+                    var chatState = BlocProvider.of<ChatBloc>(context).state;
                     if (chatState is ChatLoadedSuccessfulState) {
                       print("зашли в отправку сообщения");
                       Message sendMessage = Message(
                           senderId: User.id,
                           recipientId: chatState.interlocutorId,
                           text: _textController.text.trim(),
-                          sendTimestamp: DateTime
-                              .now()
-                              .millisecondsSinceEpoch,
+                          sendTimestamp: DateTime.now().millisecondsSinceEpoch,
                           status: Status.CONFIRMATION,
                           type: Type.MESSAGE_SENT);
                       BlocProvider.of<ChatBloc>(context).add(
@@ -269,6 +259,11 @@ class _ScrollableChatState extends State<ScrollableChat> {
                               chatId: chatState.chatId,
                               messages: chatState.messages,
                               interlocutorId: chatState.interlocutorId));
+
+                      //todo Вот здесь отправить event для обновления карточек чата
+                      BlocProvider.of<ChatsBloc>(context)
+                          .add(ChatsNewMessageEvent(chatId: chatState.chatId));
+
                       _textController.clear();
                       print("отправили сообщение");
                     }

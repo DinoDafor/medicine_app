@@ -3,15 +3,12 @@ import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:medicine_app/bloc/chat_service.dart';
-import 'package:medicine_app/test.dart';
-import 'package:medicine_app/utils/conversation.dart';
 import 'package:medicine_app/utils/token.dart';
 import 'package:meta/meta.dart';
 
 import '../models/message_model.dart';
 
 part 'chat_event.dart';
-
 part 'chat_state.dart';
 
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
@@ -56,6 +53,5 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   _deleteMessagesFromLocalList(
       ChatLeavingEvent event, Emitter<ChatState> emitter) {
     _chatService.deleteMessagesFromLocalList();
-    // event.messages.clear();
   }
 }
