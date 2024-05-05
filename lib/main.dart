@@ -19,12 +19,12 @@ import 'package:medicine_app/add_pill/service_locator.dart';
 import 'package:medicine_app/bloc/authentication_bloc.dart';
 import 'package:medicine_app/bloc/navigation_bloc.dart';
 import 'package:medicine_app/giga/pages/gigachat_page.dart';
-import 'package:medicine_app/gpt/pages/chat_gpt.dart';
 
 import 'package:medicine_app/onBoarding/generalScreen.dart';
 import 'package:medicine_app/screens/authentication_screen.dart';
 import 'package:medicine_app/screens/chat_screen.dart';
 import 'package:medicine_app/screens/chat_screen_new.dart';
+import 'package:medicine_app/screens/lock_screens/lock_screen.dart';
 import 'package:medicine_app/screens/registration_screen.dart';
 import 'package:medicine_app/screens/users_chat_screen.dart';
 import 'package:medicine_app/add_pill/service_locator.dart' as di;
@@ -58,26 +58,30 @@ final GoRouter _router = GoRouter(routes: [
   GoRoute(
       path: '/',
       builder: (BuildContext context, GoRouterState state) {
-        return AuthenticationScreen();
+        return LockScreen();
       },
       routes: [
-        GoRoute(
-            path: 'authentication',
-            builder: (BuildContext context, GoRouterState state) {
-              return const AuthenticationScreen();
-            }),
+        // GoRoute(
+        //     path: 'authentication',
+        //     builder: (BuildContext context, GoRouterState state) {
+        //       return const AuthenticationScreen();
+        //     }),
         GoRoute(
             path: 'registration',
             builder: (BuildContext context, GoRouterState state) {
-              return const RegistrationScreen();
+              return const LockScreen();
             }),
-        GoRoute(
-          path: 'addPill',
-          builder: (context, state) => ChatPage(),
-        ),
+        // GoRoute(
+        //   path: 'addPill',
+        //   builder: (context, state) => ChatPage(),
+        // ),
         GoRoute(
           path: 'chatGPT',
           builder: (context, state) => const GigaChatPage(),
+        ),
+        GoRoute(
+          path: 'lockscreen',
+          builder: (context, state) => LockScreen(),
         ),
         GoRoute(
             path: 'chats',

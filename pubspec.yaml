@@ -60,8 +60,9 @@ dependencies:
   local_auth: ^2.2.0
   smooth_page_indicator: ^1.1.0
   dash_chat_2: ^0.0.20
-  chat_gpt_sdk: ^3.0.4
   stomp_dart_client: ^1.0.3
+  flutter_secure_storage: ^9.0.0
+  passcode_screen: ^2.0.1
 
   flutter:
     sdk: flutter

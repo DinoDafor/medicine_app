@@ -1,6 +1,7 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:medicine_app/bloc/authentication_bloc.dart';
 
@@ -134,14 +135,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   ElevatedButton buildRegisterButton(BuildContext context) {
     return ElevatedButton(
       onPressed: () async {
-
         // if (_formKey.currentState!.validate()) {
-            BlocProvider.of<AuthenticationBloc>(context).add(
-                AuthenticationSighUpEvent(
-                    email: _emailController.text,
-                    password: _passwordController.text,
-                    userName: _nameController.text,
-                    phoneNumber: _phoneNumberController.text));
+        BlocProvider.of<AuthenticationBloc>(context).add(
+            AuthenticationSighUpEvent(
+                email: _emailController.text,
+                password: _passwordController.text,
+                userName: _nameController.text,
+                phoneNumber: _phoneNumberController.text));
         // }
       },
       style: ButtonStyle(
