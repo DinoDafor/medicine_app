@@ -53,14 +53,14 @@ class _LockScreenState extends State<LockScreen> {
             if (snapshot.hasData && snapshot.data!.isNotEmpty) {
               return PasscodePage();
             }
-            return RegisterPage();
+            return RegistrationScreen();
           },
         ),
       ),
       routes: {
         'home': (builder) => ChatScreen(),
         'login': (context) => LoginPage(),
-        'register': (context) => RegisterPage(),
+        'register': (context) => RegistrationScreen(),
         'onboarding': (context) => OnboardingPage(),
         'setPincodeScreen': (context) => SetupPincode()
       },
