@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -5,9 +7,13 @@ import 'package:medicine_app/bloc/navigation_bloc.dart';
 import 'package:medicine_app/models/message_model.dart';
 import 'package:medicine_app/utils/conversation.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:stomp_dart_client/stomp.dart';
+import 'package:stomp_dart_client/stomp_config.dart';
+import 'package:stomp_dart_client/stomp_frame.dart';
 
 import '../bloc/chat_bloc.dart';
 import '../bloc/chats_bloc.dart';
+import '../utils/token.dart';
 import '../utils/user.dart';
 
 class ChatWithUser extends StatefulWidget {
@@ -43,10 +49,7 @@ class _ChatWithUserState extends State<ChatWithUser> {
         title: BlocBuilder<ChatBloc, ChatState>(
           builder: (context, state) {
             if (state is ChatLoadedSuccessfulState) {
-              print("мапа при отрисовке: ");
-              print(Conversation.idName);
               return Text(
-                //todo hardcode
                 Conversation.idName[state.interlocutorId].toString(),
                 // widget.chatId.toString(),
                 style: const TextStyle(
@@ -135,12 +138,54 @@ class ScrollableChat extends StatefulWidget {
 }
 
 class _ScrollableChatState extends State<ScrollableChat> {
+  late final StompClient stompClient;
+  static const String destination = '/app/message';
+  static const String destinationFrom = '/user/specific';
   final TextEditingController _textController = TextEditingController();
   final ItemScrollController _scrollController = ItemScrollController();
 
   @override
   void initState() {
+    stompClient = StompClient(
+      config: StompConfig(
+        url: 'ws://10.0.2.2:8080/irecipe-chat',
+        onConnect: onConnect,
+        beforeConnect: () async {
+          print('beforeConnect...');
+        },
+        onWebSocketError: (dynamic error) => print(error.toString()),
+        stompConnectHeaders: {'Authorization': 'Bearer ${Token.token}'},
+        webSocketConnectHeaders: {'Authorization': 'Bearer ${Token.token}'},
+      ),
+    );
+    stompClient.activate();
+
     super.initState();
+  }
+
+  void onConnect(StompFrame frame) {
+    print("Callback for when STOMP has successfully connected!");
+
+    stompClient.subscribe(
+      headers: {'Authorization': 'Bearer ${Token.token}'},
+      destination: destinationFrom,
+      callback: (frame) {
+        print("зашли в коллбек подписки");
+
+        if (frame.body != null && frame.body != "{\"type\":\"MESSAGE_SENT\"}") {
+          print("зашли в проверку");
+          Message message = Message.fromJson(jsonDecode(frame.body!));
+          // Conversation.conversations[message.].messages
+          //     .add(message);
+          // print(
+          //  Conversation.conversations[chatId].messages
+          //  );
+          BlocProvider.of<ChatBloc>(context)
+              .add(ChatReceiveMessageEvent(message: message));
+        }
+        print(frame.body);
+      },
+    );
   }
 
   @override
@@ -252,13 +297,21 @@ class _ScrollableChatState extends State<ScrollableChat> {
                           text: _textController.text.trim(),
                           sendTimestamp: DateTime.now().millisecondsSinceEpoch,
                           status: Status.CONFIRMATION,
-                          type: Type.MESSAGE_SENT);
+                          type: Type.MESSAGE_SENT, conversationId: chatState.chatId);
                       BlocProvider.of<ChatBloc>(context).add(
                           ChatSendMessageEvent(
                               message: sendMessage,
+                              //todo chatid можно убрать походу, из сообщения можно брать
                               chatId: chatState.chatId,
                               messages: chatState.messages,
                               interlocutorId: chatState.interlocutorId));
+
+                      print("СООБЩЕНИЕ ОТПРАВЛЯЕМ:" + sendMessage.toString());
+
+                      stompClient.send(
+                          destination: destination,
+                          headers: {'Authorization': 'Bearer ${Token.token}'},
+                          body: jsonEncode(sendMessage));
 
                       //todo Вот здесь отправить event для обновления карточек чата
                       BlocProvider.of<ChatsBloc>(context)
@@ -279,35 +332,6 @@ class _ScrollableChatState extends State<ScrollableChat> {
       ],
     );
   }
-
-  // void onMediaButtonPressed() async {
-  //   final ImagePicker _picker = ImagePicker();
-  //   final List<XFile>? pickerResults = await _picker.pickMultiImage();
-  //
-  //   if (pickerResults != null) {
-  //     if (pickerResults.isNotEmpty) {
-  //       for (XFile xfile in pickerResults) {
-  //         String name = xfile.name;
-  //         int size = await xfile.length();
-  //         print(
-  //             "MyHomePage.onMediaButtonPressed(): Picked file name=${name}, size=${size}, path=${xfile.path}");
-  //         File file = File(xfile.path);
-  //       }
-  //     }
-  //   }
-  // }
-
-  // void onCameraButtonPressed() async {
-  //   Navigator.push(context, MaterialPageRoute(builder: (_) => CameraScreen()));
-  // }
-
-  // void _scrollToBottom(List<Message> messages) {
-  //   _scrollController.scrollTo(
-  //     index: messages.length - 1,
-  //     duration: const Duration(milliseconds: 300),
-  //     curve: Curves.easeInOut,
-  //   );
-  // }
 
   @override
   void dispose() {

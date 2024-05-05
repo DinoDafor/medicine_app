@@ -1,6 +1,7 @@
 class Message {
   int senderId;
   int recipientId;
+  int conversationId;
   String text;
   int sendTimestamp;
   Status status;
@@ -9,6 +10,7 @@ class Message {
   Message({
     required this.senderId,
     required this.recipientId,
+    required this.conversationId,
     required this.text,
     required this.sendTimestamp,
     required this.status,
@@ -19,6 +21,7 @@ class Message {
     return Message(
         senderId: json["senderId"],
         recipientId: json["recipientId"],
+        conversationId: json["conversationId"],
         text: json["text"],
         sendTimestamp: json["sendTimestamp"],
         status: Status.values.byName(json["status"]),
