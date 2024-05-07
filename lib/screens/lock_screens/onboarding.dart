@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:medicine_app/screen_lock_services/AuthenticationService.dart';
 import 'package:medicine_app/screens/lock_screens/Register.dart';
 import 'package:medicine_app/screens/lock_screens/widgets/graddientWrapper.dart';
+import 'package:medicine_app/screens/registration_screen.dart';
 
 class OnboardingPage extends StatefulWidget {
   @override

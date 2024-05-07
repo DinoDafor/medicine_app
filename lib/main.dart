@@ -25,6 +25,7 @@ import 'package:medicine_app/screens/authentication_screen.dart';
 import 'package:medicine_app/screens/chat_screen.dart';
 import 'package:medicine_app/screens/chat_screen_new.dart';
 import 'package:medicine_app/screens/lock_screens/lock_screen.dart';
+import 'package:medicine_app/screens/lock_screens/onboarding.dart';
 import 'package:medicine_app/screens/registration_screen.dart';
 import 'package:medicine_app/screens/users_chat_screen.dart';
 import 'package:medicine_app/add_pill/service_locator.dart' as di;
@@ -61,19 +62,19 @@ final GoRouter _router = GoRouter(routes: [
         return LockScreen();
       },
       routes: [
-        // GoRoute(
-        //     path: 'authentication',
-        //     builder: (BuildContext context, GoRouterState state) {
-        //       return const AuthenticationScreen();
-        //     }),
+        GoRoute(
+            path: 'authentication',
+            builder: (BuildContext context, GoRouterState state) {
+              return const LockScreen();
+            }),
         GoRoute(
             path: 'registration',
             builder: (BuildContext context, GoRouterState state) {
               return const LockScreen();
             }),
         // GoRoute(
-        //   path: 'addPill',
-        //   builder: (context, state) => ChatPage(),
+        //   path: 'onboarding',
+        //   builder: (context, state) => OnboardingPage(),
         // ),
         GoRoute(
           path: 'chatGPT',
@@ -100,9 +101,14 @@ final GoRouter _router = GoRouter(routes: [
       ]),
 ]);
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(

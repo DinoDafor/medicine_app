@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:flutter_screen_lock/flutter_screen_lock.dart';
 import 'package:medicine_app/screen_lock_services/AuthenticationService.dart';
+import 'package:medicine_app/screens/authentication_screen.dart';
 import 'package:medicine_app/screens/lock_screens/Register.dart';
 import 'package:medicine_app/screens/lock_screens/login.dart';
 import 'package:medicine_app/screens/lock_screens/onboarding.dart';
@@ -59,7 +60,7 @@ class _LockScreenState extends State<LockScreen> {
       ),
       routes: {
         'home': (builder) => ChatScreen(),
-        'login': (context) => LoginPage(),
+        'login': (context) => AuthenticationScreen(),
         'register': (context) => RegistrationScreen(),
         'onboarding': (context) => OnboardingPage(),
         'setPincodeScreen': (context) => SetupPincode()

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:medicine_app/bloc/authentication_bloc.dart';
+import 'package:medicine_app/screen_lock_services/AuthenticationService.dart';
 
 import '../bloc/navigation_bloc.dart';
 
@@ -22,6 +23,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+
+  Future<bool> get hasBioAuth async {
+    return await localAuth.canCheckBiometrics;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -153,11 +158,20 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: BlocConsumer<AuthenticationBloc, AuthenticationState>(
-          listener: (context, state) {
+          listener: (context, state) async {
             if (state is AuthenticationSuccessState) {
-              //todo delete
-              BlocProvider.of<NavigationBloc>(context)
-                  .add(NavigationToChatsScreenEvent(context: context));
+              final hasBio = await this.hasBioAuth;
+              if (hasBio) {
+                Navigator.pushNamed(context, 'onboarding',
+                    arguments: ScreenArgs(email: _emailController.text));
+                //todo delete
+                // BlocProvider.of<NavigationBloc>(context)
+                //     .add(NavigationToChatsScreenEvent(context: context));
+              } else {
+                context.go('/chats');
+
+                ///Navigator.pushNamed(context, 'home');
+              }
             }
           },
           builder: (context, state) {
@@ -181,7 +195,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           ),
         ),
         TextButton(
-            onPressed: () {
+            onPressed: () async {
               BlocProvider.of<NavigationBloc>(context)
                   .add(NavigationToAuthenticationScreenEvent(context: context));
             },
@@ -232,4 +246,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     _confirmPasswordController.dispose();
     super.dispose();
   }
+}
+
+class ScreenArgs {
+  final String email;
+
+  ScreenArgs({required this.email});
 }
