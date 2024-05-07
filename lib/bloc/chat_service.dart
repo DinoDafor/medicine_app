@@ -18,7 +18,7 @@ class ChatService {
   ChatService() {
     stompClient = StompClient(
       config: StompConfig(
-        url: 'ws://10.0.2.2:8080/irecipe-chat',
+        url: 'ws://31.129.59.206/irecipe-chat',
         onConnect: onConnect,
         beforeConnect: () async {
           print('beforeConnect...');

@@ -12,7 +12,7 @@ class AuthService {
       String phoneNumber) async {
     //todo прокидываем исключение?
     //todo URL
-    var response = await _dio.post('http://10.0.2.2:8080/auth/register', data: {
+    var response = await _dio.post('http://31.129.59.206/auth/register', data: {
       "email": email.trim(),
       "password": password.trim(),
       "name": userName.trim(),
@@ -24,7 +24,7 @@ class AuthService {
   }
 
   Future<Response> sighInUser(String email, String password) async {
-    var response = await _dio.post('http://10.0.2.2:8080/auth/login', data: {
+    var response = await _dio.post('http://31.129.59.206/auth/login', data: {
       "email": email.trim(),
       "password": password.trim(),
     });
@@ -35,7 +35,7 @@ class AuthService {
     Options options = Options(
         headers: {HttpHeaders.authorizationHeader: 'Bearer ${Token.token}'});
 
-    var response = await _dio.get('http://10.0.2.2:8080/users',
+    var response = await _dio.get('http://31.129.59.206/users',
         options: options, queryParameters: {"email": email});
     return response;
   }
