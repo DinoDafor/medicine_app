@@ -26,4 +26,10 @@ class ChatLoadingEvent extends ChatEvent {
   });
 }
 
+class ChatReceiveMessageEvent extends ChatEvent {
+  final Message message;
+
+  ChatReceiveMessageEvent({required this.message});
+}
+
 class ChatLeavingEvent extends ChatEvent {}

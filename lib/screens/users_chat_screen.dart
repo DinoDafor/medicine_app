@@ -12,6 +12,7 @@ import 'package:medicine_app/giga/pages/gigachat_page.dart';
 import 'package:medicine_app/screens/chat_screen_new.dart';
 import 'package:medicine_app/screens/lock_screens/lock_screen.dart';
 import 'package:medicine_app/utils/conversation.dart';
+
 import '../bloc/chat_bloc.dart';
 import '../bloc/chats_bloc.dart';
 import '../models/chat_model.dart';
@@ -156,7 +157,6 @@ class ScrollableChats extends StatelessWidget {
                     BlocProvider.of<NavigationBloc>(context).add(
                         NavigationToChatScreenEvent(
                             context: context, chatId: chat.id));
-                    print("Айди собеседника: ${chat.firstParticipantId}");
                     BlocProvider.of<ChatBloc>(context).add(ChatLoadingEvent(
                         chatId: chat.id,
                         interlocutorId: User.id == chat.firstParticipantId

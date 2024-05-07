@@ -12,3 +12,8 @@ class ChatsClickEvent extends ChatsEvent {
 
   ChatsClickEvent({required this.chatId});
 }
+class ChatsNewMessageEvent extends ChatsEvent {
+  final int chatId;
+
+  ChatsNewMessageEvent({required this.chatId});
+}
