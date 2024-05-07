@@ -15,9 +15,8 @@ class UsersChatsService {
 
     Options options = Options(
         headers: {HttpHeaders.authorizationHeader: 'Bearer ${Token.token}'});
-    var conversationsResponse = await _dio.get(
-        "http://31.129.59.206/conversations/all/${User.id}",
-        options: options);
+    var conversationsResponse = await _dio
+        .get("http://10.0.2.2:8080/conversations/${User.id}", options: options);
 
     if (conversationsResponse.statusCode == 200) {
       List<Map<String, dynamic>> chatData =
@@ -41,14 +40,14 @@ class UsersChatsService {
         dynamic userResponse;
         if (User.id == chat.firstParticipantId) {
           userResponse = await _dio.get(
-            "http://31.129.59.206/users/${chat.secondParticipantId}",
+            "http://10.0.2.2:8080/users/${chat.secondParticipantId}",
             options: options,
           );
           Conversation.idName[chat.secondParticipantId] =
               userResponse.data["name"];
         } else {
           userResponse = await _dio.get(
-            "http://31.129.59.206/users/${chat.firstParticipantId}",
+            "http://10.0.2.2:8080/users/${chat.firstParticipantId}",
             options: options,
           );
           Conversation.idName[chat.firstParticipantId] =
@@ -59,5 +58,14 @@ class UsersChatsService {
       Conversation.conversations.addAll(allChatsOfUser);
     }
     return allChatsOfUser;
+  }
+
+  moveChatToTop(int chatId) {
+    int chatIndex =
+        Conversation.conversations.indexWhere((chat) => chat.id == chatId);
+    if (chatIndex != -1) {
+      Chat chatToMove = Conversation.conversations.removeAt(chatIndex);
+      Conversation.conversations.insert(0, chatToMove);
+    }
   }
 }

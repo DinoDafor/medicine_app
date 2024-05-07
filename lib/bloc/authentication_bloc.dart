@@ -29,15 +29,16 @@ class AuthenticationBloc
         event.email, event.password, event.userName, event.phoneNumber);
     if (signUpResponse.statusCode == 200) {
       Token.token = signUpResponse.data["token"];
-      // emit() state для на страницу с чатами
+      User.email = event.email;
+
+      var userResponse = await _authService.getUser(User.email);
+      User.id = userResponse.data["id"];
+
+      emit(AuthenticationSuccessState());
+      emit(AuthenticationLoadingState(isLoading: false));
     } else if (signUpResponse.statusCode == 401) {
-      //todo обработать
-      print("401 ошибка!!!");
       // emit() state ошибка
     }
-
-    emit(AuthenticationSuccessState());
-    emit(AuthenticationLoadingState(isLoading: false));
   }
 
   _signIn(AuthenticationSighInEvent event,
