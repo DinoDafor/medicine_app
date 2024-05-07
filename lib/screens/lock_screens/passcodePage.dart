@@ -73,7 +73,7 @@ class _PasscodePageState extends State<PasscodePage> {
                 ),
                 margin: EdgeInsets.symmetric(vertical: 100, horizontal: 75.0),
               ),
-              mainColor: Colors.red,
+              mainColor: Colors.green,
             );
           }
           return PasscodeWidget(

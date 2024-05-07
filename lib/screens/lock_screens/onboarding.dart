@@ -39,7 +39,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
     double height = MediaQuery.of(context).size.height;
 
     return GradientWrapper(
-      mainColor: Colors.red,
+      mainColor: Colors.green,
       child: Center(
         child: Column(
           children: [

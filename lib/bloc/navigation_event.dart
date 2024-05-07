@@ -11,6 +11,10 @@ class NavigationToAuthenticationScreenEvent extends NavigationEvent {
   const NavigationToAuthenticationScreenEvent({required super.context});
 }
 
+class NavigationToOnBoardingScreenEvent extends NavigationEvent {
+  const NavigationToOnBoardingScreenEvent({required super.context});
+}
+
 class NavigationToRegistrationScreenEvent extends NavigationEvent {
   const NavigationToRegistrationScreenEvent({required super.context});
 }

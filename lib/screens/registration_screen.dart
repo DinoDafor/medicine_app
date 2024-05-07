@@ -159,19 +159,23 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         padding: const EdgeInsets.all(8.0),
         child: BlocConsumer<AuthenticationBloc, AuthenticationState>(
           listener: (context, state) async {
+            final hasBio = await this.hasBioAuth;
+
             if (state is AuthenticationSuccessState) {
-              final hasBio = await this.hasBioAuth;
               if (hasBio) {
-                Navigator.pushNamed(context, 'onboarding',
-                    arguments: ScreenArgs(email: _emailController.text));
+                // Navigator.pushNamed(context, 'onboarding',
+                //     arguments: ScreenArgs(email: _emailController.text));
+
                 //todo delete
-                // BlocProvider.of<NavigationBloc>(context)
-                //     .add(NavigationToChatsScreenEvent(context: context));
+                BlocProvider.of<NavigationBloc>(context)
+                    .add(NavigationToOnBoardingScreenEvent(context: context));
               } else {
                 context.go('/chats');
 
                 ///Navigator.pushNamed(context, 'home');
               }
+              // BlocProvider.of<NavigationBloc>(context)
+              //     .add(NavigationToChatsScreenEvent(context: context));
             }
           },
           builder: (context, state) {

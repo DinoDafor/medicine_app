@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:medicine_app/bloc/navigation_bloc.dart';
 import 'package:medicine_app/screen_lock_services/AuthenticationService.dart';
 import 'package:medicine_app/screens/lock_screens/widgets/passcodeWidget.dart';
 
@@ -17,7 +19,8 @@ class _SetupPincodeState extends State<SetupPincode> {
     authService.verifyCode(enteredCode);
     authService.isEnabledStream.listen((isSet) {
       if (isSet) {
-        Navigator.pushNamed(context, 'home');
+        BlocProvider.of<NavigationBloc>(context)
+            .add(NavigationToChatsScreenEvent(context: context));
       }
     });
   }

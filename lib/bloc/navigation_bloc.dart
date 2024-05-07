@@ -18,23 +18,31 @@ class NavigationBloc extends Bloc<NavigationEvent, NavigationState> {
     on<NavigationToRegistrationScreenEvent>(_onRegistrationScreen);
     on<NavigationToChatsScreenEvent>(_onChatsScreen);
     on<NavigationToChatScreenEvent>(_onChatScreen);
+    on<NavigationToOnBoardingScreenEvent>(_onBoardingScreen);
   }
 
   _onAuthenticationScreen(NavigationToAuthenticationScreenEvent event,
       Emitter<NavigationState> emit) {
-    event.context.go("/");
+    event.context.go("/authentication");
   }
+
   _onRegistrationScreen(NavigationToRegistrationScreenEvent event,
       Emitter<NavigationState> emit) {
     event.context.go("/registration");
   }
-  _onChatsScreen(NavigationToChatsScreenEvent event,
-      Emitter<NavigationState> emit) {
+
+  _onBoardingScreen(
+      NavigationToOnBoardingScreenEvent event, Emitter<NavigationState> emit) {
+    event.context.go("/onboarding");
+  }
+
+  _onChatsScreen(
+      NavigationToChatsScreenEvent event, Emitter<NavigationState> emit) {
     event.context.go("/chats");
   }
 
-  _onChatScreen(NavigationToChatScreenEvent event,
-      Emitter<NavigationState> emit) {
+  _onChatScreen(
+      NavigationToChatScreenEvent event, Emitter<NavigationState> emit) {
     event.context.go("/chats/chat", extra: event.chatId);
   }
 }

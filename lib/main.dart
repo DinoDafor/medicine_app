@@ -59,23 +59,23 @@ final GoRouter _router = GoRouter(routes: [
   GoRoute(
       path: '/',
       builder: (BuildContext context, GoRouterState state) {
-        return LockScreen();
+        return RegistrationScreen();
       },
       routes: [
         GoRoute(
             path: 'authentication',
             builder: (BuildContext context, GoRouterState state) {
-              return const LockScreen();
+              return const AuthenticationScreen();
             }),
         GoRoute(
             path: 'registration',
             builder: (BuildContext context, GoRouterState state) {
-              return const LockScreen();
+              return const RegistrationScreen();
             }),
-        // GoRoute(
-        //   path: 'onboarding',
-        //   builder: (context, state) => OnboardingPage(),
-        // ),
+        GoRoute(
+          path: 'onboarding',
+          builder: (context, state) => OnboardingPage(),
+        ),
         GoRoute(
           path: 'chatGPT',
           builder: (context, state) => const GigaChatPage(),
