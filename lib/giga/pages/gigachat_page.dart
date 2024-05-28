@@ -10,6 +10,8 @@ import 'package:medicine_app/bloc/navigation_bloc.dart';
 import 'package:medicine_app/giga/consts.dart';
 import 'package:medicine_app/utils/conversation.dart';
 import 'package:http/http.dart' as http;
+import 'package:uuid/uuid.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class GigaChatPage extends StatefulWidget {
   const GigaChatPage({super.key});
@@ -23,7 +25,7 @@ class _ChatPageState extends State<GigaChatPage> {
       ChatUser(id: '1', firstName: "Mikhael", lastName: "Kreslavskii");
 
   final ChatUser _gptChatUser =
-      ChatUser(id: '2', firstName: "Giga", lastName: "Chat");
+      ChatUser(id: '2', firstName: "ИИ -", lastName: "Помощник");
 
   List<ChatMessage> _messages = <ChatMessage>[];
   List<Map<String, dynamic>> _messagesHistory = [];
@@ -32,9 +34,11 @@ class _ChatPageState extends State<GigaChatPage> {
   List<ChatUser> _typingUser = <ChatUser>[];
   @override
   void initState() {
+    String? PROMPT = dotenv.env["PROMPT"];
+
     _messagesHistory.add({'role': 'system', 'content': PROMPT});
-    ChatMessage initialPrompt =
-        ChatMessage(user: _systemUser, createdAt: DateTime.now(), text: PROMPT);
+    ChatMessage initialPrompt = ChatMessage(
+        user: _systemUser, createdAt: DateTime.now(), text: PROMPT!);
 
     getChatResponse(initialPrompt);
 
@@ -186,6 +190,12 @@ class _ChatPageState extends State<GigaChatPage> {
     }).toList());
 
     final url = "https://gigachat.devices.sberbank.ru/api/v1/chat/completions";
+    final credentials =
+        "${dotenv.env["CLIENT_ID"]}:${dotenv.env["SBER_SECRET"]}";
+    final encoded_credentials_tmp = base64.encode(utf8.encode(credentials));
+    final encoded_credentials = utf8.decode(encoded_credentials_tmp.codeUnits);
+    final API_TOKEN = await get_token(dotenv.env["SBER_AUTH"]!);
+    print("TOKEN: ${API_TOKEN}");
     final headers = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
@@ -202,28 +212,14 @@ class _ChatPageState extends State<GigaChatPage> {
       "repetition_penalty": 1,
       "update_interval": 0
     };
-    // HttpClient client = new HttpClient();
-    // client.badCertificateCallback =
-    //     ((X509Certificate cert, String host, int port) => true);
-    // HttpClientRequest request = await client.postUrl(Uri.parse(url));
 
-    // request.headers.set('Content-Type', 'application/json');
-    // request.headers.set('Accept', 'application/json');
-    // request.headers.set('Authorization', 'Bearer ${API_TOKEN}');
-
-    // request.add(utf8.encode(json.encode(body)));
-
-    // HttpClientResponse response = await request.close();
-
-    // if (response.statusCode == 200) {
-    //   print("Weeee");
-    // } else {
-    //   print("Unsuccess");
-    // }
     final response = await http.post(Uri.parse(url),
         headers: headers, body: jsonEncode(body));
     print(response.statusCode);
     print(response.body);
+    if (response.statusCode == 401) {
+      print(get_token(dotenv.env["SBER_AUTH"]!));
+    }
     if (response.statusCode == 200) {
       print("Success");
       String content =
@@ -240,5 +236,32 @@ class _ChatPageState extends State<GigaChatPage> {
     setState(() {
       _typingUser.remove(_gptChatUser);
     });
+  }
+
+  Future<String?> get_token(String auth,
+      {String scope = "GIGACHAT_API_PERS"}) async {
+    final rq_uid = (Uuid().v4()).toString();
+    final url = "https://ngw.devices.sberbank.ru:9443/api/v2/oauth";
+    final headers = {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Accept': 'application/json',
+      'RqUID': '${rq_uid}',
+      'Authorization': 'Basic ${auth}'
+    };
+
+    final payload = {'scope': 'GIGACHAT_API_PERS'};
+
+    try {
+      final auth_response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: payload,
+      );
+      print(auth_response.body);
+      return jsonDecode(auth_response.body)['access_token'];
+    } on Exception catch (_) {
+      print("Ошибка: {str(e)}");
+      return null;
+    }
   }
 }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,8 @@ import 'package:medicine_app/screen_lock_services/AuthenticationService.dart';
 import 'package:medicine_app/screens/lock_screens/widgets/passcodeWidget.dart';
 
 class SetupPincode extends StatefulWidget {
+  final Map<String, String> creds;
+  SetupPincode({required this.creds});
   @override
   _SetupPincodeState createState() => _SetupPincodeState();
 }
@@ -16,11 +19,17 @@ class _SetupPincodeState extends State<SetupPincode> {
   StreamController<bool>? verficationController;
 
   void _onCallback(String enteredCode) {
-    authService.verifyCode(enteredCode);
+    authService.codeForNewUser(
+        enteredCode, widget.creds["email"]!, widget.creds["password"]!);
+
+    /// authService.verifyCode(enteredCode);
     authService.isEnabledStream.listen((isSet) {
       if (isSet) {
+        log("LISIISISISIISHA");
         BlocProvider.of<NavigationBloc>(context)
             .add(NavigationToChatsScreenEvent(context: context));
+      } else {
+        log("NOT LISISHA");
       }
     });
   }

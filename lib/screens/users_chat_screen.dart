@@ -9,7 +9,6 @@ import 'package:intl/intl.dart';
 import 'package:medicine_app/bloc/navigation_bloc.dart';
 import 'package:medicine_app/giga/pages/gigachat_page.dart';
 
-import 'package:medicine_app/screens/chat_screen_new.dart';
 import 'package:medicine_app/screens/lock_screens/lock_screen.dart';
 import 'package:medicine_app/utils/conversation.dart';
 
@@ -32,7 +31,7 @@ class _ChatScreenState extends State<ChatScreen> {
     super.initState();
   }
 
-  final List<Widget> pages = [ScrollableChats(), GigaChatPage(), LockScreen()];
+  final List<Widget> pages = [ScrollableChats(), GigaChatPage()];
   int _selectedIndex = 0;
   @override
   Widget build(BuildContext context) {

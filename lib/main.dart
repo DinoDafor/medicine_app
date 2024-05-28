@@ -23,12 +23,16 @@ import 'package:medicine_app/giga/pages/gigachat_page.dart';
 import 'package:medicine_app/onBoarding/generalScreen.dart';
 import 'package:medicine_app/screens/authentication_screen.dart';
 import 'package:medicine_app/screens/chat_screen.dart';
-import 'package:medicine_app/screens/chat_screen_new.dart';
+
 import 'package:medicine_app/screens/lock_screens/lock_screen.dart';
+import 'package:medicine_app/screens/lock_screens/login.dart';
 import 'package:medicine_app/screens/lock_screens/onboarding.dart';
+import 'package:medicine_app/screens/lock_screens/passcodePage.dart';
+import 'package:medicine_app/screens/lock_screens/setupPincode.dart';
 import 'package:medicine_app/screens/registration_screen.dart';
 import 'package:medicine_app/screens/users_chat_screen.dart';
 import 'package:medicine_app/add_pill/service_locator.dart' as di;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'bloc/chat_bloc.dart';
 import 'bloc/chats_bloc.dart';
@@ -51,6 +55,7 @@ void main() async {
   Hive.registerAdapter(FormEnumAdapter());
   await Hive.openBox<PillEntity>('pillbox');
   await Hive.openBox('mybox');
+  await dotenv.load(fileName: "assets/.env");
   //todo скорее всего надо будет переместить в users_chat провайдер
   runApp(const MyApp());
 }
@@ -65,7 +70,7 @@ final GoRouter _router = GoRouter(routes: [
         GoRoute(
             path: 'authentication',
             builder: (BuildContext context, GoRouterState state) {
-              return const AuthenticationScreen();
+              return LoginPage();
             }),
         GoRoute(
             path: 'registration',
@@ -73,17 +78,24 @@ final GoRouter _router = GoRouter(routes: [
               return const RegistrationScreen();
             }),
         GoRoute(
+            path: "setPincode",
+            builder: (context, state) {
+              return SetupPincode(creds: state.extra as Map<String, String>);
+            }),
+        GoRoute(
           path: 'onboarding',
-          builder: (context, state) => OnboardingPage(),
+          builder: (context, state) => OnboardingPage(
+            args: state.extra as ScreenArgs,
+          ),
         ),
         GoRoute(
           path: 'chatGPT',
           builder: (context, state) => const GigaChatPage(),
         ),
-        GoRoute(
-          path: 'lockscreen',
-          builder: (context, state) => LockScreen(),
-        ),
+        // GoRoute(
+        //   path: 'lockscreen',
+        //   builder: (context, state) => LockScreen(),
+        // ),
         GoRoute(
             path: 'chats',
             builder: (BuildContext context, GoRouterState state) {
@@ -95,7 +107,7 @@ final GoRouter _router = GoRouter(routes: [
                   path: 'chat',
                   builder: (BuildContext context, GoRouterState state) {
                     // int chatId = int.parse(state.extra.toString());
-                    return const ChatScreenNew();
+                    return const ChatWithUser();
                   })
             ]),
       ]),

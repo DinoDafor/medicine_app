@@ -19,7 +19,7 @@ class AuthenticationService {
   Stream<bool> get isEnabledStream => _isEnabledController.stream;
   Stream<bool> get isNewUserStream => _isNewUserController.stream;
 
-  Future<String> read(String key) async {
+  Future<dynamic> read(String key) async {
     final val = await this._storage.read(key: key);
     return val != null ? jsonDecode(val) : '';
   }
@@ -34,6 +34,7 @@ class AuthenticationService {
 
   Future<void> verifyCode(String enteredCode) async {
     final pin = await this.read('pin');
+
     if (pin != null && pin == enteredCode) {
       this.isNewUserController.add(false);
     } else {
@@ -41,6 +42,33 @@ class AuthenticationService {
       this.write('pin', enteredCode);
     }
     this.isEnabledController.add(true);
+  }
+
+  Future<void> codeForNewUser(
+      String enteredCode, String email, String password) async {
+    // this.write('pin', enteredCode);
+    // Map<String, String> creds = {"email": email, "password": password};
+    // this.write('creds', creds);
+    final pin = await this.read('pin');
+    this.isNewUserController.add(false);
+    this.isEnabledController.add(true);
+  }
+
+  Future<Map<String, String>?> getCredsByCode(String enteredCode) async {
+    final pin = await this.read('pin');
+    if (pin != null && pin == enteredCode) {
+      this.isNewUserController.add(false);
+      final creds = await this.read('creds');
+      return creds;
+    }
+
+    return null;
+  }
+
+  Future<Map<String, String>?> getCredsByBio() async {
+    this.isNewUserController.add(false);
+    final creds = await this.read('creds');
+    return creds;
   }
 
   dispose() {

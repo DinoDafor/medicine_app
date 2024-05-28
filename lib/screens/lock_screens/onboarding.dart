@@ -1,12 +1,16 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:medicine_app/screen_lock_services/AuthenticationService.dart';
 import 'package:medicine_app/screens/lock_screens/Register.dart';
 import 'package:medicine_app/screens/lock_screens/widgets/graddientWrapper.dart';
 import 'package:medicine_app/screens/registration_screen.dart';
 
 class OnboardingPage extends StatefulWidget {
+  final ScreenArgs args;
+  OnboardingPage({required this.args});
   @override
   _OnboardingPageState createState() => _OnboardingPageState();
 }
@@ -15,8 +19,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
   bool _enabledFingerprint = false;
 
   String getEmailArg(BuildContext context) {
-    dynamic args = ModalRoute.of(context)!.settings.arguments as ScreenArgs;
-    String email = args.email;
+    log(widget.args.email);
+    log(ModalRoute.of(context)!.settings.arguments.toString());
+
+    /// dynamic args = ModalRoute.of(context)!.settings.arguments;
+    String email = widget.args.email;
+    String password = widget.args.password;
     if (email.indexOf('.') != -1) {
       return email.substring(0, email.indexOf('.'));
     }
@@ -78,7 +86,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
             SizedBox(height: 100),
             TextButton(
               onPressed: () {
-                Navigator.pushNamed(context, 'setPincodeScreen');
+                // Navigator.pushNamed(context, 'setPincodeScreen');
+                Map<String, String> creds = {
+                  "email": widget.args.email,
+                  "password": widget.args.password
+                };
+                context.go("/setPincode", extra: creds);
               },
               child: Text(
                 'Continue',

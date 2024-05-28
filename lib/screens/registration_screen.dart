@@ -165,15 +165,23 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               if (hasBio) {
                 // Navigator.pushNamed(context, 'onboarding',
                 //     arguments: ScreenArgs(email: _emailController.text));
-
+                Map<String, String> cred = {
+                  "email": _emailController.text,
+                  "password": _passwordController.text,
+                };
                 //todo delete
-                BlocProvider.of<NavigationBloc>(context)
-                    .add(NavigationToOnBoardingScreenEvent(context: context));
+                BlocProvider.of<NavigationBloc>(context).add(
+                    NavigationToOnBoardingScreenEvent(
+                        context: context,
+                        credentials: ScreenArgs(
+                            email: _emailController.text,
+                            password: _passwordController.text)));
               } else {
                 context.go('/chats');
 
-                ///Navigator.pushNamed(context, 'home');
+                //   ///Navigator.pushNamed(context, 'home');
               }
+
               // BlocProvider.of<NavigationBloc>(context)
               //     .add(NavigationToChatsScreenEvent(context: context));
             }
@@ -254,6 +262,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
 class ScreenArgs {
   final String email;
+  final String password;
 
-  ScreenArgs({required this.email});
+  ScreenArgs({required this.email, required this.password});
 }

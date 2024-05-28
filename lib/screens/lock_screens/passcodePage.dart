@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:medicine_app/bloc/authentication_bloc.dart';
 import 'package:medicine_app/screen_lock_services/AuthenticationService.dart';
 import 'package:medicine_app/screens/lock_screens/login.dart';
 import 'package:medicine_app/screens/lock_screens/widgets/graddientWrapper.dart';
@@ -24,11 +27,9 @@ class _PasscodePageState extends State<PasscodePage> {
   }
 
   void _onCallback(String enteredCode) {
-    authService.verifyCode(enteredCode);
+    authService.getCredsByCode(enteredCode);
     this._isVerification!.listen((isValid) {
       if (isValid) {
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => ChatScreen()));
       } else {
         setState(() => attempts += 1);
         if (attempts == 5) {
@@ -53,8 +54,9 @@ class _PasscodePageState extends State<PasscodePage> {
         ));
     authService.isEnabledController.add(isAuthenticated);
     if (isAuthenticated) {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => ChatScreen()));
+      final creds = await authService.getCredsByBio();
+      BlocProvider.of<AuthenticationBloc>(context)
+          .add(AuthenticationSighInEvent(creds!["email"]!, creds["password"]!));
     }
   }
 
@@ -65,6 +67,7 @@ class _PasscodePageState extends State<PasscodePage> {
         builder: (context, snapshot) {
           if (snapshot.hasData && snapshot.data!) {
             this.authenticate();
+
             return GradientWrapper(
               child: Container(
                 child: Text(

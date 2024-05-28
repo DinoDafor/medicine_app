@@ -15,8 +15,9 @@ class UsersChatsService {
 
     Options options = Options(
         headers: {HttpHeaders.authorizationHeader: 'Bearer ${Token.token}'});
-    var conversationsResponse = await _dio
-        .get("http://10.0.2.2:8080/conversations/${User.id}", options: options);
+    var conversationsResponse = await _dio.get(
+        "http://10.0.2.2:8080/conversations/all/${User.id}",
+        options: options);
 
     if (conversationsResponse.statusCode == 200) {
       List<Map<String, dynamic>> chatData =

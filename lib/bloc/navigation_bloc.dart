@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:medicine_app/screens/registration_screen.dart';
 import 'package:meta/meta.dart';
 
 part 'navigation_event.dart';
@@ -33,7 +35,16 @@ class NavigationBloc extends Bloc<NavigationEvent, NavigationState> {
 
   _onBoardingScreen(
       NavigationToOnBoardingScreenEvent event, Emitter<NavigationState> emit) {
-    event.context.go("/onboarding");
+    // Navigator.pushNamed(
+    //   event.context,
+    //   '/onboarding',
+    //   arguments: ScreenArgs(credentials: {
+    //     "email": 'Extract Arguments Screen',
+    //     "password": 'This message is extracted in the build method.',
+    //   }),
+    // );
+    log(event.credentials.email);
+    event.context.go("/onboarding", extra: event.credentials);
   }
 
   _onChatsScreen(
