@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:medicine_app/add_pill/pills/pages/PageForProvider.dart';
 import 'package:medicine_app/add_pill/pills/pages/drag_list_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:medicine_app/bloc/navigation_bloc.dart';
@@ -31,7 +32,11 @@ class _ChatScreenState extends State<ChatScreen> {
     super.initState();
   }
 
-  final List<Widget> pages = [ScrollableChats(), GigaChatPage()];
+  final List<Widget> pages = [
+    ScrollableChats(),
+    GigaChatPage(),
+    DragListScreen()
+  ];
   int _selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
@@ -56,10 +61,10 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
               ),
               BottomNavigationBarItem(
-                icon: SvgPicture.asset('assets/icons/calendar_icon.svg'),
-                label: 'Календарь',
+                icon: SvgPicture.asset('assets/icons/bot.svg'),
+                label: 'ИИ-помощник',
                 activeIcon: SvgPicture.asset(
-                  'assets/icons/calendar_icon.svg',
+                  'assets/icons/bot.svg',
                   colorFilter: const ColorFilter.mode(
                       Color(0xFF0EBE7E), BlendMode.srcIn),
                 ),

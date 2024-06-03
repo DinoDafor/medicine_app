@@ -1,8 +1,13 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:medicine_app/bloc/authentication_bloc.dart';
 import 'package:medicine_app/bloc/navigation_bloc.dart';
+import 'package:local_auth/local_auth.dart';
+import 'package:medicine_app/screen_lock_services/AuthenticationService.dart';
+import 'package:medicine_app/screens/lock_screens/passcodePage.dart';
 
 class AuthenticationScreen extends StatefulWidget {
   const AuthenticationScreen({super.key});
@@ -15,6 +20,12 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+
+  Future<bool> get hasBio async {
+    List<BiometricType> availableBiometrics =
+        await localAuth.getAvailableBiometrics();
+    return availableBiometrics.length > 0;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +49,74 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                     ),
                     buildEmailField(),
                     buildPasswordField(),
+                    FutureBuilder(
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return ElevatedButton(
+                              onPressed: () async {
+                                final isSupportBioAuth =
+                                    await authService.checkSupportBioAuth();
+                                if (isSupportBioAuth) {
+                                  bool isAuthenticated = await localAuth
+                                      .authenticate(localizedReason: 'Login');
+                                  if (isAuthenticated) {
+                                    print("GET AFTER SAFE ");
+                                    final creds =
+                                        await authService.getCredsByBio();
+                                    print(creds);
+                                    BlocProvider.of<AuthenticationBloc>(context)
+                                        .add(AuthenticationSighInEvent(
+                                            creds!["email"],
+                                            creds["password"]));
+                                  }
+                                } else {
+                                  print("NOT CHOOOOOSE AUTH");
+                                  String? enteredCode = await context
+                                      .pushNamed<String>('passcodePage');
+                                  if (enteredCode != null) {
+                                    print("Finally crreeeeds, ${enteredCode} ");
+
+                                    final creds = await authService
+                                        .getCredsByCode(enteredCode!);
+                                    print("WEEEE, ${creds}");
+                                    print(creds!["email"]);
+                                    print(creds["password"]);
+                                    print(creds["email"].runtimeType);
+                                    BlocProvider.of<AuthenticationBloc>(context)
+                                        .add(AuthenticationSighInEvent(
+                                            creds!["email"],
+                                            creds["password"]));
+                                    print("After bloc provider");
+                                  }
+                                }
+                              },
+                              // tooltip: "Bio Login",
+                              child: BlocConsumer<AuthenticationBloc,
+                                  AuthenticationState>(
+                                builder: (context, state) {
+                                  return state
+                                              is AuthenticationSignInLoadingState &&
+                                          state.isLoading
+                                      ? const Text("...")
+                                      : const Text(
+                                          "Войти с помощью биометрии или пин-кода");
+                                },
+                                listener: (context, state) async {
+                                  if (state
+                                      is AuthenticationSignInSuccessState) {
+                                    BlocProvider.of<NavigationBloc>(context)
+                                        .add(
+                                      NavigationToChatsScreenEvent(
+                                          context: context),
+                                    );
+                                  }
+                                },
+                              ));
+                        }
+                        return Container();
+                      },
+                      future: this.hasBio,
+                    ),
                     buildAuthButton(context),
                   ],
                 ),

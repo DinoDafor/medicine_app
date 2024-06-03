@@ -66,7 +66,10 @@ class _OnboardingPageState extends State<OnboardingPage> {
             SwitchListTile(
               value: this._enabledFingerprint,
               onChanged: (val) {
-                setState(() => this._enabledFingerprint = val);
+                setState(() {
+                  ///authService.supportBioAuth(val);
+                  this._enabledFingerprint = val;
+                });
                 if (val) {
                   showBioMeteric();
                 }
@@ -85,7 +88,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
             ),
             SizedBox(height: 100),
             TextButton(
-              onPressed: () {
+              onPressed: () async {
+                await authService.supportBioAuth(this._enabledFingerprint);
                 // Navigator.pushNamed(context, 'setPincodeScreen');
                 Map<String, String> creds = {
                   "email": widget.args.email,

@@ -1,5 +1,6 @@
 import "dart:async";
 import "dart:convert";
+import 'dart:developer';
 
 import 'package:local_auth/local_auth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -32,42 +33,75 @@ class AuthenticationService {
     await this._storage.write(key: key, value: jsonEncode(value));
   }
 
-  Future<void> verifyCode(String enteredCode) async {
+  Future<bool> verifyCode(String enteredCode) async {
     final pin = await this.read('pin');
+    print("Pin is ${pin}");
+    print("Pin type ${pin.runtimeType}");
+    return pin == enteredCode;
 
-    if (pin != null && pin == enteredCode) {
-      this.isNewUserController.add(false);
-    } else {
-      this.isNewUserController.add(true);
-      this.write('pin', enteredCode);
-    }
-    this.isEnabledController.add(true);
+    // if (pin != null && pin == enteredCode) {
+    //   this.isNewUserController.add(false);
+    //   this.isEnabledController.add(true);
+    // } else {
+    //   this.isNewUserController.add(true);
+    //   this.write('pin', enteredCode);
+    //   this.isEnabledController.add(false);
+    // }
+  }
+
+  Future<void> supportBioAuth(bool isBio) async {
+    log("Support bio auth");
+    print(isBio);
+    this.write('bio', isBio);
+  }
+
+  Future<bool> checkSupportBioAuth() async {
+    final res = await this.read("bio");
+    print(res);
+    return res;
   }
 
   Future<void> codeForNewUser(
       String enteredCode, String email, String password) async {
-    // this.write('pin', enteredCode);
-    // Map<String, String> creds = {"email": email, "password": password};
-    // this.write('creds', creds);
+    this.write('pin', enteredCode);
+
+    log("WRITE PIN");
+    Map<String, String> creds = {"email": email, "password": password};
+    this.write('creds', creds);
+    log("WRITE CREDS");
     final pin = await this.read('pin');
     this.isNewUserController.add(false);
     this.isEnabledController.add(true);
   }
 
-  Future<Map<String, String>?> getCredsByCode(String enteredCode) async {
+  Future<Map<String, dynamic>?> getCreds() async {
+    final creds = await this.read("creds");
+    return creds;
+  }
+
+  Future<Map<String, dynamic>?> getCredsByCode(String enteredCode) async {
     final pin = await this.read('pin');
     if (pin != null && pin == enteredCode) {
       this.isNewUserController.add(false);
       final creds = await this.read('creds');
+      print(creds);
+      print("I GET CREDS");
+      this.isEnabledController.add(true);
       return creds;
     }
-
+    this.isEnabledController.add(true);
     return null;
   }
 
-  Future<Map<String, String>?> getCredsByBio() async {
+  Future<Map<String, dynamic>?> getCredsByBio() async {
     this.isNewUserController.add(false);
     final creds = await this.read('creds');
+    print(creds);
+    print(creds.runtimeType);
+
+    ///Map<String, dynamic> valueMap = jsonDecode(creds);
+
+    /// print(creds);
     return creds;
   }
 

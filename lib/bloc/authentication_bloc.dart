@@ -43,7 +43,7 @@ class AuthenticationBloc
 
   _signIn(AuthenticationSighInEvent event,
       Emitter<AuthenticationState> emit) async {
-    emit(AuthenticationLoadingState(isLoading: true));
+    emit(AuthenticationSignInLoadingState(isLoading: true));
 
     var signInResponse =
         await _authService.sighInUser(event.email, event.password);
@@ -53,9 +53,12 @@ class AuthenticationBloc
       var userResponse = await _authService.getUser(User.email);
       User.id = userResponse.data["id"];
 
-      emit(AuthenticationSuccessState());
-      emit(AuthenticationLoadingState(isLoading: false));
+      emit(AuthenticationSignInSuccessState());
+      print("Success auth");
+      emit(AuthenticationSignInLoadingState(isLoading: false));
+      print("Again success");
     } else if (signInResponse.statusCode == 401) {
+      print("Error");
     } else if (signInResponse.statusCode == 400) {}
   }
 }

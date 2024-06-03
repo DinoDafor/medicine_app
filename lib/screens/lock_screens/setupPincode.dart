@@ -52,10 +52,7 @@ class _SetupPincodeState extends State<SetupPincode> {
 
   @override
   Widget build(BuildContext context) {
-    return PasscodeWidget(
-      this.verficationController!.stream,
-      this._onCallback,
-      this._onCancelCakllBack,
-    );
+    return PasscodeWidget(this.verficationController!, this._onCallback,
+        this._onCancelCakllBack, () {});
   }
 }

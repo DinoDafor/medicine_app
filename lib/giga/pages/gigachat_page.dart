@@ -64,32 +64,7 @@ class _ChatPageState extends State<GigaChatPage> {
                 .add(NavigationToChatsScreenEvent(context: context));
           },
         ),
-        title: BlocBuilder<ChatBloc, ChatState>(
-          builder: (context, state) {
-            if (state is ChatLoadedSuccessfulState) {
-              print("мапа при отрисовке: ");
-              print(Conversation.idName);
-              return Text(
-                //todo hardcode
-                Conversation.idName[state.interlocutorId].toString(),
-                // widget.chatId.toString(),
-                style: const TextStyle(
-                    color: Color(0xFF212121),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 24),
-              );
-            }
-            return const Text(
-              //todo hardcode
-              "Ошибка в логике программы",
-              // widget.chatId.toString(),
-              style: TextStyle(
-                  color: Color(0xFF212121),
-                  fontWeight: FontWeight.bold,
-                  fontSize: 24),
-            );
-          },
-        ),
+        title: Text("ИИ-помощник"),
         actions: [
           SvgPicture.asset(
             "assets/icons/Search.svg",

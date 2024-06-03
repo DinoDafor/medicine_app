@@ -11,6 +11,7 @@ import 'package:medicine_app/add_pill/pills/data/bloc/pill_bloc.dart';
 import 'package:medicine_app/add_pill/pills/data/model/enums/form_enum.dart';
 import 'package:medicine_app/add_pill/pills/data/model/enums/status_enum.dart';
 import 'package:medicine_app/add_pill/pills/data/model/pill_entity.dart';
+import 'package:medicine_app/add_pill/pills/pages/PageForProvider.dart';
 
 ///import 'package:medicine_app/add_pill/pills/data/bloc/pill_bloc.dart';
 import 'package:medicine_app/add_pill/pills/pages/drag_list_screen.dart';
@@ -70,7 +71,7 @@ final GoRouter _router = GoRouter(routes: [
         GoRoute(
             path: 'authentication',
             builder: (BuildContext context, GoRouterState state) {
-              return LoginPage();
+              return AuthenticationScreen();
             }),
         GoRoute(
             path: 'registration',
@@ -88,6 +89,11 @@ final GoRouter _router = GoRouter(routes: [
             args: state.extra as ScreenArgs,
           ),
         ),
+
+        GoRoute(
+            name: 'passcodePage',
+            path: 'passcodePage',
+            builder: (context, state) => PasscodePage()),
         GoRoute(
           path: 'chatGPT',
           builder: (context, state) => const GigaChatPage(),
@@ -96,6 +102,9 @@ final GoRouter _router = GoRouter(routes: [
         //   path: 'lockscreen',
         //   builder: (context, state) => LockScreen(),
         // ),
+        GoRoute(
+            path: 'pillReminder',
+            builder: ((context, state) => DragListScreen())),
         GoRoute(
             path: 'chats',
             builder: (BuildContext context, GoRouterState state) {

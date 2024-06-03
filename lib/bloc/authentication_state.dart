@@ -13,9 +13,15 @@ class AuthenticationLoadingState extends AuthenticationState {
 
 class AuthenticationSuccessState extends AuthenticationState {}
 
+class AuthenticationSignInSuccessState extends AuthenticationState {}
+
+class AuthenticationSignInLoadingState extends AuthenticationState {
+  final bool isLoading;
+  AuthenticationSignInLoadingState({required this.isLoading});
+}
+
 class AuthenticationFailureState extends AuthenticationState {
   final String errorMessage;
 
   AuthenticationFailureState(this.errorMessage);
 }
-
