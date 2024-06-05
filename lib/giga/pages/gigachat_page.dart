@@ -53,17 +53,17 @@ class _ChatPageState extends State<GigaChatPage> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.white,
-        leading: IconButton(
-          icon: SvgPicture.asset(
-            "assets/icons/back_arrow_icon.svg",
-            fit: BoxFit.scaleDown,
-          ),
-          onPressed: () {
-            BlocProvider.of<ChatBloc>(context).add(ChatLeavingEvent());
-            BlocProvider.of<NavigationBloc>(context)
-                .add(NavigationToChatsScreenEvent(context: context));
-          },
-        ),
+        // leading: IconButton(
+        //   icon: SvgPicture.asset(
+        //     "assets/icons/back_arrow_icon.svg",
+        //     fit: BoxFit.scaleDown,
+        //   ),
+        //   onPressed: () {
+        //     BlocProvider.of<ChatBloc>(context).add(ChatLeavingEvent());
+        //     BlocProvider.of<NavigationBloc>(context)
+        //         .add(NavigationToChatsScreenEvent(context: context));
+        //   },
+        // ),
         title: Text("ИИ-помощник"),
         actions: [
           SvgPicture.asset(

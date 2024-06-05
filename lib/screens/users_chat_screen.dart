@@ -33,9 +33,9 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   final List<Widget> pages = [
-    ScrollableChats(),
+    DragListScreen(),
     GigaChatPage(),
-    DragListScreen()
+    ScrollableChats(),
   ];
   int _selectedIndex = 0;
   @override
