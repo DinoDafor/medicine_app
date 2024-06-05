@@ -110,7 +110,8 @@ class ScrollableChats extends StatelessWidget {
                       Text(
                         DateFormat('dd/MM/yyyy').format(
                             DateTime.fromMillisecondsSinceEpoch(
-                                chat.messages.last.sendTimestamp)),
+                                chat.messages.last.sendTimestamp,
+                                isUtc: true)),
                         style: const TextStyle(
                           color: Color(0xFF616161),
                         ),
@@ -278,7 +279,12 @@ class NavBar extends StatelessWidget {
           child: SvgPicture.asset(
             "assets/icons/Search.svg",
           ),
-          onTap: () {},
+          onTap: () {
+            print("Hello");
+
+            BlocProvider.of<NavigationBloc>(context)
+                .add(NavigationToSearchScreenEvent(context: context));
+          },
         ),
         const SizedBox(width: 10),
         SvgPicture.asset(

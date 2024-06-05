@@ -38,9 +38,13 @@ final GoRouter _router = GoRouter(routes: [
               GoRoute(
                   path: 'chat',
                   builder: (BuildContext context, GoRouterState state) {
-                    // int chatId = int.parse(state.extra.toString());
                     return const ChatWithUser();
-                  })
+                  }),
+              // GoRoute(
+              //     path: 'search',
+              //     builder: (BuildContext context, GoRouterState state) {
+              //       return const ChatWithUser();
+              //     }),
             ]),
       ]),
 ]);

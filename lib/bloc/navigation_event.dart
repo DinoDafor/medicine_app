@@ -25,3 +25,7 @@ class NavigationToChatScreenEvent extends NavigationEvent {
   const NavigationToChatScreenEvent(
       {required super.context, required this.chatId});
 }
+
+class NavigationToSearchScreenEvent extends NavigationEvent {
+  const NavigationToSearchScreenEvent({required super.context});
+}
