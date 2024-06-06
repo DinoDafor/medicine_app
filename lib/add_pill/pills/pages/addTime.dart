@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:medicine_app/add_pill/pills/data/bloc/pill_bloc.dart';
 import 'package:medicine_app/add_pill/pills/data/model/pill_model.dart';
 import 'package:medicine_app/add_pill/pills/widget/TimeCard.dart';
+import 'package:medicine_app/screens/users_chat_screen.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../service_locator.dart';
@@ -261,7 +262,7 @@ class _AddTimePageState extends State<AddTimePage> {
                                 CupertinoPageRoute(builder: (context) {
                               return BlocProvider<PillBloc>(
                                   create: (context) => sl<PillBloc>(),
-                                  child: DragListScreen());
+                                  child: ChatScreen());
                             });
                             Navigator.push(
                               context,

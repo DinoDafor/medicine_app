@@ -808,6 +808,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.2.2"
+  mask_text_input_formatter:
+    dependency: transitive
+    description:
+      name: mask_text_input_formatter
+      sha256: "978c58ec721c25621ceb468e633f4eef64b64d45424ac4540e0565d4f7c800cd"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.9.0"
+  masked_text:
+    dependency: "direct main"
+    description:
+      name: masked_text
+      sha256: dc3467eb5a128f9a4767023c10279ea522788fb90fd126a2b49fd858df576e65
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.2"
   matcher:
     dependency: transitive
     description:

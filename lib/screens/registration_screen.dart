@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:masked_text/masked_text.dart';
 import 'package:medicine_app/bloc/authentication_bloc.dart';
 import 'package:medicine_app/screen_lock_services/AuthenticationService.dart';
 
@@ -23,6 +24,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool _validatePhone = true;
+  bool _validateEmail = true;
 
   Future<bool> get hasBioAuth async {
     return await localAuth.canCheckBiometrics;
@@ -74,7 +77,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           if (EmailValidator.validate(value)) {
             return null;
           } else {
-            return "Email is not valide";
+            return "Введите корректную почту";
           }
         }
       },
@@ -85,7 +88,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   TextFormField buildConfirmPasswordField() {
     return TextFormField(
-      controller: _passwordController,
+      controller: _confirmPasswordController,
+      validator: (value) {
+        if (_confirmPasswordController.text != _passwordController.text) {
+          return "Пароли не совпадают";
+        }
+        return null;
+      },
       decoration: buildInputDecoration("Ещё раз пароль", 10, Icons.shield),
       obscureText: true,
     );
@@ -96,7 +105,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       //todo вынести валидацию из UI
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return 'Password can not be empty';
+          return 'Введите пароль';
         }
         return null;
       },
@@ -105,22 +114,40 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     );
   }
 
-  TextFormField buildPhoneField() {
-    return TextFormField(
-      //todo вынести валидацию из UI
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Phone number can not be empty';
-        }
-        if (isMobileNumberValid(value)) {
-          return null;
-        } else {
-          return "Phone number is not valide!";
-        }
-      },
-      controller: _phoneNumberController,
-      decoration: buildInputDecoration("Номер телефона", 10, Icons.phone),
-    );
+  MaskedTextField buildPhoneField() {
+    return MaskedTextField(
+        mask: "+#(###) ###-##-##",
+        keyboardType: TextInputType.number,
+
+        //todo вынести валидацию из UI
+        validator: validatorPhone,
+
+        // (value) {
+        //   if (value == null || value.isEmpty) {
+        //     return 'Phone number can not be empty';
+        //   }
+        //   if (isMobileNumberValid(value)) {
+        //     return null;
+        //   } else {
+        //     return "Phone number is not valide!";
+        //   }
+        // },
+        controller: _phoneNumberController,
+
+        ///  decoration: buildInputDecoration("Номер телефона", 10, Icons.phone),
+        decoration: InputDecoration(
+          prefixIcon: Container(
+              margin: EdgeInsets.only(right: 10), child: Icon(Icons.phone)),
+          labelText: "Номер телефона",
+          hintText: "+7(***) ***-**-**",
+          // fillColor: (_validatePhone == true)
+          //     ? const Color.fromARGB(255, 255, 251, 254)
+          //     : Color.fromARGB((255 * 0.15).toInt(), 235, 87, 87),
+          // filled: true,
+          // border: OutlineInputBorder(
+          //     borderSide: BorderSide.none,
+          //     borderRadius: BorderRadius.circular(15))),
+        ));
   }
 
   TextFormField buildNameField() {
@@ -129,7 +156,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       //todo вынести валидацию из UI
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return 'Name can not be empty';
+          return 'Введите имя';
         }
         return null;
       },
@@ -140,14 +167,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   ElevatedButton buildRegisterButton(BuildContext context) {
     return ElevatedButton(
       onPressed: () async {
-        // if (_formKey.currentState!.validate()) {
-        BlocProvider.of<AuthenticationBloc>(context).add(
-            AuthenticationSighUpEvent(
-                email: _emailController.text,
-                password: _passwordController.text,
-                userName: _nameController.text,
-                phoneNumber: _phoneNumberController.text));
-        // }
+        if (_formKey.currentState!.validate()) {
+          BlocProvider.of<AuthenticationBloc>(context).add(
+              AuthenticationSighUpEvent(
+                  email: _emailController.text,
+                  password: _passwordController.text,
+                  userName: _nameController.text,
+                  phoneNumber: _phoneNumberController.text));
+        }
       },
       style: ButtonStyle(
         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -208,8 +235,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         ),
         TextButton(
             onPressed: () async {
-              BlocProvider.of<NavigationBloc>(context)
-                  .add(NavigationToAuthenticationScreenEvent(context: context));
+              if (_formKey.currentState!.validate()) {
+                BlocProvider.of<NavigationBloc>(context).add(
+                    NavigationToAuthenticationScreenEvent(context: context));
+              }
             },
             child: const Padding(
               padding: EdgeInsets.all(8.0),
@@ -226,16 +255,24 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   //todo Вынести логику из UI
-  bool isMobileNumberValid(String phoneNumber) {
-    const String regexPattern = r'^(?:[+0][1-9])?[0-9]{10,12}$';
-    var regExp = RegExp(regexPattern);
+  // bool isMobileNumberValid(String phoneNumber) {
+  //   const String regexPattern = r'^(?:[+0][1-9])?[0-9]{10,12}$';
+  //   var regExp = RegExp(regexPattern);
 
-    if (phoneNumber.isEmpty) {
-      return false;
-    } else if (regExp.hasMatch(phoneNumber)) {
-      return true;
+  //   if (phoneNumber.isEmpty) {
+  //     return false;
+  //   } else if (regExp.hasMatch(phoneNumber)) {
+  //     return true;
+  //   }
+  //   return false;
+  // }
+
+  String? validatorPhone(String? phone) {
+    if ((phone!.isEmpty) || (phone!.length < 10)) {
+      _validatePhone = false;
+      setState(() {});
+      return "Введите номер телефона";
     }
-    return false;
   }
 
   InputDecoration buildInputDecoration(

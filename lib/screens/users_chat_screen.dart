@@ -143,81 +143,89 @@ class ScrollableChats extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(child: BlocBuilder<ChatsBloc, ChatsState>(
-      builder: (context, state) {
-        //todo можно по-другому?
-        var chatsBloc = BlocProvider.of<ChatsBloc>(context);
-        ChatsState chatsBlocState = chatsBloc.state;
-        //todo сделать состояние загрузки и показывать индикатор загрузки при другом стейте
-        if (chatsBlocState is ChatsInitialLoadedSuccessfulState) {
-          return ListView.builder(
-              itemCount: chatsBlocState.chats.length,
-              itemBuilder: (context, index) {
-                //todo: мы должны передавать сортированные данные для ListView.builder
-                Chat chat = chatsBlocState.chats[index];
-                return ListTile(
-                  onTap: () {
-                    chatsBloc.add(ChatsClickEvent(chatId: chat.id));
-                    BlocProvider.of<NavigationBloc>(context).add(
-                        NavigationToChatScreenEvent(
-                            context: context, chatId: chat.id));
-                    BlocProvider.of<ChatBloc>(context).add(ChatLoadingEvent(
-                        chatId: chat.id,
-                        interlocutorId: User.id == chat.firstParticipantId
-                            ? chat.secondParticipantId
-                            : chat.firstParticipantId));
-                  },
-                  title: Text(
-                    Conversation.idName[User.id == chat.firstParticipantId
-                            ? chat.secondParticipantId
-                            : chat.firstParticipantId]
-                        .toString(),
-                    // chat.chatName,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  leading: const CircleAvatar(
-                    backgroundImage:
-                        AssetImage("assets/images/doctor_image.png"),
-                    backgroundColor: Colors.deepOrange,
-                  ),
-                  subtitle: Text(
-                    chat.messages.last.text,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: Color(0xFF616161),
-                    ),
-                  ),
-                  trailing: Column(
-                    children: [
-                      //TODO:
-                      Text(
-                        DateFormat('dd/MM/yyyy').format(
-                            DateTime.fromMillisecondsSinceEpoch(
-                                chat.messages.last.sendTimestamp)),
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+          child: NavBar(),
+        ),
+        Expanded(child: BlocBuilder<ChatsBloc, ChatsState>(
+          builder: (context, state) {
+            //todo можно по-другому?
+            var chatsBloc = BlocProvider.of<ChatsBloc>(context);
+            ChatsState chatsBlocState = chatsBloc.state;
+            //todo сделать состояние загрузки и показывать индикатор загрузки при другом стейте
+            if (chatsBlocState is ChatsInitialLoadedSuccessfulState) {
+              return ListView.builder(
+                  itemCount: chatsBlocState.chats.length,
+                  itemBuilder: (context, index) {
+                    //todo: мы должны передавать сортированные данные для ListView.builder
+                    Chat chat = chatsBlocState.chats[index];
+                    return ListTile(
+                      onTap: () {
+                        chatsBloc.add(ChatsClickEvent(chatId: chat.id));
+                        BlocProvider.of<NavigationBloc>(context).add(
+                            NavigationToChatScreenEvent(
+                                context: context, chatId: chat.id));
+                        BlocProvider.of<ChatBloc>(context).add(ChatLoadingEvent(
+                            chatId: chat.id,
+                            interlocutorId: User.id == chat.firstParticipantId
+                                ? chat.secondParticipantId
+                                : chat.firstParticipantId));
+                      },
+                      title: Text(
+                        Conversation.idName[User.id == chat.firstParticipantId
+                                ? chat.secondParticipantId
+                                : chat.firstParticipantId]
+                            .toString(),
+                        // chat.chatName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      leading: const CircleAvatar(
+                        backgroundImage:
+                            AssetImage("assets/images/doctor_image.png"),
+                        backgroundColor: Colors.deepOrange,
+                      ),
+                      subtitle: Text(
+                        chat.messages.last.text,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
                           color: Color(0xFF616161),
                         ),
                       ),
-                      // Text(
-                      //   chat.lastDate,
-                      //   style: const TextStyle(
-                      //     color: Color(0xFF616161),
-                      //   ),
-                      // ),
-                    ],
-                  ),
-                );
-              });
-        }
-        // return const Text("Где чат?");
-        return const Center(child: CircularProgressIndicator());
-      },
-    ));
+                      trailing: Column(
+                        children: [
+                          //TODO:
+                          Text(
+                            DateFormat('dd/MM/yyyy').format(
+                                DateTime.fromMillisecondsSinceEpoch(
+                                    chat.messages.last.sendTimestamp)),
+                            style: const TextStyle(
+                              color: Color(0xFF616161),
+                            ),
+                          ),
+                          // Text(
+                          //   chat.lastDate,
+                          //   style: const TextStyle(
+                          //     color: Color(0xFF616161),
+                          //   ),
+                          // ),
+                        ],
+                      ),
+                    );
+                  });
+            }
+            // return const Text("Где чат?");
+            return const Center(child: CircularProgressIndicator());
+          },
+        )),
+      ],
+    );
   }
 }
 
