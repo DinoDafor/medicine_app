@@ -89,12 +89,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   TextFormField buildConfirmPasswordField() {
     return TextFormField(
       controller: _confirmPasswordController,
-      validator: (value) {
-        if (_confirmPasswordController.text != _passwordController.text) {
-          return "Пароли не совпадают";
-        }
-        return null;
-      },
+      // validator: (value) {
+      //   if (_confirmPasswordController.text != _passwordController.text) {
+      //     return "Пароли не совпадают";
+      //   }
+      //   return null;
+      // },
       decoration: buildInputDecoration("Ещё раз пароль", 10, Icons.shield),
       obscureText: true,
     );
@@ -196,13 +196,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   "email": _emailController.text,
                   "password": _passwordController.text,
                 };
-                //todo delete
-                BlocProvider.of<NavigationBloc>(context).add(
-                    NavigationToOnBoardingScreenEvent(
-                        context: context,
-                        credentials: ScreenArgs(
-                            email: _emailController.text,
-                            password: _passwordController.text)));
+                if (_formKey.currentState!.validate()) {
+                  //todo delete
+                  BlocProvider.of<NavigationBloc>(context).add(
+                      NavigationToOnBoardingScreenEvent(
+                          context: context,
+                          credentials: ScreenArgs(
+                              email: _emailController.text,
+                              password: _passwordController.text)));
+                }
               } else {
                 context.go('/chats');
 
@@ -235,10 +237,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         ),
         TextButton(
             onPressed: () async {
-              if (_formKey.currentState!.validate()) {
-                BlocProvider.of<NavigationBloc>(context).add(
-                    NavigationToAuthenticationScreenEvent(context: context));
-              }
+              BlocProvider.of<NavigationBloc>(context)
+                  .add(NavigationToAuthenticationScreenEvent(context: context));
             },
             child: const Padding(
               padding: EdgeInsets.all(8.0),

@@ -1,6 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:medicine_app/add_pill/pills/data/bloc/pill_service.dart';
 import 'package:medicine_app/add_pill/pills/data/model/pill_entity.dart';
+import 'package:medicine_app/add_pill/pills/data/model/pill_model.dart';
 import 'package:medicine_app/add_pill/pills/data/usecases/add_pill.dart';
 import 'package:medicine_app/add_pill/pills/data/usecases/delete_pill.dart';
 import 'package:medicine_app/add_pill/pills/data/usecases/get_all_pills.dart';
@@ -22,11 +24,14 @@ class PillBloc extends Bloc<PillBlocEvent, PillBlocState> {
     on<DeletePillBloc>(_delete);
     on<AddPillBloc>(_add);
     on<UpdatePillBloc>(_update);
+    on<PillReminderEvent>(_reminder);
   }
   final AddPill addPill;
   final DeletePill deletePill;
   final GetAllPills getAllPills;
   final UpdateStatus updateStatus;
+
+  final PillService _pillService = PillService();
 
   void _update(UpdatePillBloc event, Emitter<PillBlocState> emit) async {
     if (state is! PillLoaded) {
@@ -58,5 +63,13 @@ class PillBloc extends Bloc<PillBlocEvent, PillBlocState> {
     }
     final pillList = await getAllPills.call(GetParams(event.date));
     emit(PillLoaded(pillList: pillList));
+  }
+
+  void _reminder(PillReminderEvent event, Emitter<PillBlocState> emit) async {
+    var remindResponse = await _pillService.sendReminder(event.pill);
+    if (remindResponse.statusCode == 200) {
+      emit(ReminderLoadedState());
+      print("Reminder state is loded");
+    }
   }
 }

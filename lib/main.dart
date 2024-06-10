@@ -25,6 +25,12 @@ import 'package:medicine_app/onBoarding/generalScreen.dart';
 import 'package:medicine_app/screens/authentication_screen.dart';
 import 'package:medicine_app/screens/chat_screen.dart';
 
+import 'dart:developer';
+
+import 'package:alarm/alarm.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+
 import 'package:medicine_app/screens/lock_screens/lock_screen.dart';
 import 'package:medicine_app/screens/lock_screens/login.dart';
 import 'package:medicine_app/screens/lock_screens/onboarding.dart';
@@ -34,6 +40,7 @@ import 'package:medicine_app/screens/registration_screen.dart';
 import 'package:medicine_app/screens/users_chat_screen.dart';
 import 'package:medicine_app/add_pill/service_locator.dart' as di;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:medicine_app/utils/firebase_options.dart';
 
 import 'bloc/chat_bloc.dart';
 import 'bloc/chats_bloc.dart';
@@ -47,6 +54,15 @@ class MyHttpoverrides extends HttpOverrides {
   }
 }
 
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // If you're going to use other Firebase services in the background, such as Firestore,
+  // make sure you call `initializeApp` before using other Firebase services.
+  await Firebase.initializeApp();
+
+  print("Handling a background message: ${message.messageId}");
+}
+
 void main() async {
   HttpOverrides.global = new MyHttpoverrides();
   await di.init();
@@ -57,6 +73,23 @@ void main() async {
   await Hive.openBox<PillEntity>('pillbox');
   await Hive.openBox('mybox');
   await dotenv.load(fileName: "assets/.env");
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  FirebaseMessaging _messaging = FirebaseMessaging.instance;
+  NotificationSettings settings = await _messaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true);
+  String? token = await _messaging.getToken();
+  print("Firebase token: ${token}");
+
   //todo скорее всего надо будет переместить в users_chat провайдер
   runApp(const MyApp());
 }

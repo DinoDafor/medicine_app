@@ -1,8 +1,8 @@
 part of 'pill_bloc.dart';
 
-abstract class PillBlocEvent extends Equatable{}
+abstract class PillBlocEvent extends Equatable {}
 
-class LoadPillBloc extends PillBlocEvent{
+class LoadPillBloc extends PillBlocEvent {
   LoadPillBloc({required this.date});
 
   final DateTime date;
@@ -11,26 +11,34 @@ class LoadPillBloc extends PillBlocEvent{
   List<Object?> get props => [date];
 }
 
-class DeletePillBloc extends PillBlocEvent{
+class DeletePillBloc extends PillBlocEvent {
   final String pillId;
 
   DeletePillBloc({required this.pillId});
 
   @override
   List<Object?> get props => [pillId];
-
 }
 
-class AddPillBloc extends PillBlocEvent{
+class PillReminderEvent extends PillBlocEvent {
+  final PillModel pill;
+
+  PillReminderEvent({required this.pill});
+
+  @override
+  List<Object?> get props => [pill];
+}
+
+class AddPillBloc extends PillBlocEvent {
   final PillEntity pill;
 
   AddPillBloc({required this.pill});
 
   @override
   List<Object?> get props => [pill];
-
 }
-class UpdatePillBloc extends PillBlocEvent{
+
+class UpdatePillBloc extends PillBlocEvent {
   final String pillId;
   final StatusEnum status;
 
@@ -38,5 +46,4 @@ class UpdatePillBloc extends PillBlocEvent{
 
   @override
   List<Object?> get props => [pillId, status];
-
 }

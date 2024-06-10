@@ -252,6 +252,9 @@ class _AddTimePageState extends State<AddTimePage> {
 
                                 BlocProvider.of<PillBloc>(context)
                                     .add(AddPillBloc(pill: pill));
+
+                                BlocProvider.of<PillBloc>(context)
+                                    .add(PillReminderEvent(pill: pill));
                               }
                             }
 

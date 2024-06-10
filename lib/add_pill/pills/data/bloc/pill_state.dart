@@ -15,17 +15,20 @@ class PillLoading extends PillBlocState {
 class PillLoaded extends PillBlocState {
   PillLoaded({
     required this.pillList,
-  })
-  {
-    pillList.sort((pill1, pill2) =>pill1.timeToDrink.compareTo(pill2.timeToDrink));
+  }) {
+    pillList
+        .sort((pill1, pill2) => pill1.timeToDrink.compareTo(pill2.timeToDrink));
   }
-
- 
 
   final List<PillEntity> pillList;
 
   @override
   List<Object?> get props => [pillList];
+}
+
+class ReminderLoadedState extends PillBlocState {
+  @override
+  List<Object?> get props => [];
 }
 
 class PillLoadingFailure extends PillBlocState {
