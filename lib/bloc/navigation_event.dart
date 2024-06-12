@@ -29,3 +29,15 @@ class NavigationToChatScreenEvent extends NavigationEvent {
 class NavigationToSearchScreenEvent extends NavigationEvent {
   const NavigationToSearchScreenEvent({required super.context});
 }
+
+class NavigationToProfileMainScreenEvent extends NavigationEvent {
+  const NavigationToProfileMainScreenEvent({required super.context});
+}
+
+class NavigationToProfileEditScreenEvent extends NavigationEvent {
+  const NavigationToProfileEditScreenEvent({required super.context});
+}
+
+class NavigationToProfileSecurityScreenEvent extends NavigationEvent {
+  const NavigationToProfileSecurityScreenEvent({required super.context});
+}

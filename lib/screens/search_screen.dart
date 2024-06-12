@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:medicine_app/bloc/search_bloc.dart';
 
+//todo: прочитать про AutoComplete класс для поиска
 class SearchScreen extends StatelessWidget {
   const SearchScreen({super.key});
 
@@ -9,7 +10,7 @@ class SearchScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Search Users'),
+        title: const Text('Search Users'),
       ),
       body: _buildSearchBody(context),
     );
@@ -51,7 +52,7 @@ class SearchScreen extends StatelessWidget {
                 itemCount: 1,
                 itemBuilder: (context, index) {
                   return ListTile(
-                    title: Text(state.doctor.name),
+                    title: Text(state.doctor.firstName),
                     subtitle: Text(state.doctor.email),
                     //todo при нажатии попадаем в чат с доктором
                     // onTap: ,

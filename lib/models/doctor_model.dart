@@ -1,13 +1,13 @@
 class Doctor {
   int id;
   String email;
-  String name;
+  String firstName;
   String phoneNumber;
 
   // {
   //     "id": 1,
   //     "email": "mraggitt0@washingtonpost.com",
-  //     "name": "Maye",
+  //     "fistName": "Maye",
   //     "phoneNumber": "+55 (799) 806-4034",
   //     "role": null,
   //     "userData": {}
@@ -16,7 +16,7 @@ class Doctor {
   Doctor({
     required this.id,
     required this.email,
-    required this.name,
+    required this.firstName,
     required this.phoneNumber,
   });
 
@@ -24,7 +24,7 @@ class Doctor {
     return Doctor(
       id: json["id"],
       email: json["email"],
-      name: json["name"],
+      firstName: json["firstName"],
       phoneNumber: json["phoneNumber"],
     );
   }
@@ -33,7 +33,7 @@ class Doctor {
     return {
       'id': id,
       'email': email,
-      'name': name,
+      'firstName': firstName,
       'phoneNumber': phoneNumber,
     };
   }

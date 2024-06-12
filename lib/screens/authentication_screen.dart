@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:medicine_app/bloc/authentication_bloc.dart';
 import 'package:medicine_app/bloc/navigation_bloc.dart';
 
@@ -36,13 +35,13 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    buildEmailField(),
-                    buildPasswordField(),
-                    buildAuthButton(context),
+                    _buildEmailField(),
+                    _buildPasswordField(),
+                    _buildAuthButton(context),
                   ],
                 ),
               ),
-              buildBottomRow(context),
+              _buildBottomRow(context),
             ],
           ),
         ),
@@ -50,7 +49,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
     );
   }
 
-  Padding buildEmailField() {
+  Padding _buildEmailField() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: TextFormField(
@@ -78,7 +77,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
     );
   }
 
-  Padding buildPasswordField() {
+  Padding _buildPasswordField() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: TextFormField(
@@ -112,7 +111,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
     );
   }
 
-  ElevatedButton buildAuthButton(BuildContext context) {
+  ElevatedButton _buildAuthButton(BuildContext context) {
     return ElevatedButton(
       onPressed: () async {
         BlocProvider.of<AuthenticationBloc>(context).add(
@@ -145,7 +144,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
     );
   }
 
-  Row buildBottomRow(BuildContext context) {
+  Row _buildBottomRow(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [

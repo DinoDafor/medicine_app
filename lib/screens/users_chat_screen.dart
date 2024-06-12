@@ -145,6 +145,26 @@ class MyBottomNavigationBar extends StatelessWidget {
       unselectedItemColor: Colors.grey,
       selectedItemColor: const Color(0xFF0EBE7E),
       currentIndex: 2,
+      onTap: (index) {
+        switch (index) {
+          case 0:
+            // Navigator.pushNamed(context, '/home');
+            break;
+          case 1:
+            // Navigator.pushNamed(context, '/calendar');
+            break;
+          case 2:
+            // Already on the chat screen
+            break;
+          case 3:
+            // Navigator.pushNamed(context, '/articles');
+            break;
+          case 4:
+            BlocProvider.of<NavigationBloc>(context)
+                .add(NavigationToProfileMainScreenEvent(context: context));
+            break;
+        }
+      },
       items: [
         BottomNavigationBarItem(
           icon: SvgPicture.asset('assets/icons/home_icon.svg'),
@@ -280,8 +300,6 @@ class NavBar extends StatelessWidget {
             "assets/icons/Search.svg",
           ),
           onTap: () {
-            print("Hello");
-
             BlocProvider.of<NavigationBloc>(context)
                 .add(NavigationToSearchScreenEvent(context: context));
           },

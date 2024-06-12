@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 part 'navigation_event.dart';
+
 part 'navigation_state.dart';
 
 class NavigationBloc extends Bloc<NavigationEvent, NavigationState> {
@@ -15,6 +16,9 @@ class NavigationBloc extends Bloc<NavigationEvent, NavigationState> {
     on<NavigationToChatsScreenEvent>(_onChatsScreen);
     on<NavigationToChatScreenEvent>(_onChatScreen);
     on<NavigationToSearchScreenEvent>(_onSearchScreen);
+    on<NavigationToProfileMainScreenEvent>(_onProfileMainScreen);
+    on<NavigationToProfileEditScreenEvent>(_onProfileEditScreen);
+    on<NavigationToProfileSecurityScreenEvent>(_onProfileSecurityScreen);
   }
 
   _onAuthenticationScreen(NavigationToAuthenticationScreenEvent event,
@@ -39,7 +43,21 @@ class NavigationBloc extends Bloc<NavigationEvent, NavigationState> {
 
   _onSearchScreen(
       NavigationToSearchScreenEvent event, Emitter<NavigationState> emit) {
-    print("зашли в _onSearchScreen");
-    event.context.go("/search");
+    event.context.go("/chats/search");
+  }
+
+  _onProfileMainScreen(
+      NavigationToProfileMainScreenEvent event, Emitter<NavigationState> emit) {
+    event.context.go("/chats/profile");
+  }
+
+  _onProfileEditScreen(
+      NavigationToProfileEditScreenEvent event, Emitter<NavigationState> emit) {
+    event.context.go("/chats/profile/edit");
+  }
+
+  _onProfileSecurityScreen(NavigationToProfileSecurityScreenEvent event,
+      Emitter<NavigationState> emit) {
+    event.context.go("/chats/profile/security");
   }
 }

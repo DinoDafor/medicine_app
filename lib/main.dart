@@ -5,14 +5,21 @@ import 'package:medicine_app/bloc/authentication_bloc.dart';
 import 'package:medicine_app/bloc/navigation_bloc.dart';
 import 'package:medicine_app/screens/authentication_screen.dart';
 import 'package:medicine_app/screens/chat_screen.dart';
+import 'package:medicine_app/screens/profile_edit_screen.dart';
+import 'package:medicine_app/screens/profile_main_screen.dart';
+import 'package:medicine_app/screens/profile_security_screen.dart';
 import 'package:medicine_app/screens/registration_screen.dart';
+import 'package:medicine_app/screens/search_screen.dart';
 import 'package:medicine_app/screens/users_chat_screen.dart';
 
 import 'bloc/chat_bloc.dart';
 import 'bloc/chats_bloc.dart';
+import 'bloc/profile_edit_bloc.dart';
+import 'bloc/profile_main_bloc.dart';
+import 'bloc/profile_security_bloc.dart';
+import 'bloc/search_bloc.dart';
 
 void main() {
-  //todo скорее всего надо будет переместить в users_chat провайдер
   runApp(const MyApp());
 }
 
@@ -34,17 +41,33 @@ final GoRouter _router = GoRouter(routes: [
               return const ChatScreen();
             },
             routes: [
-              //todo тут надо вставить айдишник с кем мы говорим chat/userid=?
               GoRoute(
                   path: 'chat',
                   builder: (BuildContext context, GoRouterState state) {
                     return const ChatWithUser();
                   }),
-              // GoRoute(
-              //     path: 'search',
-              //     builder: (BuildContext context, GoRouterState state) {
-              //       return const ChatWithUser();
-              //     }),
+              GoRoute(
+                  path: 'search',
+                  builder: (BuildContext context, GoRouterState state) {
+                    return const SearchScreen();
+                  }),
+              GoRoute(
+                  path: 'profile',
+                  builder: (BuildContext context, GoRouterState state) {
+                    return ProfileScreen();
+                  },
+                  routes: [
+                    GoRoute(
+                        path: 'edit',
+                        builder: (BuildContext context, GoRouterState state) {
+                          return ProfileEditScreen();
+                        }),
+                    GoRoute(
+                        path: 'security',
+                        builder: (BuildContext context, GoRouterState state) {
+                          return const ProfileSecurityScreen();
+                        }),
+                  ]),
             ]),
       ]),
 ]);
@@ -68,13 +91,25 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => NavigationBloc(),
         ),
+        BlocProvider(
+          create: (context) => SearchBloc(),
+        ),
+        BlocProvider(
+          create: (context) => ProfileEditBloc(),
+        ),
+        BlocProvider(
+          create: (context) => ProfileMainBloc(),
+        ),
+        BlocProvider(
+          create: (context) => ProfileSecurityBloc(),
+        ),
       ],
       child: MaterialApp.router(
         routerConfig: _router,
         theme: ThemeData().copyWith(
           colorScheme: ThemeData().colorScheme.copyWith(
-            primary: const Color(0xFF0EBE7E),
-          ),
+                primary: const Color(0xFF0EBE7E),
+              ),
         ),
         debugShowCheckedModeBanner: false,
       ),
