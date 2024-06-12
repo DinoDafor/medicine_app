@@ -32,6 +32,7 @@ class AuthService {
   }
 
   Future<Response> getUser(String email) async {
+    print("Token auth ${Token.token}");
     Options options = Options(
         headers: {HttpHeaders.authorizationHeader: 'Bearer ${Token.token}'});
 

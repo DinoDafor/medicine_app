@@ -19,6 +19,7 @@ import 'package:medicine_app/add_pill/pills/widget/drag_list.dart';
 import 'package:medicine_app/add_pill/service_locator.dart';
 import 'package:medicine_app/bloc/authentication_bloc.dart';
 import 'package:medicine_app/bloc/navigation_bloc.dart';
+import 'package:medicine_app/firebase_options.dart';
 import 'package:medicine_app/giga/pages/gigachat_page.dart';
 
 import 'package:medicine_app/onBoarding/generalScreen.dart';
@@ -40,7 +41,6 @@ import 'package:medicine_app/screens/registration_screen.dart';
 import 'package:medicine_app/screens/users_chat_screen.dart';
 import 'package:medicine_app/add_pill/service_locator.dart' as di;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:medicine_app/utils/firebase_options.dart';
 
 import 'bloc/chat_bloc.dart';
 import 'bloc/chats_bloc.dart';
@@ -56,6 +56,7 @@ class MyHttpoverrides extends HttpOverrides {
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  print("Body of notification: ${message.notification?.body}");
   // If you're going to use other Firebase services in the background, such as Firestore,
   // make sure you call `initializeApp` before using other Firebase services.
   await Firebase.initializeApp();
@@ -74,8 +75,7 @@ void main() async {
   await Hive.openBox('mybox');
   await dotenv.load(fileName: "assets/.env");
   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+      name: "irecipe", options: DefaultFirebaseOptions.currentPlatform);
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   FirebaseMessaging _messaging = FirebaseMessaging.instance;
@@ -87,8 +87,9 @@ void main() async {
       criticalAlert: false,
       provisional: false,
       sound: true);
-  String? token = await _messaging.getToken();
-  print("Firebase token: ${token}");
+
+  ///String? token = await _messaging.getToken();
+  ///print("Firebase token: ${token}");
 
   //todo скорее всего надо будет переместить в users_chat провайдер
   runApp(const MyApp());

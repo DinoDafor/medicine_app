@@ -6,7 +6,7 @@ import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:medicine_app/add_pill/pills/data/model/pill_entity.dart';
 import 'package:medicine_app/add_pill/pills/data/model/pill_model.dart';
-import 'package:medicine_app/utils/firebase_options.dart';
+
 import 'package:medicine_app/utils/token.dart';
 import 'package:intl/intl.dart';
 import 'package:medicine_app/utils/user.dart';
@@ -17,9 +17,11 @@ class PillService {
   Future<Response> sendReminder(PillModel pill) async {
     //todo прокидываем исключение?
     //todo URL
+    FirebaseMessaging _messaging = FirebaseMessaging.instance;
     print("Send post");
     print(pill.timeToDrink);
     print(DateTime.now().timeZoneName);
+    print(DateFormat.Hm().format(pill.timeToDrink));
     print(DateFormat('EEEE').format(pill.timeToDrink).toUpperCase());
     Options options = Options(
         headers: {HttpHeaders.authorizationHeader: 'Bearer ${Token.token}'});
@@ -31,16 +33,21 @@ class PillService {
       "medicineForm": pill.image.toString(),
       "dosage": pill.countOfPills.toString(),
       "remindTime": DateFormat.Hm().format(pill.timeToDrink),
-      "timeZone": DateTime.now().timeZoneName,
+      "timeZone": 'Europe/Moscow',
       "remindDay": DateFormat('EEEE').format(pill.timeToDrink).toUpperCase(),
       "comment": pill.description,
-      "clientToken":
-          "cwby_VOp_T8:APA91bFKVw5fPbV6cE70Qg5oqkXAZLrt1-hp3bEuckmmIwf-XDb5f6YKQb1mDiYibLCEixux_ZO0_XE5AoRd7tvUvxi97Kf_KmFqtixZqRSvzVbAMf5fnkEaSP2by_wy3DCOPLWb6fQr",
+      "clientToken": await _messaging.getToken(),
       "active": true,
       "soundNotificationEnabled": false
     });
 
     print("Success post");
     return response;
+  }
+
+  Future<Response> getReminder() async {
+    var _response =
+        await _dio.get("http://10.0.2.2:8080/user/${User.id}/reminders");
+    return _response;
   }
 }

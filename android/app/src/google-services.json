@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "317240731908",
+    "project_id": "irecipe-b98ef",
+    "storage_bucket": "irecipe-b98ef.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:317240731908:android:ff3da336918ac14e270851",
+        "android_client_info": {
+          "package_name": "com.example.medicine_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDo4OdYqoyJI0Q6eVxf6XJi6ApSWxeRz_s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
