@@ -13,6 +13,7 @@ import 'package:stomp_dart_client/stomp_frame.dart';
 
 import '../bloc/chat_bloc.dart';
 import '../bloc/chats_bloc.dart';
+import '../utils/globals.dart';
 import '../utils/token.dart';
 import '../utils/user.dart';
 
@@ -148,7 +149,7 @@ class _ScrollableChatState extends State<ScrollableChat> {
   void initState() {
     stompClient = StompClient(
       config: StompConfig(
-        url: 'ws://10.0.2.2:8080/irecipe-chat',
+        url: 'ws://${GlobalConfig.host}:${GlobalConfig.port}/irecipe-chat',
         onConnect: onConnect,
         beforeConnect: () async {
           print('beforeConnect...');

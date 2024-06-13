@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:medicine_app/utils/globals.dart';
 
 import '../utils/token.dart';
 
@@ -12,6 +13,7 @@ class AuthService {
       String phoneNumber) async {
     //todo прокидываем исключение?
     //todo URL
+
     var response = await _dio.post('http://10.0.2.2:8080/auth/register', data: {
       "email": email.trim(),
       "password": password.trim(),
@@ -24,10 +26,12 @@ class AuthService {
   }
 
   Future<Response> sighInUser(String email, String password) async {
-    var response = await _dio.post('http://10.0.2.2:8080/auth/login', data: {
-      "email": email.trim(),
-      "password": password.trim(),
-    });
+    var response = await _dio.post(
+        'http://${GlobalConfig.host}:${GlobalConfig.port}/auth/login',
+        data: {
+          "email": email.trim(),
+          "password": password.trim(),
+        });
     return response;
   }
 
@@ -36,8 +40,10 @@ class AuthService {
     Options options = Options(
         headers: {HttpHeaders.authorizationHeader: 'Bearer ${Token.token}'});
 
-    var response = await _dio.get('http://10.0.2.2:8080/users',
-        options: options, queryParameters: {"email": email});
+    var response = await _dio.get(
+        'http://${GlobalConfig.host}:${GlobalConfig.port}/users',
+        options: options,
+        queryParameters: {"email": email});
     return response;
   }
 }

@@ -47,7 +47,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    buildEmailField(),
+                    _buildEmailField(),
                     buildPasswordField(),
                     FutureBuilder(
                       builder: (context, snapshot) {
@@ -117,11 +117,11 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                       },
                       future: this.hasBio,
                     ),
-                    buildAuthButton(context),
+                    _buildAuthButton(context),
                   ],
                 ),
               ),
-              buildBottomRow(context),
+              _buildBottomRow(context),
             ],
           ),
         ),
@@ -129,7 +129,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
     );
   }
 
-  Padding buildEmailField() {
+  Padding _buildEmailField() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: TextFormField(
@@ -191,36 +191,12 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
     );
   }
 
-  ElevatedButton buildAuthButton(BuildContext context) {
+  ElevatedButton _buildAuthButton(BuildContext context) {
     return ElevatedButton(
       onPressed: () async {
         BlocProvider.of<AuthenticationBloc>(context).add(
             AuthenticationSighInEvent(
                 _emailController.text, _passwordController.text));
-
-//         if (_formKey.currentState!.validate()) {
-//
-//           var formData = FormData.fromMap({
-//             "username": _emailController.text.trim(),
-//             "password": _passwordController.text.trim(),
-//             "grant_type": '',
-//             "scope": '',
-//             "client_id": '',
-//             "client_secret": '',
-//           });
-//          var response = await dio.post( 'https://5lzxc7kx-8000.euw.devtunnels.ms/auth/login', data: formData);
-//           if (response.statusCode == 200) {
-//             Token.token = response.data["access_token"];
-//             context.go('/chats');
-//           } else if (response.statusCode == 400) {
-// //todo обработать
-//             print("Ошибка 400: ${response.data}");
-//             //"detail": "LOGIN_BAD_CREDENTIALS"
-//           } else if (response.statusCode == 422) {
-//             print("Ошибка 422: ${response.data}");
-// //todo обработать
-//           }
-//         }
       },
       style: ButtonStyle(
         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -248,7 +224,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
     );
   }
 
-  Row buildBottomRow(BuildContext context) {
+  Row _buildBottomRow(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [

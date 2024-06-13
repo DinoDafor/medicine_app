@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:medicine_app/utils/conversation.dart';
 
 import '../models/chat_model.dart';
+import '../utils/globals.dart';
 import '../utils/token.dart';
 import '../utils/user.dart';
 
@@ -16,10 +17,11 @@ class UsersChatsService {
     Options options = Options(
         headers: {HttpHeaders.authorizationHeader: 'Bearer ${Token.token}'});
     var conversationsResponse = await _dio.get(
-        "http://10.0.2.2:8080/conversations/all/${User.id}",
+        "http://${GlobalConfig.host}:${GlobalConfig.port}/conversations/all/${User.id}",
         options: options);
 
     if (conversationsResponse.statusCode == 200) {
+      print(conversationsResponse.data);
       List<Map<String, dynamic>> chatData =
           List<Map<String, dynamic>>.from(conversationsResponse.data);
 
@@ -41,18 +43,22 @@ class UsersChatsService {
         dynamic userResponse;
         if (User.id == chat.firstParticipantId) {
           userResponse = await _dio.get(
-            "http://10.0.2.2:8080/users/${chat.secondParticipantId}",
+            "http://${GlobalConfig.host}:${GlobalConfig.port}/users/${chat.secondParticipantId}",
             options: options,
           );
+          print(userResponse.data);
+          print(userResponse.data["firstName"]);
           Conversation.idName[chat.secondParticipantId] =
-              userResponse.data["name"];
+              userResponse.data["firstName"];
         } else {
           userResponse = await _dio.get(
-            "http://10.0.2.2:8080/users/${chat.firstParticipantId}",
+            "http://${GlobalConfig.host}:${GlobalConfig.port}/users/${chat.firstParticipantId}",
             options: options,
           );
+          print(userResponse.data);
+          print(userResponse.data["firstName"]);
           Conversation.idName[chat.firstParticipantId] =
-              userResponse.data["name"];
+              userResponse.data["firstName"];
         }
       });
       //todo: refactor

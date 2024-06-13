@@ -11,6 +11,8 @@ import 'package:medicine_app/bloc/navigation_bloc.dart';
 import 'package:medicine_app/giga/pages/gigachat_page.dart';
 
 import 'package:medicine_app/screens/lock_screens/lock_screen.dart';
+import 'package:medicine_app/screens/profile_main_screen.dart';
+import 'package:medicine_app/screens/search_screen.dart';
 import 'package:medicine_app/utils/conversation.dart';
 
 import '../bloc/chat_bloc.dart';
@@ -36,6 +38,8 @@ class _ChatScreenState extends State<ChatScreen> {
     DragListScreen(),
     GigaChatPage(),
     ScrollableChats(),
+    SearchScreen(),
+    ProfileScreen()
   ];
   int _selectedIndex = 0;
   @override
@@ -407,7 +411,10 @@ class NavBar extends StatelessWidget {
           child: SvgPicture.asset(
             "assets/icons/Search.svg",
           ),
-          onTap: () {},
+          onTap: () {
+            BlocProvider.of<NavigationBloc>(context)
+                .add(NavigationToSearchScreenEvent(context: context));
+          },
         ),
         const SizedBox(width: 10),
         SvgPicture.asset(
