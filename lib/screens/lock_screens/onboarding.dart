@@ -40,7 +40,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
     localAuth.authenticate(localizedReason: 'Add Passcode?');
   }
 
-  String get switchLabel => Platform.isIOS ? 'Face Id' : 'Touch Id';
+  // String get switchLabel => Platform.isIOS ? 'Face Id' : 'Touch Id';
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +55,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Text(
-                "Welcome ${this.getEmailArg(context)}",
+                "Добро пожаловать!",
                 style: TextStyle(
                   fontSize: 40,
                   color: Colors.white,
@@ -75,7 +75,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 }
               },
               title: Text(
-                'Enable $switchLabel',
+                'Использовать биометрию',
                 style: TextStyle(
                   fontSize: 24,
                   color: Colors.white70,
@@ -98,7 +98,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 context.go("/setPincode", extra: creds);
               },
               child: Text(
-                'Continue',
+                'Продолжить',
                 style: TextStyle(
                   color: Colors.amber,
                   fontSize: 20,
@@ -106,12 +106,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
               ),
             ),
             SizedBox(height: 20),
-            Text(
-              '* You could enable it also in settings',
-              style: TextStyle(
-                color: Colors.white,
-              ),
-            ),
           ],
         ),
       ),

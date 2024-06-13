@@ -9,6 +9,7 @@ import 'package:medicine_app/add_pill/pills/pages/drag_list_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:medicine_app/bloc/navigation_bloc.dart';
 import 'package:medicine_app/giga/pages/gigachat_page.dart';
+import 'package:medicine_app/screens/articles_screen.dart';
 
 import 'package:medicine_app/screens/lock_screens/lock_screen.dart';
 import 'package:medicine_app/screens/profile_main_screen.dart';
@@ -38,7 +39,7 @@ class _ChatScreenState extends State<ChatScreen> {
     DragListScreen(),
     GigaChatPage(),
     ScrollableChats(),
-    SearchScreen(),
+    ArticleScreen(),
     ProfileScreen()
   ];
   int _selectedIndex = 0;
@@ -195,7 +196,9 @@ class ScrollableChats extends StatelessWidget {
                         backgroundColor: Colors.deepOrange,
                       ),
                       subtitle: Text(
-                        chat.messages.last.text,
+                        chat.messages.isNotEmpty
+                            ? chat.messages.last.text
+                            : "Нет сообщений",
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
@@ -205,14 +208,15 @@ class ScrollableChats extends StatelessWidget {
                       trailing: Column(
                         children: [
                           //TODO:
-                          Text(
-                            DateFormat('dd/MM/yyyy').format(
-                                DateTime.fromMillisecondsSinceEpoch(
-                                    chat.messages.last.sendTimestamp)),
-                            style: const TextStyle(
-                              color: Color(0xFF616161),
+                          if (chat.messages.isNotEmpty)
+                            Text(
+                              DateFormat('dd/MM/yyyy').format(
+                                  DateTime.fromMillisecondsSinceEpoch(
+                                      chat.messages.last.sendTimestamp)),
+                              style: const TextStyle(
+                                color: Color(0xFF616161),
+                              ),
                             ),
-                          ),
                           // Text(
                           //   chat.lastDate,
                           //   style: const TextStyle(

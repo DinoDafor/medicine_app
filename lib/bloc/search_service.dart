@@ -12,7 +12,7 @@ class SearchService {
         headers: {HttpHeaders.authorizationHeader: 'Bearer ${Token.token}'});
 
     Response<dynamic> responseGetMatchingDoctors = await Dio().get(
-      'http://${GlobalConfig.host}:${GlobalConfig.port}/users?userEmail=${email.trim()}&role=DOCTOR',
+      'http://${GlobalConfig.host}/users?userEmail=${email.trim()}&role=DOCTOR',
       options: options,
     );
 
@@ -23,5 +23,20 @@ class SearchService {
     } else {
       return null;
     }
+  }
+
+  Future<Response> createNewConversation(
+      int firstParticipantId, int secondParticipantId) async {
+    Options options = Options(
+        headers: {HttpHeaders.authorizationHeader: 'Bearer ${Token.token}'});
+
+    Response<dynamic> response =
+        await Dio().post('http://${GlobalConfig.host}/conversations',
+            data: {
+              "firstParticipantId": firstParticipantId,
+              "secondParticipantId": secondParticipantId,
+            },
+            options: options);
+    return response;
   }
 }

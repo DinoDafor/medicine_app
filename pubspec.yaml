@@ -65,6 +65,7 @@ dependencies:
   passcode_screen: ^2.0.1
   flutter_dotenv: ^5.1.0
   masked_text: ^1.1.2
+  flutter_launcher_icons: ^0.13.1
 
   flutter:
     sdk: flutter
@@ -74,6 +75,7 @@ dependencies:
   cupertino_icons: ^1.0.2
 
 dev_dependencies:
+  flutter_launcher_icons: "^0.13.1"
   flutter_test:
     sdk: flutter
 
@@ -86,7 +88,10 @@ dev_dependencies:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
-
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/icons/app_icon.jpg"
 # The following section is specific to Flutter packages.
 flutter:
   # The following line ensures that the Material Icons font is

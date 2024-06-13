@@ -17,7 +17,7 @@ class UsersChatsService {
     Options options = Options(
         headers: {HttpHeaders.authorizationHeader: 'Bearer ${Token.token}'});
     var conversationsResponse = await _dio.get(
-        "http://${GlobalConfig.host}:${GlobalConfig.port}/conversations/all/${User.id}",
+        "http://${GlobalConfig.host}/conversations/all/${User.id}",
         options: options);
 
     if (conversationsResponse.statusCode == 200) {
@@ -43,20 +43,18 @@ class UsersChatsService {
         dynamic userResponse;
         if (User.id == chat.firstParticipantId) {
           userResponse = await _dio.get(
-            "http://${GlobalConfig.host}:${GlobalConfig.port}/users/${chat.secondParticipantId}",
+            "http://${GlobalConfig.host}/users/${chat.secondParticipantId}",
             options: options,
           );
-          print(userResponse.data);
-          print(userResponse.data["firstName"]);
+
           Conversation.idName[chat.secondParticipantId] =
               userResponse.data["firstName"];
         } else {
           userResponse = await _dio.get(
-            "http://${GlobalConfig.host}:${GlobalConfig.port}/users/${chat.firstParticipantId}",
+            "http://${GlobalConfig.host}/users/${chat.firstParticipantId}",
             options: options,
           );
-          print(userResponse.data);
-          print(userResponse.data["firstName"]);
+
           Conversation.idName[chat.firstParticipantId] =
               userResponse.data["firstName"];
         }

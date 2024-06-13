@@ -152,10 +152,11 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     );
     if (picked != null) {
       setState(() {
-        _selectedDate = picked;
-        _birthDateController.text = picked.month > 9
-            ? "${picked.year}-${picked.month}-${picked.day}"
-            : "${picked.year}-0${picked.month}-${picked.day}";
+        int year = picked.year;
+        String month =
+            picked.month > 9 ? "${picked.month}" : "0${picked.month}";
+        String day = picked.day > 9 ? "${picked.day}" : "0${picked.day}";
+        _birthDateController.text = "$year-$month-$day";
       });
     }
   }

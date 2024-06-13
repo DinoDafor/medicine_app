@@ -24,7 +24,8 @@ class PillLocalDataSourceImpl implements PillLocalDataSource {
 
   @override
   Future<void> pillsToCache(PillEntity pill) async {
-    var box = await Hive.openBox<PillEntity>('pillbox');
+    var box = await Hive.openBox<PillEntity>('pillbox',
+        encryptionCipher: HiveAesCipher(Hive.generateSecureKey()));
     await box.add(pill);
   }
 

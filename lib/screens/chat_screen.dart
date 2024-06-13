@@ -149,7 +149,7 @@ class _ScrollableChatState extends State<ScrollableChat> {
   void initState() {
     stompClient = StompClient(
       config: StompConfig(
-        url: 'ws://${GlobalConfig.host}:${GlobalConfig.port}/irecipe-chat',
+        url: 'ws://${GlobalConfig.host}/irecipe-chat',
         onConnect: onConnect,
         beforeConnect: () async {
           print('beforeConnect...');
@@ -298,14 +298,14 @@ class _ScrollableChatState extends State<ScrollableChat> {
                           text: _textController.text.trim(),
                           sendTimestamp: DateTime.now().millisecondsSinceEpoch,
                           status: Status.CONFIRMATION,
-                          type: Type.MESSAGE_SENT, conversationId: chatState.chatId);
-                      BlocProvider.of<ChatBloc>(context).add(
-                          ChatSendMessageEvent(
-                              message: sendMessage,
-                              //todo chatid можно убрать походу, из сообщения можно брать
-                              chatId: chatState.chatId,
-                              messages: chatState.messages,
-                              interlocutorId: chatState.interlocutorId));
+                          type: Type.MESSAGE_SENT,
+                          conversationId: chatState.chatId);
+                      BlocProvider.of<ChatBloc>(context).add(ChatSendMessageEvent(
+                          message: sendMessage,
+                          //todo chatid можно убрать походу, из сообщения можно брать
+                          chatId: chatState.chatId,
+                          messages: chatState.messages,
+                          interlocutorId: chatState.interlocutorId));
 
                       print("СООБЩЕНИЕ ОТПРАВЛЯЕМ:" + sendMessage.toString());
 

@@ -17,6 +17,7 @@ class AddPhilsPage extends StatelessWidget {
       child: CupertinoPageScaffold(
         child: SafeArea(
           child: SingleChildScrollView(
+            physics: ScrollPhysics(),
             child: Column(
               children: [
                 AppBarCupertino(mode: AppBarMode.ADD),

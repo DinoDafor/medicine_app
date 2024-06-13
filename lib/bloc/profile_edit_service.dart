@@ -9,7 +9,7 @@ import '../utils/user.dart';
 class ProfileEditService {
   Future<Response> postUpdatedData(Map<String, dynamic> updatedFields) {
     var response = Dio().post(
-      'http://${GlobalConfig.host}:${GlobalConfig.port}/users/profile',
+      'http://${GlobalConfig.host}/users/profile',
       data: json.encode({
         'userId': '${User.id}',
         'email': '${updatedFields['email']}',

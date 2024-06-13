@@ -91,7 +91,7 @@ class _DragListState extends State<DragList> {
 
   Widget _calenarTimeLine() {
     return Padding(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(10),
       child: CalendarTimeline(
         initialDate: DragList.selectedDate,
         firstDate: DateTime(DateTime.now().year),

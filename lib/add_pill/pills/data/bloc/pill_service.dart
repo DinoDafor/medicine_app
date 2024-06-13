@@ -6,6 +6,7 @@ import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:medicine_app/add_pill/pills/data/model/pill_entity.dart';
 import 'package:medicine_app/add_pill/pills/data/model/pill_model.dart';
+import 'package:medicine_app/utils/globals.dart';
 
 import 'package:medicine_app/utils/token.dart';
 import 'package:intl/intl.dart';
@@ -23,22 +24,29 @@ class PillService {
     print(DateTime.now().timeZoneName);
     print(DateFormat.Hm().format(pill.timeToDrink));
     print(DateFormat('EEEE').format(pill.timeToDrink).toUpperCase());
+    print('${pill.timeToDrink.hour}:${pill.timeToDrink.minute}');
+    String hour = (pill.timeToDrink.hour < 9)
+        ? '0${pill.timeToDrink.hour}'
+        : '${pill.timeToDrink.hour}';
+    String minutes = (pill.timeToDrink.minute < 9)
+        ? '0${pill.timeToDrink.minute}'
+        : '${pill.timeToDrink.minute}';
     Options options = Options(
         headers: {HttpHeaders.authorizationHeader: 'Bearer ${Token.token}'});
     var response = await _dio
-        .post('http://10.0.2.2:8080/reminders', options: options, data: {
+        .post('http://${GlobalConfig.host}/reminders', options: options, data: {
       "id": DateTime.now().millisecondsSinceEpoch,
       "userId": User.id,
       "medicineName": pill.name,
       "medicineForm": pill.image.toString(),
       "dosage": pill.countOfPills.toString(),
-      "remindTime": DateFormat.Hm().format(pill.timeToDrink),
+      "remindTime": '${hour}:${minutes}',
       "timeZone": 'Europe/Moscow',
       "remindDay": DateFormat('EEEE').format(pill.timeToDrink).toUpperCase(),
       "comment": pill.description,
       "clientToken": await _messaging.getToken(),
       "active": true,
-      "soundNotificationEnabled": false
+      "soundNotificationEnabled": true
     });
 
     print("Success post");
@@ -47,7 +55,7 @@ class PillService {
 
   Future<Response> getReminder() async {
     var _response =
-        await _dio.get("http://10.0.2.2:8080/user/${User.id}/reminders");
+        await _dio.get("http://${GlobalConfig.host}/user/${User.id}/reminders");
     return _response;
   }
 }

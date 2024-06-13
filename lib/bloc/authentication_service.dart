@@ -14,7 +14,8 @@ class AuthService {
     //todo прокидываем исключение?
     //todo URL
 
-    var response = await _dio.post('http://10.0.2.2:8080/auth/register', data: {
+    var response =
+        await _dio.post('http://${GlobalConfig.host}/auth/register', data: {
       "email": email.trim(),
       "password": password.trim(),
       "name": userName.trim(),
@@ -26,12 +27,11 @@ class AuthService {
   }
 
   Future<Response> sighInUser(String email, String password) async {
-    var response = await _dio.post(
-        'http://${GlobalConfig.host}:${GlobalConfig.port}/auth/login',
-        data: {
-          "email": email.trim(),
-          "password": password.trim(),
-        });
+    var response =
+        await _dio.post('http://${GlobalConfig.host}/auth/login', data: {
+      "email": email.trim(),
+      "password": password.trim(),
+    });
     return response;
   }
 
@@ -40,10 +40,8 @@ class AuthService {
     Options options = Options(
         headers: {HttpHeaders.authorizationHeader: 'Bearer ${Token.token}'});
 
-    var response = await _dio.get(
-        'http://${GlobalConfig.host}:${GlobalConfig.port}/users',
-        options: options,
-        queryParameters: {"email": email});
+    var response = await _dio.get('http://${GlobalConfig.host}/users',
+        options: options, queryParameters: {"email": email});
     return response;
   }
 }
