@@ -24,4 +24,20 @@ class SearchService {
       return null;
     }
   }
+
+  Future<Response> createNewConversation(
+      int firstParticipantId, int secondParticipantId) async {
+    Options options = Options(
+        headers: {HttpHeaders.authorizationHeader: 'Bearer ${Token.token}'});
+
+    Response<dynamic> response = await Dio()
+        .post('http://${GlobalConfig.host}:${GlobalConfig.port}/conversations',
+            data: {
+              "firstParticipantId": firstParticipantId,
+              "secondParticipantId": secondParticipantId,
+            },
+            options: options);
+    return response;
+  }
 }
+

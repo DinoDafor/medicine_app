@@ -46,8 +46,7 @@ class UsersChatsService {
             "http://${GlobalConfig.host}:${GlobalConfig.port}/users/${chat.secondParticipantId}",
             options: options,
           );
-          print(userResponse.data);
-          print(userResponse.data["firstName"]);
+
           Conversation.idName[chat.secondParticipantId] =
               userResponse.data["firstName"];
         } else {
@@ -55,8 +54,7 @@ class UsersChatsService {
             "http://${GlobalConfig.host}:${GlobalConfig.port}/users/${chat.firstParticipantId}",
             options: options,
           );
-          print(userResponse.data);
-          print(userResponse.data["firstName"]);
+
           Conversation.idName[chat.firstParticipantId] =
               userResponse.data["firstName"];
         }

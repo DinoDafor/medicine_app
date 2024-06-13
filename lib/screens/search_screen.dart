@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:medicine_app/bloc/search_bloc.dart';
 
+import '../utils/user.dart';
+
 //todo: прочитать про AutoComplete класс для поиска
 class SearchScreen extends StatelessWidget {
   const SearchScreen({super.key});
@@ -54,8 +56,15 @@ class SearchScreen extends StatelessWidget {
                   return ListTile(
                     title: Text(state.doctor.firstName),
                     subtitle: Text(state.doctor.email),
-                    //todo при нажатии попадаем в чат с доктором
-                    // onTap: ,
+                    onTap: () {
+                      BlocProvider.of<SearchBloc>(context).add(
+                          SearchCreateConversationWithDoctorEvent(
+                              context: context,
+                              firstParticipantId: User.id,
+                              secondParticipantId: state.doctor.id,
+                          doctorName: state.doctor.firstName));
+
+                    },
                   );
                 }),
           );

@@ -69,6 +69,7 @@ class ScrollableChats extends StatelessWidget {
                 Chat chat = chatsBlocState.chats[index];
                 return ListTile(
                   onTap: () {
+                    //todo кажется ChatsClickEvent ничего не делает, надо удалить
                     chatsBloc.add(ChatsClickEvent(chatId: chat.id));
                     BlocProvider.of<NavigationBloc>(context).add(
                         NavigationToChatScreenEvent(

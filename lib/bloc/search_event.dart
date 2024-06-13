@@ -8,3 +8,16 @@ class SearchSendEmailOfDoctorEvent extends SearchEvent {
 
   SearchSendEmailOfDoctorEvent({required this.email});
 }
+
+class SearchCreateConversationWithDoctorEvent extends SearchEvent {
+  final int firstParticipantId;
+  final int secondParticipantId;
+  final BuildContext context;
+  final String doctorName;
+
+  SearchCreateConversationWithDoctorEvent(
+      {required this.firstParticipantId,
+      required this.secondParticipantId,
+      required this.context,
+      required this.doctorName});
+}
